@@ -21,8 +21,8 @@ public enum Card {
         this.color = color;
     }
     
-    public final static List<Card> ALL = List.of(values());
-    public final static int COUNT = ALL.size();
+    public static final List<Card> ALL = List.of(values());
+    public static final int COUNT = ALL.size();
     
     // For CARS, we take the sublist of ALL starting from the beginning,
     // until the last element which is LOCOMOTIVE, since we don't want it.
