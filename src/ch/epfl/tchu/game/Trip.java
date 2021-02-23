@@ -1,5 +1,7 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,8 +12,7 @@ public final class Trip {
     private final int points;
     
     public Trip(Station from, Station to, int points) {
-        if (! (points > 0))
-            throw new IllegalArgumentException();
+        Preconditions.checkArgument(points > 0);
         
         this.from = Objects.requireNonNull(from);
         this.to = Objects.requireNonNull(to);
@@ -19,14 +20,17 @@ public final class Trip {
     }
     
     public static List<Trip> all(List<Station> from, List<Station> to, int points) {
-        if (from.isEmpty() || to.isEmpty() || ! (points > 0))
-            throw new IllegalArgumentException();
+        Preconditions.checkArgument(! from.isEmpty());
+        Preconditions.checkArgument(! to.isEmpty());
+        Preconditions.checkArgument(points > 0);
         
         List<Trip> allTrips = new ArrayList<>();
-    
-        for (Station f : from) {
-            for (Station t : to) {
-                allTrips.add(new Trip(f, t, points));
+        
+        for (Station fromStation : from) {
+            for (Station toStation : to) {
+                allTrips.add(
+                        new Trip(fromStation, toStation, points)
+                );
             }
         }
         
@@ -46,6 +50,8 @@ public final class Trip {
     }
     
     public int points(StationConnectivity connectivity) {
-        return (connectivity.connected(from, to)) ? points() : -points(); // TODO: Demander à un assistant pour points()
+        // TODO: points() ou points ?
+        return (connectivity.connected(from, to)) ? points : -points;
     }
+    
 }

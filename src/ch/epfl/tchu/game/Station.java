@@ -1,13 +1,14 @@
 package ch.epfl.tchu.game;
 
+import ch.epfl.tchu.Preconditions;
+
 public final class Station {
     
     private final int id;
     private final String name;
     
     public Station(int id, String name) {
-        if (id < 0)
-            throw new IllegalArgumentException(); // TODO: EXCEPTION SI id > 50 
+        Preconditions.checkArgument(! (id < 0)); // TODO: exception si id > 50 ?
         
         this.id = id;
         this.name = name;
