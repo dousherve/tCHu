@@ -1,6 +1,6 @@
-package ch.epfl.tchu.game;
+package ch.epfl.tchu;
 
-public class Test {
+public class ManualTests {
     
     public static void main(String[] args) {
     }
