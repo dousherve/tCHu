@@ -28,16 +28,16 @@ public final class Ticket implements Comparable<Ticket> {
     
     private static String computeText(List<Trip> trips) {
         final Trip FIRST_TRIP = trips.get(0);
-        final Station FROM = FIRST_TRIP.from();
+        final Station FIRST_TRIP_FROM = FIRST_TRIP.from();
         
         if (trips.size() == 1) {
-            // Billet ville-à-ville
+            // Billet ville-à-ville, car elle contient un seul trajet
             final Station TO = FIRST_TRIP.to();
-            return String.format("%s - %s (%d)", FROM.name(), TO.name(), FIRST_TRIP.points());
+            return String.format("%s - %s (%d)", FIRST_TRIP_FROM.name(), TO.name(), FIRST_TRIP.points());
         }
         
         final List<String> COUNTRIES = List.of("Allemagne", "Autriche", "France", "Italie");
-        if (COUNTRIES.contains(FROM.name())) {
+        if (COUNTRIES.contains(FIRST_TRIP_FROM.name())) {
             // Billet pays-à-pays
             
         }
@@ -50,8 +50,16 @@ public final class Ticket implements Comparable<Ticket> {
         return text;
     }
     
+    public int points(StationConnectivity connectivity) {
+        // TODO: implement
+        
+        return 0; 
+    }
+    
     @Override
-    public int compareTo(Ticket o) {
+    public int compareTo(Ticket that) {
+        // TODO: implement
         return 0;
     }
+    
 }
