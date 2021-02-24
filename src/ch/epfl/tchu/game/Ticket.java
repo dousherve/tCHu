@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+// TODO: documenter le code !
+
 public final class Ticket implements Comparable<Ticket> {
     
     private final List<Trip> trips;
@@ -49,21 +51,25 @@ public final class Ticket implements Comparable<Ticket> {
             );
         }
         
-        final TreeSet<String> COUNTRY_NAMES = (TreeSet<String>) Set.of("Allemagne", "Autriche", "France", "Italie");
+        // Billet ville à pays ou bien pays à pays
+    
+        Set<String> destinationsDescriptions = new TreeSet<>();
         
-        if (COUNTRY_NAMES.contains(FROM_STATION_NAME)) {
-            // Billet pays à pays,
-            // car le nom de la station de départ est un pays
-            
-            // TODO: implémenter
-        } else {
-            // Billet ville à pays
-            
-            
+        for (Trip trip : trips) {
+            destinationsDescriptions.add(
+                    String.format(
+                            "%s (%d)",
+                            trip.to().name(),
+                            trip.points()
+                    )
+            );
         }
-        
-        // TODO: retourner la bonne valeur
-        return "";
+    
+        return String.format(
+                "%s - {%s}",
+                FROM_STATION_NAME,
+                String.join(", ", destinationsDescriptions)
+        );
     }
     
     public String text() {
@@ -71,15 +77,32 @@ public final class Ticket implements Comparable<Ticket> {
     }
     
     public int points(StationConnectivity connectivity) {
-        // TODO: implement
+        final int FIRST_TRIP_POINTS = trips.get(0).points(connectivity);
         
-        return 0; 
+        if (trips.size() == 1) {
+            // Billet ville à ville : trajet unique
+            return FIRST_TRIP_POINTS;
+        }
+    
+        // Billet ville à pays ou bien pays à pays :
+        // On cherche le score maximum parmi tous les trajets.
+        // Ainsi, le comportement min/max imposé sera automatiquement
+        // pris en compte grâce au signe des valeurs retournées.
+        
+        int maxScore = FIRST_TRIP_POINTS;
+        for (int i = 1; i < trips.size(); ++i) {
+            maxScore = Math.max(
+                    maxScore,
+                    trips.get(i).points(connectivity)
+            );
+        }
+            
+        return maxScore;
     }
     
     @Override
     public int compareTo(Ticket that) {
-        // TODO: implement
-        return 0;
+        return this.text.compareTo(that.text);
     }
     
 }
