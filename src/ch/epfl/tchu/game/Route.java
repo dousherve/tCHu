@@ -3,7 +3,7 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -106,6 +106,24 @@ public final class Route {
     }
 
     public List<SortedBag<Card>> possibleClaimCards() {
-        return Collections.emptyList();
+        List<SortedBag<Card>> possibleClaimCards = new ArrayList<>();
+        
+        return possibleClaimCards;
     }
+    
+    public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards) {
+        Preconditions.checkArgument(
+                level == Level.UNDERGROUND && drawnCards.size() == 3
+        );
+        
+        // TODO: implémenter
+        
+        return 0;
+    }
+    
+    public int claimPoints() {
+        // TODO: length() ou length ?
+        return Constants.ROUTE_CLAIM_POINTS.get(length);
+    }
+    
 }
