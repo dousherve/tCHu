@@ -30,9 +30,17 @@ public final class Ticket implements Comparable<Ticket> {
     public Ticket(List<Trip> trips) {
         Preconditions.checkArgument(! trips.isEmpty());
         
-        final String FIRST_STATION_NAME = trips.get(0).from().name();
+        final String FIRST_STATION_NAME = trips
+                .get(0)
+                .from()
+                .name();
+
         for (int i = 1; i < trips.size(); ++i) {
-            final String CURRENT_STATION_NAME = trips.get(i).from().name();
+            final String CURRENT_STATION_NAME = trips
+                    .get(i)
+                    .from()
+                    .name();
+
             Preconditions.checkArgument(
                     CURRENT_STATION_NAME.equals(FIRST_STATION_NAME)
             );
@@ -125,7 +133,9 @@ public final class Ticket implements Comparable<Ticket> {
      *          la connectivité du joueur qui le possède
      */
     public int points(StationConnectivity connectivity) {
-        final int FIRST_TRIP_POINTS = trips.get(0).points(connectivity);
+        final int FIRST_TRIP_POINTS = trips
+                .get(0)
+                .points(connectivity);
         
         if (trips.size() == 1) {
             // Billet ville à ville : trajet unique
@@ -136,7 +146,6 @@ public final class Ticket implements Comparable<Ticket> {
         // On cherche le score maximum parmi tous les trajets.
         // Ainsi, le comportement min/max imposé sera automatiquement
         // pris en compte grâce au signe des valeurs retournées par le trajet dont il est question.
-        
         int maxScore = FIRST_TRIP_POINTS;
         for (int i = 1; i < trips.size(); ++i) {
             maxScore = Math.max(
@@ -147,7 +156,7 @@ public final class Ticket implements Comparable<Ticket> {
             
         return maxScore;
     }
-    
+
     /**
      * Compare ce billet à celui passé en argument
      * par ordre alphabétique de leur représentation textuelle.
@@ -162,5 +171,15 @@ public final class Ticket implements Comparable<Ticket> {
     public int compareTo(Ticket that) {
         return this.text.compareTo(that.text);
     }
-    
+
+    /**
+     * Retourne la même valeur que la methode text()
+     *
+     * @return
+     *          la valeur de l'attribut text
+     */
+    @Override
+    public String toString() {
+        return text;
+    }
 }

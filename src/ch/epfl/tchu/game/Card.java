@@ -22,8 +22,18 @@ public enum Card {
     WHITE   (Color.WHITE),
     
     LOCOMOTIVE(null);
-    
+
     private Color color;
+
+    /**
+     * Liste immuable contenant toutes les cartes du type énuméré,
+     * dans leur ordre de définition.
+     */
+    public static final List<Card> ALL = List.of(values());
+    /**
+     * Nombre total de cartes.
+     */
+    public static final int COUNT = ALL.size();
     
     /**
      * Construit une nouvelle carte en prenant sa couleur en paramètre.
@@ -34,16 +44,6 @@ public enum Card {
     Card(Color color) {
         this.color = color;
     }
-    
-    /**
-     * Liste immuable contenant toutes les cartes du type énuméré,
-     * dans leur ordre de définition.
-     */
-    public static final List<Card> ALL = List.of(values());
-    /**
-     * Nombre total de cartes.
-     */
-    public static final int COUNT = ALL.size();
     
     // Pour CARS, on prend la sous-liste de ALL qui va du début
     // jusqu'à l'avant-dernier élément, le dernier étant LOCOMOTIVE.
