@@ -59,10 +59,9 @@ public final class Trip {
      * @return la liste de tous les trajets possibles comme décrits ci-dessus
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points) {
-        // TODO: 3 checks ou un seul ?
-        Preconditions.checkArgument(! from.isEmpty());
-        Preconditions.checkArgument(! to.isEmpty());
-        Preconditions.checkArgument(points > 0);
+        Preconditions.checkArgument(
+        ! from.isEmpty() && ! to.isEmpty() && points > 0
+        );
         
         List<Trip> allTrips = new ArrayList<>();
         

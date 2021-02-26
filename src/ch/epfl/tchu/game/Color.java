@@ -24,6 +24,7 @@ public enum Color {
      * dans leur ordre de déclaration.
      */
     public static final List<Color> ALL = List.of(values());
+    
     /**
      * Nombre total de couleurs.
      */

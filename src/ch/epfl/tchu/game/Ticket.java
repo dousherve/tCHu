@@ -104,11 +104,15 @@ public final class Ticket implements Comparable<Ticket> {
                     )
             );
         }
+        
+        final String FORMATTED_DESCRITPIONS = String.join(
+                ", ", destinationsDescriptions
+        );
     
         return String.format(
                 "%s - {%s}",
                 FROM_STATION_NAME,
-                String.join(", ", destinationsDescriptions)
+                FORMATTED_DESCRITPIONS
         );
     }
     
@@ -142,10 +146,12 @@ public final class Ticket implements Comparable<Ticket> {
             return FIRST_TRIP_POINTS;
         }
     
-        // Billet ville à pays ou bien pays à pays :
-        // On cherche le score maximum parmi tous les trajets.
-        // Ainsi, le comportement min/max imposé sera automatiquement
-        // pris en compte grâce au signe des valeurs retournées par le trajet dont il est question.
+        /* 
+           Billet ville à pays ou bien pays à pays :
+           On cherche le score maximum parmi tous les trajets.
+           Ainsi, le comportement min/max imposé sera automatiquement
+           pris en compte grâce au signe des valeurs retournées par le trajet dont il est question.
+        */
         int maxScore = FIRST_TRIP_POINTS;
         for (int i = 1; i < trips.size(); ++i) {
             maxScore = Math.max(
@@ -159,7 +165,7 @@ public final class Ticket implements Comparable<Ticket> {
 
     /**
      * Compare ce billet à celui passé en argument
-     * par ordre alphabétique de leur représentation textuelle.
+     * selon l'ordre alphabétique de leur représentation textuelle.
      * 
      * @param that
      *          le billet avec lequel on effectue la comparaison
@@ -173,13 +179,14 @@ public final class Ticket implements Comparable<Ticket> {
     }
 
     /**
-     * Retourne la même valeur que la methode text()
+     * Retourne la même valeur que la méthode text() : 
      *
      * @return
-     *          la valeur de l'attribut text
+     *          la représentation textuelle
      */
     @Override
     public String toString() {
         return text;
     }
+    
 }

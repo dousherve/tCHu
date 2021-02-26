@@ -22,9 +22,7 @@ public enum Card {
     WHITE   (Color.WHITE),
     
     LOCOMOTIVE(null);
-
-    private Color color;
-
+    
     /**
      * Liste immuable contenant toutes les cartes du type énuméré,
      * dans leur ordre de définition.
@@ -34,6 +32,17 @@ public enum Card {
      * Nombre total de cartes.
      */
     public static final int COUNT = ALL.size();
+    /**
+     * Liste immuable contenant uniquement les cartes wagon,
+     * dans leur ordre de définition.
+     */
+    public static final List<Card> CARS = Collections.unmodifiableList(
+            // Sous-liste de ALL du premier jusqu'à l'avant-dernier élément,
+            // le dernier étant LOCOMOTIVE.
+            ALL.subList(0, COUNT - 1)
+    );
+    
+    private final Color color;
     
     /**
      * Construit une nouvelle carte en prenant sa couleur en paramètre.
@@ -45,16 +54,6 @@ public enum Card {
         this.color = color;
     }
     
-    // Pour CARS, on prend la sous-liste de ALL qui va du début
-    // jusqu'à l'avant-dernier élément, le dernier étant LOCOMOTIVE.
-    /**
-     * Liste immuable contenant uniquement les cartes wagon,
-     * dans leur ordre de définition.
-     */
-    public final static List<Card> CARS = Collections.unmodifiableList(
-            ALL.subList(0, COUNT - 1)
-    );
-    
     /**
      * Retourne l'unique carte wagon dont la couleur est celle 
      * passée en paramètre.
@@ -62,7 +61,7 @@ public enum Card {
      * @param color
      *          la couleur de la carte désirée (non-null)
      * @throws NullPointerException
-     *          si la couleur est null
+     *          si la couleur passée en paramètre est null
      * @return l'unique carte wagon dont la couleur est color
      */
     public static Card of(Color color) {
@@ -73,8 +72,7 @@ public enum Card {
                 return car;
         }
         
-        // Ne retournera jamais null
-        return null;
+        throw new NullPointerException("Il n'y a pas de carte wagon correpondant à cette couleur");
     }
     
     /**

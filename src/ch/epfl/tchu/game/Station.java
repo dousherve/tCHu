@@ -19,9 +19,11 @@ public final class Station {
      *          l'identifiant unique de la gare
      * @param name
      *          le nom de la gare
+     * @throws IllegalArgumentException
+     *          si le nombre de points est négatif ou nul
      */
     public Station(int id, String name) {
-        Preconditions.checkArgument(! (id < 0)); // TODO: Exception si id > 50 ?
+        Preconditions.checkArgument(! (id < 0));
         
         this.id = id;
         this.name = name;
