@@ -4,6 +4,7 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +23,7 @@ public final class Route {
     private final Color color;
 
     /**
-     * Type énuméré représentant les deux niveaux auquel une route peut se trouver.
+     * Type énuméré imbriqué représentant les deux niveaux auquel une route peut se trouver.
      */
     public enum Level {
         OVERGROUND, UNDERGROUND
@@ -45,11 +46,11 @@ public final class Route {
      *          la couleur de la route, null si elle est de couleur neutre
      *
      * @throws IllegalArgumentException
-     *          si les deux fares sont égales (au sens de la methode <code>equals</code>
+     *          si les deux gares sont égales (au sens de la méthode <code>equals</code>)
      *          ou si la longueur n'est pas comrpise entre <code>Constants.MIN_ROUTE_LENGTH</code> et <code>Constants.MAX_ROUTE_LENGTH</code>
      *
      * @throws NullPointerException
-     *          si l'identité, l'une des 2 gares ou le niveau sont nuls
+     *          si l'identité, l'une des 2 gares ou le niveau sont null
      */
     public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
         final boolean IS_IN_BOUNDS = (
@@ -154,23 +155,80 @@ public final class Route {
      */
     public Station stationOpposite(Station station) {
         Preconditions.checkArgument(
-                station.equals(station1) || station.equals(station2) // TODO: on a la methode stations() qui fait une liste des 2 on essaye ?
+                stations().contains(station)
         );
 
         return station.equals(station1) ? station2 : station1;
     }
 
     /**
-     * Retourne la liste de tous les ensembles de cartes qui peuvent être jouées pour prendre une route
-     *          la liste sera dans l'ordre croissant de nombre de cartes locomotives puis de couleur.
+     * Retourne la liste immuable de tous les ensembles de cartes qui peuvent être jouées pour s'emparer d'une route.
+     * La liste sera triée par ordre croissant du nombre de cartes locomotives puis par couleur.
      *
      * @return
-     *          la liste de tous les ensembles de cartes qui peuvent être jouées pour gagner une route
+     *          la liste de tous les ensembles de cartes qui peuvent être jouées pour s'emparer d'une route
      */
     public List<SortedBag<Card>> possibleClaimCards() {
         List<SortedBag<Card>> possibleClaimCards = new ArrayList<>();
         
-        return possibleClaimCards;
+        if (level == Level.OVERGROUND) {
+            // Route en surface
+            
+            if (color != null) {
+                // Route coloré
+                possibleClaimCards.add(
+                        SortedBag.of(length, Card.of(color))
+                );
+            } else {
+                // Route de couleur neutre
+                for (Color c : Color.values()) {
+                    possibleClaimCards.add(
+                            SortedBag.of(length, Card.of(c))
+                    );
+                }
+            }
+            
+        } else if (level == Level.UNDERGROUND) {
+            // Tunnel
+            
+            if (color != null) {
+                // Tunnel coloré
+                for (int i = 0; i < length; ++i) {
+                    // i représente le nombre de locomotives
+                    possibleClaimCards.add(
+                            SortedBag.of(
+                                    length - i, Card.of(color),
+                                    i, Card.LOCOMOTIVE
+                            )
+                    );
+                }
+                
+            } else {
+                // Tunnel de couleur neutre
+                for (int i = 0; i < length; ++i) {
+    
+                    for (Color c : Color.values()) {
+                        possibleClaimCards.add(
+                                SortedBag.of(
+                                        length - i, Card.of(c),
+                                        i, Card.LOCOMOTIVE
+                                )
+                        );
+                    }
+    
+                }
+    
+            }
+    
+            // Ajout du nombre de cartes locomotive maximum
+            possibleClaimCards.add(
+                    SortedBag.of(length, Card.LOCOMOTIVE)
+            );
+        }
+        
+        return Collections.unmodifiableList(
+                possibleClaimCards
+        );
     }
 
     /**
@@ -183,7 +241,7 @@ public final class Route {
      *
      * @throws IllegalArgumentException
      *          si la route à laquelle on applique la methode n'est pas un tunnel
-     *          ou si drawnCards ne contient pas exactement 3 cartes
+     *          ou si <code>drawnCards</code> ne contient pas exactement 3 cartes
      *
      * @return
      *          le nombre de cartes additionnelles à jouer pour s'emparer de la route (tunnel)
@@ -193,9 +251,15 @@ public final class Route {
                 level == Level.UNDERGROUND && drawnCards.size() == 3
         );
         
-        // TODO: implémenter
+        SortedBag<Card> CLAIM_CARDS_WITHOUT_LOCOMOTIVE = claimCards.difference(
+                SortedBag.of(claimCards.countOf(Card.LOCOMOTIVE), Card.LOCOMOTIVE)
+        );
         
-        return 0;
+        final SortedBag<Card> COMMON_CARDS_WITHOUT_LOCOMOTIVE = drawnCards.difference(
+                drawnCards.difference(CLAIM_CARDS_WITHOUT_LOCOMOTIVE)
+        );
+        
+        return COMMON_CARDS_WITHOUT_LOCOMOTIVE.size() + drawnCards.countOf(Card.LOCOMOTIVE);
     }
 
     /**
