@@ -10,7 +10,18 @@ public final class Trail {
     private final int length;
     private final Station station1, station2;
     private final List<Route> routes;
-    
+
+    /**
+     * Retourne le plus long chemin du réseau constitué des routes données.
+     * S'il y a plusieurs chemins de longueur maximale, celui qui est retourné n'est pas spécifié.
+     *
+     * @param routes
+     *          la liste de route
+     *
+     * @return
+     *          le plus long chemin de réseau constitué des routes données
+     *          si la liste est vide, retourne un chemin de longueur zéro dont les gares sont égales à null
+     */
     public static Trail longest(List<Route> routes) {
         // Liste des chemins constitués d'une seule route
         List<Trail> trails = new ArrayList<>();
@@ -88,19 +99,47 @@ public final class Trail {
         this.station2 = station2;
         this.routes = routes;
     }
-    
+
+    /**
+     * Retourne la longueur du chemin
+     *
+     * @return
+     *          la longueur du chemin
+     */
     public int length() {
         return length;
     }
-    
+
+    /**
+     * Retourne la première gare
+     *
+     * @return
+     *          la première gare
+     *          ou null si le chemin est de longueur zéro
+     */
     public Station station1() {
         return station1;
     }
-    
+
+    /**
+     * Retourne la deuxième gare
+     *
+     * @return
+     *          la deuxième gare
+     *          ou null si le chemin est de longueur zéro
+     */
     public Station station2() {
         return station2;
     }
-    
+
+    /**
+     * Retourne la représentation textuelle du chemin qui doit contenir le nom de la première,
+     * de la dernière (dans cette ordre), ainsi que la longueur du chemin entre parenthèses.
+     *
+     * @return
+     *          la représentation textuelle du chemin
+     *          ou Empty trail si la longueur est zéro
+     */
     @Override
     public String toString() {
         if (length == 0) {
