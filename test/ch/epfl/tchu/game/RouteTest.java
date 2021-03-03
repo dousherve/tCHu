@@ -101,8 +101,9 @@ class RouteTest {
     }
 
     @Test
-    void stationOpposite() {
-
+    void stationOppositeWorks() {
+        Route route = new Route("LAUSANNE", ChMap.stations().get(0), ChMap.stations().get(1), 1, Route.Level.OVERGROUND, Color.RED);
+        assertEquals(ChMap.stations().get(1), route.stationOpposite(ChMap.stations().get(0)));
     }
 
     @Test
@@ -122,8 +123,6 @@ class RouteTest {
     
         System.out.println(r3.possibleClaimCards());
         assertEquals(2, r3.possibleClaimCards().size());
-    
-    
     }
 
     @Test

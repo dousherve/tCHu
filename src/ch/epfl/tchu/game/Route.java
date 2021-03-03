@@ -167,7 +167,8 @@ public final class Route {
     }
 
     /**
-     * Retourne la liste immuable de tous les ensembles triés de cartes qui peuvent être jouées pour s'emparer d'une route.
+     * Retourne la liste immuable de tous les ensembles triés de cartes
+     * qui peuvent être jouées pour s'emparer d'une route.
      * La liste est triée par ordre croissant du nombre de cartes locomotives puis par couleur.
      *
      * @return
@@ -274,7 +275,6 @@ public final class Route {
      *          le nombre de points gagnés en s'emparant de la route
      */
     public int claimPoints() {
-        // TODO: length() ou length ?
         return Constants.ROUTE_CLAIM_POINTS.get(length);
     }
     

@@ -10,12 +10,16 @@ import java.util.List;
 
 public class ManualTests {
     
+    private static int toIndex(int lineNumber) {
+        return lineNumber - 91;
+    }
+    
     public static void main(String[] args) {
-        final int INDEX = 132 - 91;
+        final int INDEX = toIndex(132);
         final Route r = ChMap.routes().get(INDEX);
     
-        System.out.println(r.possibleClaimCards());
-        System.out.println(r.possibleClaimCards().size());
+        System.out.println("Possible claim cards : " + r.possibleClaimCards());
+        System.out.println("Possible claim cards size : " + r.possibleClaimCards().size());
     
         System.out.println("Returned : " + r.additionalClaimCardsCount(
                 r.possibleClaimCards().get(15),
@@ -23,11 +27,14 @@ public class ManualTests {
         ));
         
         List<Route> routes = new ArrayList<>();
-        routes.add(ChMap.routes().get(2));
-        routes.add(ChMap.routes().get(6));
+        routes.add(ChMap.routes().get(toIndex(107)));
+        routes.add(ChMap.routes().get(toIndex(109)));
+        routes.add(ChMap.routes().get(toIndex(156)));
+        routes.add(ChMap.routes().get(toIndex(110)));
+        routes.add(ChMap.routes().get(toIndex(104)));
         
         Trail trail = Trail.longest(routes);
-        System.out.println(trail.toString());
+        System.out.println("Longest trail : " + trail.toString());
     }
     
 }

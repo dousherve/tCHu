@@ -19,7 +19,8 @@ public final class Trail {
 
     /**
      * Retourne le plus long chemin du réseau constitué des routes données.
-     * S'il y a plusieurs chemins de longueur maximale, celui qui est retourné n'est pas spécifié.
+     * S'il y a plusieurs chemins de longueur maximale, celui qui est retourné est le
+     * premier qui aura été traité par l'algorithme de recherche.
      *
      * @param routes
      *          la liste de routes
@@ -29,53 +30,55 @@ public final class Trail {
      *          si la liste est vide, retourne un chemin de longueur zéro dont les gares sont égales à null
      */
     public static Trail longest(List<Route> routes) {
-        // Liste des chemins constitués d'une seule route
+        final Trail EMPTY_TRAIL = new Trail(
+                null, null, Collections.emptyList()
+        );
+        
+        if (routes.isEmpty()) {
+            return EMPTY_TRAIL;
+        }
+            
         List<Trail> trails = new ArrayList<>();
-        int maxLength = 0;
+        int maxLength = -1;
         Trail longestTrail = null;
         
-        final List<Route> LENGTH_ONE_ROUTES = routes
-                .stream()
-                .filter(route -> route.length() == 1)
-                .collect(Collectors.toUnmodifiableList());
-        
-        for (Route r : LENGTH_ONE_ROUTES) {
-            trails.add(
+        // On ajoute tous les chemins constitués d'une seule route
+        for (Route r : routes) {
+            trails.addAll(List.of(
                     new Trail(
-                            r.station1(), r.station2(), 
+                            r.station1(), r.station2(),
                             Collections.singletonList(r)
-                    )
-            );
-            
-            trails.add(
+                    ),
                     new Trail(
                             r.station2(), r.station1(),
                             Collections.singletonList(r)
                     )
-            );
+            ));
         }
         
         while (! trails.isEmpty()) {
-            
             List<Trail> tempTrails = new ArrayList<>();
+            
             for (Trail t : trails) {
                 // TODO: utiliser removeAll() et pas contains()
                 final List<Route> NEW_ROUTES = routes
                         .stream()
-                        .filter(r -> (! t.routes.contains(r) && r.stations().contains(t.station2)))
+                        // Pour pouvoir prolonger le chemin, une route ne doit pas déjà y appartenir,
+                        // et il faut de plus qu'une de ses gares soit celle d'arrivée du chemin
+                        // que l'on désire prolonger (ici t.station2)
+                        .filter(r -> ! t.routes.contains(r) && r.stations().contains(t.station2))
                         .collect(Collectors.toUnmodifiableList());
                 
                 for (Route r : NEW_ROUTES) {
                     List<Route> newTrailRoutes = new ArrayList<>(List.copyOf(t.routes));
                     newTrailRoutes.add(r);
     
-                    // La gare de départ ne change pas,
-                    // mais la nouvelle gare d'arrivée est 
-                    // l'opposée de l'ancienne par rapport à la route ajoutée
+                    // La gare de départ ne change pas, mais la nouvelle gare
+                    // d'arrivée est l'opposée de l'ancienne par rapport à la route ajoutée
                     final Trail NEW_TRAIL = new Trail(
                             t.station1,
                             r.stationOpposite(t.station2),
-                            newTrailRoutes
+                            Collections.unmodifiableList(newTrailRoutes)
                     );
                     
                     tempTrails.add(NEW_TRAIL);
@@ -88,18 +91,19 @@ public final class Trail {
             }
             
             trails = tempTrails;
-            
         }
     
-        if (longestTrail != null) {
+        if (longestTrail != null && longestTrail.length > 0) {
             return longestTrail;
         }
         
-        // Retourne un chemin vide s'il est de longueur 0
-        return new Trail(null, null, Collections.emptyList());
+        // Retourne un chemin vide dont les stations sont null
+        return EMPTY_TRAIL;
     }
     
     private Trail(Station station1, Station station2, List<Route> routes) {
+        // La longueur du chemin est la somme 
+        // de celles de toutes les routes qui le composent
         this.length = routes.stream().mapToInt(Route::length).sum();
         this.station1 = station1;
         this.station2 = station2;
@@ -152,27 +156,22 @@ public final class Trail {
             return "Empty trail";
         }
         
-        // TODO: corriger ou finir l'implémentation
-        
         List<String> stationNames = new ArrayList<>();
-    
+        
+        // On ajoute le nom de la station de départ du chemin
         stationNames.add(station1.name());
         
-        Station previousToStation = routes.get(0).stationOpposite(station1);
-        for (int i = 1; i < routes.size() - 1; ++i) {
-            final Route ROUTE = routes.get(i);
-            final Station STATION = (i % 2 == 0) ? ROUTE.station1() : ROUTE.station2();
+        Station previousStation = station1;
+        for (Route r : routes) {
+            final Station STATION = r.stationOpposite(previousStation);
             
             stationNames.add(STATION.name());
+            previousStation = STATION;
         }
         
         return String.format(
                 "%s (%d)",
-                String.join(
-                        " - ",
-                        stationNames
-                ),
-                length
+                String.join(" - ", stationNames), length
         );
     }
     
