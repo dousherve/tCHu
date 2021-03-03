@@ -143,8 +143,8 @@ public final class Trail {
     }
 
     /**
-     * Retourne la représentation textuelle du chemin qui contient le nom de la première
-     * et de la dernière gare (dans cet ordre), ainsi que la longueur du chemin entre parenthèses.
+     * Retourne la représentation textuelle du chemin qui contient toutes les gares
+     * qui se trouvent sur le chemin, ainsi que sa longueur entre parenthèses.
      *
      * @return
      *          la représentation textuelle du chemin
