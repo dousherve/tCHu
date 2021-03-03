@@ -22,16 +22,16 @@ public final class Trail {
      * S'il y a plusieurs chemins de longueur maximale, celui qui est retourné n'est pas spécifié.
      *
      * @param routes
-     *          la liste de route
+     *          la liste de routes
      *
      * @return
-     *          le plus long chemin de réseau constitué des routes données
+     *          le plus long chemin du réseau constitué des routes données ;
      *          si la liste est vide, retourne un chemin de longueur zéro dont les gares sont égales à null
      */
     public static Trail longest(List<Route> routes) {
         // Liste des chemins constitués d'une seule route
         List<Trail> trails = new ArrayList<>();
-        int maxLength = -1;
+        int maxLength = 0;
         Trail longestTrail = null;
         
         final List<Route> LENGTH_ONE_ROUTES = routes
@@ -117,10 +117,10 @@ public final class Trail {
     }
 
     /**
-     * Retourne la première gare
+     * Retourne la première gare du chemin
      *
      * @return
-     *          la première gare
+     *          la première gare du chemin
      *          ou null si le chemin est de longueur zéro
      */
     public Station station1() {
@@ -128,10 +128,10 @@ public final class Trail {
     }
 
     /**
-     * Retourne la deuxième gare
+     * Retourne la deuxième gare du chemin
      *
      * @return
-     *          la deuxième gare
+     *          la deuxième gare du chemin
      *          ou null si le chemin est de longueur zéro
      */
     public Station station2() {
@@ -139,18 +139,20 @@ public final class Trail {
     }
 
     /**
-     * Retourne la représentation textuelle du chemin qui doit contenir le nom de la première,
-     * de la dernière (dans cette ordre), ainsi que la longueur du chemin entre parenthèses.
+     * Retourne la représentation textuelle du chemin qui contient le nom de la première
+     * et de la dernière gare (dans cet ordre), ainsi que la longueur du chemin entre parenthèses.
      *
      * @return
      *          la représentation textuelle du chemin
-     *          ou Empty trail si la longueur est zéro
+     *          ou "Empty trail" si sa longueur est zéro
      */
     @Override
     public String toString() {
         if (length == 0) {
             return "Empty trail";
         }
+        
+        // TODO: corriger ou finir l'implémentation
         
         List<String> stationNames = new ArrayList<>();
     

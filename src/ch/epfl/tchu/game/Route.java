@@ -23,7 +23,7 @@ public final class Route {
     private final Color color;
 
     /**
-     * Type énuméré imbriqué représentant les deux niveaux auquel une route peut se trouver.
+     * Type énuméré imbriqué représentant les deux niveaux auxquels une route peut se trouver.
      */
     public enum Level {
         OVERGROUND, UNDERGROUND
@@ -43,14 +43,15 @@ public final class Route {
      * @param level
      *          le niveau de la route
      * @param color
-     *          la couleur de la route, null si elle est de couleur neutre
+     *          la couleur de la route, ou null si elle est de couleur neutre
      *
      * @throws IllegalArgumentException
      *          si les deux gares sont égales (au sens de la méthode <code>equals</code>)
-     *          ou si la longueur n'est pas comrpise entre <code>Constants.MIN_ROUTE_LENGTH</code> et <code>Constants.MAX_ROUTE_LENGTH</code>
+     *          ou si la longueur n'est pas comrpise entre
+     *          <code>Constants.MIN_ROUTE_LENGTH</code> et <code>Constants.MAX_ROUTE_LENGTH</code>
      *
      * @throws NullPointerException
-     *          si l'identité, l'une des 2 gares ou le niveau sont null
+     *          si l'identité, l'une des 2 gares ou bien le niveau sont null
      */
     public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
         final boolean IS_IN_BOUNDS = (
@@ -71,7 +72,7 @@ public final class Route {
     }
 
     /**
-     * Retourne l'identité de la Route.
+     * Retourne une chaîne de caractères représentant l'identité de la Route.
      *
      * @return
      *          l'identité de la Route
@@ -132,7 +133,8 @@ public final class Route {
     }
 
     /**
-     * Retourne la liste des deux gares du constructeur dans l'ordre dans lequel elles apparaissent.
+     * Retourne la liste immuable des deux gares du constructeur
+     * dans l'ordre dans lequel elles apparaissent.
      *
      * @return
      *          une liste composée de la première gare puis de la deuxième
@@ -142,16 +144,19 @@ public final class Route {
     }
 
     /**
-     * Retourne l'autre gare de la Route que celle passée en argument.
+     * Retourne la gare opposée à celle passée en argument.
+     * En d'autres termes, retourne <code>station1</code> si l'on passe <code>station2</code>,
+     * et inversement.
      *
      * @param station
-     *          une gare à comparer
+     *          la gare dont on veut l'opposée
      *
      * @throws IllegalArgumentException
-     *          si la gare passée n'est pas une des deux gares de la Route
+     *          si la gare passée en argument (<code>station</code>)
+     *          n'est pas une des deux gares de la Route
      *
      * @return
-     *          l'autre gare que celle qui est passée en argument
+     *          la gare opposée à celle passée en argument (<code>station</code>)
      */
     public Station stationOpposite(Station station) {
         Preconditions.checkArgument(
@@ -162,11 +167,11 @@ public final class Route {
     }
 
     /**
-     * Retourne la liste immuable de tous les ensembles de cartes qui peuvent être jouées pour s'emparer d'une route.
-     * La liste sera triée par ordre croissant du nombre de cartes locomotives puis par couleur.
+     * Retourne la liste immuable de tous les ensembles triés de cartes qui peuvent être jouées pour s'emparer d'une route.
+     * La liste est triée par ordre croissant du nombre de cartes locomotives puis par couleur.
      *
      * @return
-     *          la liste de tous les ensembles de cartes qui peuvent être jouées pour s'emparer d'une route
+     *          la liste de tous les ensembles triés de cartes qui peuvent être jouées pour s'emparer d'une route
      */
     public List<SortedBag<Card>> possibleClaimCards() {
         List<SortedBag<Card>> possibleClaimCards = new ArrayList<>();
@@ -175,7 +180,7 @@ public final class Route {
             // Route en surface
             
             if (color != null) {
-                // Route coloré
+                // Route colorée
                 possibleClaimCards.add(
                         SortedBag.of(length, Card.of(color))
                 );
@@ -193,25 +198,25 @@ public final class Route {
             
             if (color != null) {
                 // Tunnel coloré
-                for (int i = 0; i < length; ++i) {
-                    // i représente le nombre de locomotives
+                for (int l = 0; l < length; ++l) {
+                    // l représente le nombre de locomotives
                     possibleClaimCards.add(
                             SortedBag.of(
-                                    length - i, Card.of(color),
-                                    i, Card.LOCOMOTIVE
+                                    length - l, Card.of(color),
+                                    l, Card.LOCOMOTIVE
                             )
                     );
                 }
                 
             } else {
                 // Tunnel de couleur neutre
-                for (int i = 0; i < length; ++i) {
-    
+                for (int l = 0; l < length; ++l) {
+                    // l représente le nombre de locomotives
                     for (Color c : Color.values()) {
                         possibleClaimCards.add(
                                 SortedBag.of(
-                                        length - i, Card.of(c),
-                                        i, Card.LOCOMOTIVE
+                                        length - l, Card.of(c),
+                                        l, Card.LOCOMOTIVE
                                 )
                         );
                     }
@@ -240,7 +245,7 @@ public final class Route {
      *          les 3 cartes du sommet de la pioche
      *
      * @throws IllegalArgumentException
-     *          si la route à laquelle on applique la methode n'est pas un tunnel
+     *          si la route à laquelle on applique la méthode n'est pas un tunnel
      *          ou si <code>drawnCards</code> ne contient pas exactement 3 cartes
      *
      * @return
@@ -251,7 +256,7 @@ public final class Route {
                 level == Level.UNDERGROUND && drawnCards.size() == 3
         );
         
-        SortedBag<Card> CLAIM_CARDS_WITHOUT_LOCOMOTIVE = claimCards.difference(
+        final SortedBag<Card> CLAIM_CARDS_WITHOUT_LOCOMOTIVE = claimCards.difference(
                 SortedBag.of(claimCards.countOf(Card.LOCOMOTIVE), Card.LOCOMOTIVE)
         );
         
@@ -263,10 +268,10 @@ public final class Route {
     }
 
     /**
-     * Retourne le nombre de points de construction obtenu en s'emparant de la route.
+     * Retourne le nombre de points de construction obtenus en s'emparant de la route.
      *
      * @return
-     *          le nombre de points gagné en s'emparant de la route
+     *          le nombre de points gagnés en s'emparant de la route
      */
     public int claimPoints() {
         // TODO: length() ou length ?
