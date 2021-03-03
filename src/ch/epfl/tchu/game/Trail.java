@@ -158,7 +158,7 @@ public final class Trail {
         
         List<String> stationNames = new ArrayList<>();
         
-        // On ajoute le nom de la station de départ du chemin
+        // On ajoute le nom de la gare de départ du chemin
         stationNames.add(station1.name());
         
         Station previousStation = station1;
