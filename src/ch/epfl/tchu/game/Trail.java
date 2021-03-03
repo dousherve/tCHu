@@ -5,6 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Classe finale et immuable représentant un chemin dans le réseau d'un joueur.
+ * 
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 public final class Trail {
     
     private final int length;
