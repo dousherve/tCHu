@@ -27,12 +27,12 @@ public class ManualTests {
         ));
         
         List<Route> routes = new ArrayList<>();
+        routes.add(ChMap.routes().get(toIndex(108)));
         routes.add(ChMap.routes().get(toIndex(158)));
         routes.add(ChMap.routes().get(toIndex(157)));
         routes.add(ChMap.routes().get(toIndex(110)));
         routes.add(ChMap.routes().get(toIndex(105)));
         routes.add(ChMap.routes().get(toIndex(111)));
-        routes.add(ChMap.routes().get(toIndex(108)));
         
         Trail trail = Trail.longest(routes);
         System.out.println("Longest trail : " + trail.toString());
