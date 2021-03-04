@@ -113,6 +113,31 @@ class RouteTest {
     }
 
     @Test
+    void possibleClaimCardsWorksOnColoredRoute(){
+
+    }
+
+    @Test
+    void possibleClaimCardsWorksOnNeutralRoute(){
+
+    }
+
+    @Test
+    void possibleClaimCardsWorksOnColoredTunnel(){
+
+    }
+
+    @Test
+    void possibleClaimCardsWorksOnNeutralTunnel(){
+
+    }
+
+    @Test
+    void possibleClaimCardsWorksOnTunnelWithLocomotiveCards(){
+
+    }
+
+    @Test
     void possibleClaimCardsWorks() {
         final int INDEX = 132 - 91;
         final int INDEX2 = 102 - 91;
@@ -132,10 +157,23 @@ class RouteTest {
     }
 
     @Test
-    void additionalClaimCardsCount() {
+    void additionalClaimCardsCountFailsOnOvergroundRoute() {
     }
 
     @Test
-    void claimPoints() {
+    void additionalClaimCardsCountFailsIfNotThreeDrawnCards() {
+    }
+
+    @Test
+    void additionalClaimCardsCountWorksWithoutLocomotiveDrawnCard() {
+    }
+
+    @Test
+    void additionalClaimCardsCountWorksWithLocomotiveDrawnCard() {
+    }
+
+
+    @Test
+    void claimPointsWorks() {
     }
 }
