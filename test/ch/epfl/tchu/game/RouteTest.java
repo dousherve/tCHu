@@ -105,6 +105,12 @@ class RouteTest {
         Route route = new Route("LAUSANNE", ChMap.stations().get(0), ChMap.stations().get(1), 1, Route.Level.OVERGROUND, Color.RED);
         assertEquals(ChMap.stations().get(1), route.stationOpposite(ChMap.stations().get(0)));
     }
+    
+    @Test
+    void stationOppositeFailsOnBadArgument() {
+        Route route = new Route("LAUSANNE", ChMap.stations().get(0), ChMap.stations().get(1), 1, Route.Level.OVERGROUND, Color.RED);
+        assertThrows(IllegalArgumentException.class, () -> route.stationOpposite(ChMap.stations().get(5)));
+    }
 
     @Test
     void possibleClaimCardsWorks() {
