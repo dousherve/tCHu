@@ -98,12 +98,13 @@ public final class Trail {
     }
     
     private Trail(Station station1, Station station2, List<Route> routes) {
-        // La longueur du chemin est la somme 
-        // de celles de toutes les routes qui le composent
-        this.length = routes.stream().mapToInt(Route::length).sum();
         this.station1 = station1;
         this.station2 = station2;
         this.routes = Collections.unmodifiableList(routes);
+    
+        // La longueur du chemin est la somme 
+        // de celles de toutes les routes qui le composent
+        this.length = routes.stream().mapToInt(Route::length).sum();
     }
 
     /**
