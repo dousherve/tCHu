@@ -38,7 +38,7 @@ public final class Trail {
         }
             
         List<Trail> trails = new ArrayList<>();
-        int maxLength = -1;
+        int maxLength = 0;
         Trail longestTrail = null;
         
         // On ajoute tous les chemins constitués d'une seule route
