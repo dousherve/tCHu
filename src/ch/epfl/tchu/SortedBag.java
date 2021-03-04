@@ -8,6 +8,7 @@ import java.util.stream.Stream;
  *
  * @param <E> le type des éléments du multiensemble.
  */
+@SuppressWarnings("ALL")
 public final class SortedBag<E extends Comparable<E>> implements Iterable<E> {
     // Table associant sa multiplicité à chaque élément de l'ensemble.
     // Invariant : toutes les multiplicités sont strictement positives (> 0).

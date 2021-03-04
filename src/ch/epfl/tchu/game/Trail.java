@@ -3,7 +3,6 @@ package ch.epfl.tchu.game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Classe finale et immuable représentant un chemin dans le réseau d'un joueur.
@@ -60,16 +59,13 @@ public final class Trail {
             List<Trail> tempTrails = new ArrayList<>();
             
             for (Trail t : trails) {
-                // TODO: utiliser removeAll() et pas contains()
-                final List<Route> NEW_ROUTES = routes
-                        .stream()
-                        // Pour pouvoir prolonger le chemin, une route ne doit pas déjà y appartenir,
-                        // et il faut de plus qu'une de ses gares soit celle d'arrivée du chemin
-                        // que l'on désire prolonger (ici t.station2)
-                        .filter(r -> ! t.routes.contains(r) && r.stations().contains(t.station2))
-                        .collect(Collectors.toUnmodifiableList());
+                List<Route> newRoutes = new ArrayList<>(routes);
+                // On retire les routes qui appartiennent déjà au chemin
+                newRoutes.removeAll(t.routes);
+                // Ainsi que celles qui ne contiennent pas sa gare d'arrivée
+                newRoutes.removeIf(r -> ! r.stations().contains(t.station2));
                 
-                for (Route r : NEW_ROUTES) {
+                for (Route r : newRoutes) {
                     List<Route> newTrailRoutes = new ArrayList<>(List.copyOf(t.routes));
                     newTrailRoutes.add(r);
     
@@ -107,7 +103,7 @@ public final class Trail {
         this.length = routes.stream().mapToInt(Route::length).sum();
         this.station1 = station1;
         this.station2 = station2;
-        this.routes = routes;
+        this.routes = Collections.unmodifiableList(routes);
     }
 
     /**
@@ -164,7 +160,6 @@ public final class Trail {
         Station previousStation = station1;
         for (Route r : routes) {
             final Station STATION = r.stationOpposite(previousStation);
-            
             stationNames.add(STATION.name());
             previousStation = STATION;
         }

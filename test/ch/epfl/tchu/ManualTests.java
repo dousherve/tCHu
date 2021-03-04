@@ -11,11 +11,11 @@ import java.util.List;
 public class ManualTests {
     
     private static int toIndex(int lineNumber) {
-        return lineNumber - 91;
+        return lineNumber - 92;
     }
     
     public static void main(String[] args) {
-        final int INDEX = toIndex(132);
+        final int INDEX = toIndex(133);
         final Route r = ChMap.routes().get(INDEX);
     
         System.out.println("Possible claim cards : " + r.possibleClaimCards());
@@ -27,11 +27,12 @@ public class ManualTests {
         ));
         
         List<Route> routes = new ArrayList<>();
-        routes.add(ChMap.routes().get(toIndex(107)));
-        routes.add(ChMap.routes().get(toIndex(109)));
-        routes.add(ChMap.routes().get(toIndex(156)));
+        routes.add(ChMap.routes().get(toIndex(158)));
+        routes.add(ChMap.routes().get(toIndex(157)));
         routes.add(ChMap.routes().get(toIndex(110)));
-        routes.add(ChMap.routes().get(toIndex(104)));
+        routes.add(ChMap.routes().get(toIndex(105)));
+        routes.add(ChMap.routes().get(toIndex(111)));
+        routes.add(ChMap.routes().get(toIndex(108)));
         
         Trail trail = Trail.longest(routes);
         System.out.println("Longest trail : " + trail.toString());
