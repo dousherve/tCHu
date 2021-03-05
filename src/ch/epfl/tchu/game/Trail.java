@@ -38,9 +38,6 @@ public final class Trail {
         }
             
         List<Trail> trails = new ArrayList<>();
-        int maxLength = 0;
-        Trail longestTrail = null;
-        
         // On ajoute tous les chemins constitués d'une seule route
         for (Route r : routes) {
             trails.addAll(List.of(
@@ -54,7 +51,12 @@ public final class Trail {
                     )
             ));
         }
-        
+    
+        // On sait que trails n'est pas vide, il contient à ce stade
+        // au minimum deux chemins, s'il n'y a qu'une route
+        Trail longestTrail = trails.get(0);
+        int maxLength = longestTrail.length;
+    
         while (! trails.isEmpty()) {
             List<Trail> tempTrails = new ArrayList<>();
             

@@ -257,15 +257,18 @@ public final class Route {
                 level == Level.UNDERGROUND && drawnCards.size() == 3
         );
         
-        final SortedBag<Card> CLAIM_CARDS_WITHOUT_LOCOMOTIVE = claimCards.difference(
-                SortedBag.of(claimCards.countOf(Card.LOCOMOTIVE), Card.LOCOMOTIVE)
+        final SortedBag<Card> COLORED_DRAWN_CARDS = drawnCards.difference(
+                SortedBag.of(drawnCards.countOf(Card.LOCOMOTIVE), Card.LOCOMOTIVE)
         );
         
-        final SortedBag<Card> COMMON_CARDS_WITHOUT_LOCOMOTIVE = drawnCards.difference(
-                drawnCards.difference(CLAIM_CARDS_WITHOUT_LOCOMOTIVE)
-        );
+        int commonCardsCount = 0;
+        for (Card c : COLORED_DRAWN_CARDS) {
+            if (claimCards.contains(c)) {
+                ++commonCardsCount;
+            }
+        }
         
-        return COMMON_CARDS_WITHOUT_LOCOMOTIVE.size() + drawnCards.countOf(Card.LOCOMOTIVE);
+        return commonCardsCount + drawnCards.countOf(Card.LOCOMOTIVE);
     }
 
     /**
