@@ -55,7 +55,7 @@ public final class Trail {
         // On sait que trails n'est pas vide, il contient à ce stade
         // au minimum deux chemins, s'il n'y a qu'une route
         Trail longestTrail = trails.get(0);
-        int maxLength = longestTrail.length;
+        int maxLength = longestTrail.length; // 1, car constitué d'une seule route
     
         while (! trails.isEmpty()) {
             List<Trail> tempTrails = new ArrayList<>();
