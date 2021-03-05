@@ -40,6 +40,19 @@ class TrailTest {
                 "Lucerne - Berne - Neuchâtel - Soleure - Berne - Fribourg (13)",
                 trail.toString()
         );
+        
+        List<Route> routes2 = new ArrayList<>();
+        routes2.add(getRoute(136));
+        routes2.add(getRoute(141));
+        routes2.add(getRoute(105));
+        routes2.add(getRoute(152));
+        
+        var trail2 = Trail.longest(routes2);
+        
+        assertEquals(
+                "Interlaken - Lucerne - Olten (7)",
+                trail2.toString()
+        );
     }
 
     @Test

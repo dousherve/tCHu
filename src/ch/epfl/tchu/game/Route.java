@@ -41,7 +41,7 @@ public final class Route {
      * @param length
      *          la longueur de la route
      * @param level
-     *          le niveau de la route
+     *          le niveau auquel la route se trouve : à la surface ou bien dans un tunnel
      * @param color
      *          la couleur de la route, ou null si elle est de couleur neutre
      *
@@ -137,7 +137,7 @@ public final class Route {
      * dans l'ordre dans lequel elles apparaissent.
      *
      * @return
-     *          une liste composée de la première gare puis de la deuxième
+     *          la liste immuable composée de la première gare puis de la deuxième
      */
     public List<Station> stations() {
         return List.of(station1, station2);
@@ -156,7 +156,7 @@ public final class Route {
      *          n'est pas une des deux gares de la Route
      *
      * @return
-     *          la gare opposée à celle passée en argument (<code>station</code>)
+     *          la gare opposée à celle passée en argument
      */
     public Station stationOpposite(Station station) {
         Preconditions.checkArgument(
@@ -172,7 +172,8 @@ public final class Route {
      * La liste est triée par ordre croissant du nombre de cartes locomotives puis par couleur.
      *
      * @return
-     *          la liste de tous les ensembles triés de cartes qui peuvent être jouées pour s'emparer d'une route
+     *          la liste immuable de tous les ensembles triés de cartes
+     *          qui peuvent être jouées pour s'emparer d'une route
      */
     public List<SortedBag<Card>> possibleClaimCards() {
         List<SortedBag<Card>> possibleClaimCards = new ArrayList<>();
@@ -195,24 +196,21 @@ public final class Route {
             }
             
         } else if (level == Level.UNDERGROUND) {
-            // Tunnel
-            
-            if (color != null) {
-                // Tunnel coloré
-                for (int l = 0; l < length; ++l) {
-                    // l représente le nombre de locomotives
+            // Route dans un tunnel
+    
+            for (int l = 0; l < length; ++l) {
+                // l représente le nombre de locomotives
+                
+                if (color != null) {
+                    // Tunnel coloré
                     possibleClaimCards.add(
                             SortedBag.of(
                                     length - l, Card.of(color),
                                     l, Card.LOCOMOTIVE
                             )
                     );
-                }
-                
-            } else {
-                // Tunnel de couleur neutre
-                for (int l = 0; l < length; ++l) {
-                    // l représente le nombre de locomotives
+                } else {
+                    // Tunnel de couleur neutre
                     for (Color c : Color.values()) {
                         possibleClaimCards.add(
                                 SortedBag.of(
@@ -221,9 +219,8 @@ public final class Route {
                                 )
                         );
                     }
-    
                 }
-    
+                
             }
     
             // Ajout du nombre de cartes locomotive maximum
@@ -238,7 +235,7 @@ public final class Route {
     }
 
     /**
-     * Retourne le nombre de cartes additionnelles à jouer pour s'emparer de la route en tunnel.
+     * Retourne le nombre de cartes additionnelles à jouer pour s'emparer de la route dans un tunnel.
      *
      * @param claimCards
      *          les cartes posées par le joueur
@@ -247,14 +244,15 @@ public final class Route {
      *
      * @throws IllegalArgumentException
      *          si la route à laquelle on applique la méthode n'est pas un tunnel
-     *          ou si <code>drawnCards</code> ne contient pas exactement 3 cartes
+     *          ou si <code>drawnCards</code> ne contient pas exactement
+     *          <code>Constants.ADDITIONAL_TUNNEL_CARDS</code> cartes (3 cartes)
      *
      * @return
-     *          le nombre de cartes additionnelles à jouer pour s'emparer de la route (tunnel)
+     *          le nombre de cartes additionnelles à jouer pour s'emparer de la route dans un tunnel
      */
     public int additionalClaimCardsCount(SortedBag<Card> claimCards, SortedBag<Card> drawnCards) {
         Preconditions.checkArgument(
-                level == Level.UNDERGROUND && drawnCards.size() == 3
+                level == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS
         );
         
         final SortedBag<Card> COLORED_DRAWN_CARDS = drawnCards.difference(

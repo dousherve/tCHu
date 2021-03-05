@@ -17,7 +17,7 @@ public final class Trail {
     private final List<Route> routes;
 
     /**
-     * Retourne le plus long chemin du réseau constitué des routes données.
+     * Retourne le plus long chemin du réseau composé de routes parmi celles données.
      * S'il y a plusieurs chemins de longueur maximale, celui qui est retourné est le
      * premier qui aura été traité par l'algorithme de recherche.
      *
@@ -40,16 +40,18 @@ public final class Trail {
         List<Trail> trails = new ArrayList<>();
         // On ajoute tous les chemins constitués d'une seule route
         for (Route r : routes) {
-            trails.addAll(List.of(
+            trails.add(
                     new Trail(
                             r.station1(), r.station2(),
                             Collections.singletonList(r)
-                    ),
+                    )
+            );
+            trails.add(
                     new Trail(
                             r.station2(), r.station1(),
                             Collections.singletonList(r)
                     )
-            ));
+            );
         }
     
         // On sait que trails n'est pas vide, il contient à ce stade
@@ -76,7 +78,7 @@ public final class Trail {
                     final Trail NEW_TRAIL = new Trail(
                             t.station1,
                             r.stationOpposite(t.station2),
-                            Collections.unmodifiableList(newTrailRoutes)
+                            newTrailRoutes
                     );
                     
                     tempTrails.add(NEW_TRAIL);
@@ -101,7 +103,9 @@ public final class Trail {
     
         // La longueur du chemin est la somme 
         // de celles de toutes les routes qui le composent
-        this.length = routes.stream().mapToInt(Route::length).sum();
+        this.length = routes.stream()
+                .mapToInt(Route::length)
+                .sum();
     }
 
     /**
@@ -115,10 +119,10 @@ public final class Trail {
     }
 
     /**
-     * Retourne la première gare du chemin
+     * Retourne la gare de départ du chemin
      *
      * @return
-     *          la première gare du chemin
+     *          la gare de départ du chemin
      *          ou null si le chemin est de longueur zéro
      */
     public Station station1() {
@@ -126,10 +130,10 @@ public final class Trail {
     }
 
     /**
-     * Retourne la deuxième gare du chemin
+     * Retourne la gare d'arrivée du chemin
      *
      * @return
-     *          la deuxième gare du chemin
+     *          la gare d'arrivée du chemin
      *          ou null si le chemin est de longueur zéro
      */
     public Station station2() {
@@ -137,8 +141,8 @@ public final class Trail {
     }
 
     /**
-     * Retourne la représentation textuelle du chemin qui contient toutes les gares
-     * qui se trouvent sur le chemin, ainsi que sa longueur entre parenthèses.
+     * Retourne la représentation textuelle du chemin, qui contient toutes les gares
+     * qui s'y trouvent, ainsi que sa longueur entre parenthèses.
      *
      * @return
      *          la représentation textuelle du chemin
