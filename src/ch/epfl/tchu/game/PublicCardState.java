@@ -43,4 +43,5 @@ public class PublicCardState {
     public int discardsSize() {
         return discardsSize;
     }
+
 }
