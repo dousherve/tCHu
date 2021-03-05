@@ -29,12 +29,12 @@ public final class Trail {
      *          si la liste est vide, retourne un chemin de longueur zéro dont les gares sont égales à null
      */
     public static Trail longest(List<Route> routes) {
-        final Trail EMPTY_TRAIL = new Trail(
-                null, null, Collections.emptyList()
-        );
-        
+        // Si la liste de routes est vide, on retourne un chemin vide
+        // dont les gares sont null
         if (routes.isEmpty()) {
-            return EMPTY_TRAIL;
+            return new Trail(
+                    null, null, Collections.emptyList()
+            );
         }
             
         List<Trail> trails = new ArrayList<>();
@@ -91,12 +91,7 @@ public final class Trail {
             trails = tempTrails;
         }
     
-        if (longestTrail != null && longestTrail.length > 0) {
-            return longestTrail;
-        }
-        
-        // Retourne un chemin vide dont les stations sont null
-        return EMPTY_TRAIL;
+        return longestTrail;
     }
     
     private Trail(Station station1, Station station2, List<Route> routes) {
