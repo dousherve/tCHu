@@ -3,7 +3,6 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -13,7 +12,10 @@ public final class Deck<C extends Comparable<C>> {
     private List<C> cards;
 
     public static <C extends Comparable<C>> Deck<C> of(SortedBag<C> cards, Random rng) {
-       return null;
+        List<C> toBeShuffled = cards.toList();
+        Collections.shuffle(toBeShuffled, rng);
+
+        return new Deck<>(toBeShuffled);
     }
 
     private Deck(List<C> cards) {
@@ -30,29 +32,22 @@ public final class Deck<C extends Comparable<C>> {
 
     public C topCard() {
         Preconditions.checkArgument(! isEmpty());
-
         return cards.get(size() - 1);
     }
 
     public Deck<C> withoutTopCard() {
         Preconditions.checkArgument(! isEmpty());
-
-        List<C> withoutTopCard = new ArrayList<>(cards);
-        withoutTopCard.remove(size() - 1);
-
-        return new Deck<C>(withoutTopCard);
+        return new Deck<>(cards.subList(0, size() - 1));
     }
 
     public SortedBag<C> topCards(int count) {
         Preconditions.checkArgument(count >= 0 && count <= size());
-
-        return SortedBag.of(cards.subList(size() - count, size() - 1));
+        return SortedBag.of(cards.subList(size() - count, size()));
     }
 
     public Deck<C> withoutTopCards(int count) {
         Preconditions.checkArgument(count >= 0 && count <= size());
-
-        return new Deck<C>(cards.subList(0, size() - 1 - count));
+        return new Deck<>(cards.subList(0, size() - count));
     }
 
 }
