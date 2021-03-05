@@ -57,12 +57,15 @@ public final class Trail {
         // On sait que trails n'est pas vide, il contient à ce stade
         // au minimum deux chemins, s'il n'y a qu'une route
         Trail longestTrail = trails.get(0);
-        int maxLength = longestTrail.length; // 1, car constitué d'une seule route
     
         while (! trails.isEmpty()) {
             List<Trail> tempTrails = new ArrayList<>();
             
             for (Trail t : trails) {
+                if (t.length > longestTrail.length) {
+                    longestTrail = t;
+                }
+                
                 List<Route> newRoutes = new ArrayList<>(routes);
                 // On retire les routes qui appartiennent déjà au chemin
                 newRoutes.removeAll(t.routes);
@@ -82,11 +85,6 @@ public final class Trail {
                     );
                     
                     tempTrails.add(NEW_TRAIL);
-                    
-                    if (NEW_TRAIL.length > maxLength) {
-                        maxLength = NEW_TRAIL.length();
-                        longestTrail = NEW_TRAIL;
-                    }
                 }
             }
             
