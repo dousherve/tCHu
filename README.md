@@ -1,3 +1,3 @@
 # tCHu
 
-EPFL Project
+CS-108 EPFL Project
