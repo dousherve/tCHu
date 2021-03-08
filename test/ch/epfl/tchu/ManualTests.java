@@ -4,6 +4,7 @@ import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Trail;
+import ch.epfl.tchu.gui.Info;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,24 @@ public class ManualTests {
         
         Trail trail = Trail.longest(routes);
         System.out.println("Longest trail : " + trail.toString());
+    
+        Info info = new Info("Mallo");
+        System.out.println(info.claimedRoute(
+                ChMap.routes().get(toIndex(108)),
+                SortedBag.of(List.of(
+                        Card.RED, Card.GREEN, Card.RED, Card.LOCOMOTIVE
+                ))
+            )
+        );
+    
+        Info info2 = new Info("Loulou");
+        System.out.println(info2.claimedRoute(
+                ChMap.routes().get(toIndex(141)),
+                SortedBag.of(List.of(
+                        Card.WHITE, Card.BLACK, Card.BLACK
+                ))
+            )
+        );
     }
     
 }

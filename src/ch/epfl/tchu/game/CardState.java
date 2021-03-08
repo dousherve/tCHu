@@ -3,26 +3,29 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 public final class CardState extends PublicCardState {
 
     private final Deck<Card> deck;
     private final SortedBag<Card> discards;
-
-
+    
     public static CardState of(Deck<Card> deck) {
         Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT);
 
         return new CardState(
                 deck.topCards(Constants.FACE_UP_CARDS_COUNT).toList(),
                 deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT),
-                SortedBag.of()
+                SortedBag.of()  // Défausse vide
         );
     }
 
     private CardState(List<Card> faceUpCards, Deck<Card> deck, SortedBag<Card> discards) {
         super(faceUpCards, deck.size(), discards.size());
+        
         this.deck = deck;
         this.discards = discards;
     }
@@ -35,7 +38,7 @@ public final class CardState extends PublicCardState {
         newFaceUpCards.set(slot, deck.topCard());
 
         return new CardState(
-                Collections.unmodifiableList(newFaceUpCards),
+                newFaceUpCards,
                 deck.withoutTopCard(),
                 discards
         );

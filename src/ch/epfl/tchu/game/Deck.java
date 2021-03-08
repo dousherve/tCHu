@@ -9,7 +9,7 @@ import java.util.Random;
 
 public final class Deck<C extends Comparable<C>> {
 
-    private List<C> cards;
+    private final List<C> cards;
 
     public static <C extends Comparable<C>> Deck<C> of(SortedBag<C> cards, Random rng) {
         List<C> toBeShuffled = cards.toList();

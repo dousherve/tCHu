@@ -1,5 +1,6 @@
 package ch.epfl.tchu.gui;
 
+@SuppressWarnings("ALL")
 public final class StringsFr {
     private StringsFr() {}
 

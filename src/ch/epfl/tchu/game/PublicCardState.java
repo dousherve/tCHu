@@ -2,13 +2,14 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class PublicCardState {
+    
     private final List<Card> faceUpCards;
-    private final int deckSize;
-    private final int discardsSize;
+    private final int deckSize, discardsSize;
 
     public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize) {
         Preconditions.checkArgument(
@@ -17,7 +18,7 @@ public class PublicCardState {
                 && discardsSize >= 0
         );
 
-        this.faceUpCards = faceUpCards;
+        this.faceUpCards = Collections.unmodifiableList(faceUpCards);
         this.deckSize = deckSize;
         this.discardsSize = discardsSize;
     }
@@ -35,13 +36,17 @@ public class PublicCardState {
                 Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT)
         );
     }
-
+    
     public int deckSize() {
         return deckSize;
     }
-
+    
+    public boolean isDeckEmpty() {
+        return deckSize == 0;
+    }
+    
     public int discardsSize() {
         return discardsSize;
     }
-
+    
 }
