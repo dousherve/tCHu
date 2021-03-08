@@ -101,7 +101,7 @@ public final class Info {
                 cardDescription = StringsFr.LOCOMOTIVE_CARD;
                 break;
             default:
-                return "Error: Unknown card";
+                return "Carte inconnue";
         }
         
         return cardDescription + StringsFr.plural(count);
