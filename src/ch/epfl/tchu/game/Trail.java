@@ -67,13 +67,13 @@ public final class Trail {
                 }
                 
                 List<Route> newRoutes = new ArrayList<>(routes);
-                // On retire les routes qui appartiennent déjà au chemin
+                // On retire les routes qui appartiennent déjà au chemin...
                 newRoutes.removeAll(t.routes);
-                // Ainsi que celles qui ne contiennent pas sa gare d'arrivée
+                // ... ainsi que celles qui ne contiennent pas sa gare d'arrivée
                 newRoutes.removeIf(r -> ! r.stations().contains(t.station2));
                 
                 for (Route r : newRoutes) {
-                    List<Route> newTrailRoutes = new ArrayList<>(List.copyOf(t.routes));
+                    List<Route> newTrailRoutes = new ArrayList<>(t.routes);
                     newTrailRoutes.add(r);
     
                     // La gare de départ ne change pas, mais la nouvelle gare
