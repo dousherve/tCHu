@@ -53,7 +53,6 @@ public final class CardState extends PublicCardState {
         this.discards = discards;
     }
     
-    
     /**
      * Retourne un état décrivant un ensemble de cartes identique au récepteur,
      * où la carte face visible d'index <code>slot</code>

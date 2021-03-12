@@ -319,6 +319,7 @@ public final class Info {
      *          et que le dernier tour commence donc
      */
     public String lastTurnBegins(int carCount) {
+        // TODO: Cas où carCount = 0 ?
         return String.format(
                 StringsFr.LAST_TURN_BEGINS,
                 playerName,
