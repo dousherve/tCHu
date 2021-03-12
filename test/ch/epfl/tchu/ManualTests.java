@@ -9,6 +9,7 @@ import ch.epfl.tchu.gui.Info;
 import ch.epfl.test.TestRandomizer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ManualTests {
@@ -69,6 +70,25 @@ public class ManualTests {
         );
         
         Deck.of(cardsEnough, TestRandomizer.newRandom());
+        
+        int id = 4;
+        System.out.println(representative(id));
+        System.out.println(id);
+        
+        for (int i = 0; i < 6; ++i) {
+            links[i] = representative(i);
+        }
+    
+        System.out.println(Arrays.toString(links));
     }
+    
+    private static int[] links = new int[] {3, 1, 2, 2, 3, 5};
+    
+    private static int representative(int id) {
+        while (links[id] != id)
+            id = links[id];
+    
+        return id;
+    } 
     
 }
