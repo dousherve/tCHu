@@ -20,8 +20,8 @@ public class CardStateTestMass {
 
     @Test
     void topCardDesk() {
-        CardState emtptyCase = CardState.of(Deck.of(SortedBag.of(5,Card.WHITE), new Random()));
-        CardState emtptyCaseL = CardState.of(Deck.of(SortedBag.of(5,Card.LOCOMOTIVE), new Random()));
+        CardState emtptyCase = CardState.of(Deck.of(SortedBag.of(6,Card.WHITE), new Random()));
+        CardState emtptyCaseL = CardState.of(Deck.of(SortedBag.of(6,Card.LOCOMOTIVE), new Random()));
         assertEquals(Card.WHITE, emtptyCase.topDeckCard());
         assertEquals(Card.LOCOMOTIVE, emtptyCaseL.topDeckCard());
 
