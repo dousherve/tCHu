@@ -10,7 +10,8 @@ import java.util.Random;
 
 /**
  * Classe finale et immuable héritant de <code>{@link PublicCardState}</code>
- * qui représente l'état des cartes wagon/locomotive qui ne sont pas en main des joueurs.
+ * qui représente l'état des cartes wagon/locomotive qui ne sont pas en main des joueurs,
+ * c'est-à-dire les cartes que contiennent la pioche et la défausse.
  * 
  * Elle ajoute à <code>{@link PublicCardState}</code> les éléments privés de l'état
  * ainsi que les méthodes correspondantes.
@@ -40,8 +41,8 @@ public final class CardState extends PublicCardState {
         Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT);
 
         return new CardState(
-                deck.topCards(Constants.FACE_UP_CARDS_COUNT).toList(),
-                deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT),
+                deck.topCards(Constants.FACE_UP_CARDS_COUNT).toList(),  // Cartes face visible
+                deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT),    // Pioche
                 SortedBag.of()  // Défausse vide
         );
     }
@@ -54,7 +55,7 @@ public final class CardState extends PublicCardState {
     }
     
     /**
-     * Retourne un état décrivant un ensemble de cartes identique au récepteur,
+     * Retourne un état décrivant un ensemble de cartes identique à celui du récepteur,
      * où la carte face visible d'index <code>slot</code>
      * a été remplacée par celle se trouvant au sommet de la pioche, qui en est du même coup retirée.
      * 
@@ -99,13 +100,13 @@ public final class CardState extends PublicCardState {
     }
     
     /**
-     * Retourne un état dont l'ensemble de cartes est identique au récepteur,
+     * Retourne un état dont l'ensemble de cartes est identique à celui du récepteur,
      * mais sans la carte se trouvant au sommet de la pioche.
      * 
      * @throws IllegalArgumentException
      *          si la pioche est vide
      * @return
-     *          un état dont l'ensemble de cartes est identique au récepteur,
+     *          un état dont l'ensemble de cartes est identique à celui du récepteur,
      *          mais sans la carte se trouvant au sommet de la pioche
      */
     public CardState withoutTopDeckCard() {
@@ -119,7 +120,7 @@ public final class CardState extends PublicCardState {
     }
     
     /**
-     * Retourne un état dont l'ensemble de cartes est identique au récepteur, si ce n'est que
+     * Retourne un état dont l'ensemble de cartes est identique à celui du récepteur, si ce n'est que
      * les cartes de la défausse ont été mélangées au moyen du générateur aléatoire donné <code>rng</code>
      * afin de constituer la nouvelle pioche.
      * 
@@ -127,7 +128,7 @@ public final class CardState extends PublicCardState {
      *          le générateur aléatoire à utiliser pour mélanger les cartes
      * @throws IllegalArgumentException
      *          si la pioche du récepteur n'est pas vide
-     * @return un état dont la défausse a été mélangée
+     * @return un état dont la défausse a été mélangée pour former la nouvelle pioche
      */
     public CardState withDeckRecreatedFromDiscards(Random rng) {
         Preconditions.checkArgument(deck.isEmpty());
@@ -140,13 +141,13 @@ public final class CardState extends PublicCardState {
     }
     
     /**
-     * Retourne un état dont l'ensemble de cartes est identique au récepteur,
+     * Retourne un état dont l'ensemble de cartes est identique à celui du récepteur,
      * mais avec les cartes données ajoutées à la défausse.
      * 
      * @param additionalDiscards
      *          les cartes à ajouter à la nouvelle défausse
      * @return
-     *          un état dont l'ensemble de cartes est identique au récepteur,
+     *          un état dont l'ensemble de cartes est identique à celui du récepteur,
      *          mais avec les cartes données ajoutées à la défausse
      */
     public CardState withMoreDiscardedCards(SortedBag<Card> additionalDiscards) {

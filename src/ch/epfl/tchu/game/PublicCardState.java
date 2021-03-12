@@ -10,12 +10,10 @@ import java.util.Objects;
  * Classe publique et immuable qui représente (une partie de) l'état des cartes
  * wagons/locomotive qui ne sont pas en main des joueurs.
  *
- * C'est à dire les 5 cartes disposées face visible à côté du plateau,
- * la pioche,
- * la défausse.
+ * C'est à dire les 5 cartes disposées face visible à côté du plateau, la pioche et la défausse.
  *
- * Il s'agit de la partie de l'état des cartes connue de tous les joueurs.
- * Par exemple la taille de la pioche, mais pas son contenu exact.
+ * Il s'agit de la partie de l'état des cartes connue de tous les joueurs,
+ * par exemple : la taille de la pioche, mais pas son contenu exact.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -35,9 +33,9 @@ public class PublicCardState {
      * @param discardsSize
      *          la taille de la défausse
      * @throws IllegalArgumentException
-     *          si <code>faceUpCards</code> ne contient pas le bon nombre d'élément, <code>Constants.FACE_UP_CARDS_COUNT</code>
-     *          ou si la taille de la pioche est négative
-     *          ou si la taille de la défausse est négative
+     *          si <code>faceUpCards</code> ne contient pas le bon nombre d'éléments (<code>Constants.FACE_UP_CARDS_COUNT</code>),
+     *          si la taille de la pioche est négative,
+     *          ou bien si la taille de la défausse est négative
      */
     public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize) {
         Preconditions.checkArgument(
@@ -52,8 +50,8 @@ public class PublicCardState {
     }
 
     /**
-     * Retoune le nombre total de cartes qui ne sont pas en main des joueurs.
-     * C'est à dire les cartes face visible, de la pioche et celle de la défausse.
+     * Retoune le nombre total de cartes qui ne sont pas en main des joueurs,
+     * c'est à dire les cartes face visible, celles de la pioche et celles de la défausse.
      *
      * @return
      *          le nombre total de cartes qui ne sont pas en main des joueurs
@@ -76,7 +74,7 @@ public class PublicCardState {
      * Retourne la carte face visible d'index <code>slot</code>.
      *
      * @param slot
-     *          index de la carte des faces visibles à retourner
+     *          index de la carte face visible à retourner
      * @throws IndexOutOfBoundsException
      *          si <code>slot</code> n'est pas compris entre 0 (inclus) et 5 (exclus)
      * @return

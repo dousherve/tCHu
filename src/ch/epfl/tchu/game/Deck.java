@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Classe finale et immuable qui représente un tas de cartes.
- * Et cela pour tout type de cartes comme des wagons, des locomotives ou des billets.
+ * Classe finale et immuable qui représente un tas de cartes quelconques :
+ * des wagons, des locomotives ou des billets.
  *
- * Elle est générique car le type de cartes n'est pas fixé à l'avance
+ * Elle est générique car le type de cartes n'est pas fixé à l'avance.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -21,8 +21,8 @@ public final class Deck<C extends Comparable<C>> {
     private final List<C> cards;
 
     /**
-     * Retourne un tas de cartes ayant les mêmes cartes que le multiensemnle donné.
-     * Mais les cartes sont mélangées au moyen du nombre aléatoires rng.
+     * Retourne un tas de cartes ayant les mêmes cartes que le multiensemnle donné,
+     * mais les cartes sont mélangées au moyen du générateur de nombre aléatoires <code>rng</code>.
      *
      * @param cards
      *          Multiensemble de cartes donné
@@ -45,7 +45,7 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     /**
-     * Retourne la taille du tas, c'est à dire le nombre de cartes contenues.
+     * Retourne la taille du tas, c'est à dire le nombre de cartes qu'il contient.
      *
      * @return
      *          la taille du tas
@@ -67,7 +67,7 @@ public final class Deck<C extends Comparable<C>> {
 
     /**
      * Retourne la carte au sommet du tas.
-     * Dans notre implémentation le sommet du tas se situe à la fin de la liste.
+     * Dans notre implémentation, le sommet du tas se situe à la fin de la liste.
      *
      * @throws IllegalArgumentException
      *          si le tas de carte est vide

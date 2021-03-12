@@ -26,22 +26,20 @@ class InfoTest {
     SortedBag<Card> cardsUnion = cards.union(cards2);
 
     @Test
-    void constructorWorks() {
-
-    }
-
-    @Test
     void cardNameWorks() {
         assertEquals("verte", Info.cardName(Card.GREEN, 1));
         assertEquals("bleues", Info.cardName(Card.BLUE, 3));
         assertEquals("rouges", Info.cardName(Card.RED, 2));
+        assertEquals("orange", Info.cardName(Card.ORANGE, 1));
         assertEquals("noire", Info.cardName(Card.BLACK, 1));
         assertEquals("violettes", Info.cardName(Card.VIOLET, 15));
+        assertEquals("jaune", Info.cardName(Card.YELLOW, -1));
+        assertEquals("blanches", Info.cardName(Card.WHITE, 108));
+        assertEquals("locomotives", Info.cardName(Card.LOCOMOTIVE, 141));
     }
 
     @Test
     void drawWorks() {
-        // TODO: Normal les \ ?
         assertEquals("\nMallo et Loulou sont ex æqo avec 15 points !\n", Info.draw(List.of("Mallo", "Loulou"), 15));
     }
 
@@ -81,6 +79,7 @@ class InfoTest {
     @Test
     void claimedRouteWorks() {
         assertEquals("Louis a pris possession de la route Fribourg – Lausanne au moyen de 1 noire et 2 vertes.\n", l.claimedRoute(ChMap.routes().get(136 - 92), cards));
+        assertEquals("Mallo a pris possession de la route Fribourg – Lausanne au moyen de 1 noire.\n", m.claimedRoute(ChMap.routes().get(136 - 92), SortedBag.of(Card.BLACK)));
         assertEquals("Mallo a pris possession de la route Genève – Lausanne au moyen de 1 noire, 2 violettes, 2 vertes et 1 locomotive.\n", m.claimedRoute(ChMap.routes().get(138 - 92), cardsUnion));
     }
 
@@ -94,6 +93,7 @@ class InfoTest {
         assertEquals("Les cartes supplémentaires sont 2 violettes et 1 locomotive. Elles impliquent un coût additionnel de 3 cartes.\n", m.drewAdditionalCards(cards2, 3));
         assertEquals("Les cartes supplémentaires sont 2 violettes et 1 locomotive. Elles impliquent un coût additionnel de 1 carte.\n", l.drewAdditionalCards(cards2, 1));
         assertEquals("Les cartes supplémentaires sont 1 noire et 2 vertes. Elles n'impliquent aucun coût additionnel.\n", m.drewAdditionalCards(cards, 0));
+        assertEquals("Les cartes supplémentaires sont 1 rouge. Elles n'impliquent aucun coût additionnel.\n", m.drewAdditionalCards(SortedBag.of(Card.RED), 0));
     }
 
     @Test

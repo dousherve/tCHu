@@ -1,21 +1,28 @@
 package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.SortedBag;
+import ch.epfl.test.TestRandomizer;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CardStateTest {
 
-    SortedBag<Card> cards = SortedBag.of(
+    SortedBag<Card> faceUpCards = SortedBag.of(
             List.of(Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE, Card.GREEN)
     );
+    
     SortedBag<Card> cardsEnough = SortedBag.of(
-            List.of(Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE, Card.GREEN, Card.GREEN, Card.RED, Card.VIOLET, Card.BLACK)
+            List.of(
+                    Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE,
+                    Card.GREEN, Card.GREEN, Card.RED, Card.VIOLET, Card.BLACK
+            )
     );
+    List<Card> sortedFaceUpCardsEnough = List.of(Card.VIOLET, Card.BLUE, Card.GREEN, Card.RED, Card.LOCOMOTIVE);
+    
     SortedBag<Card> cardsNotEnough = SortedBag.of(
             List.of(Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE)
     );
@@ -23,22 +30,70 @@ class CardStateTest {
             List.of(Card.BLUE, Card.WHITE, Card.RED)
     );
 
-    CardState cardStateWithDeck = CardState.of(Deck.of(cardsEnough, new Random()));
-    CardState cardStateWithoutDeck = CardState.of(Deck.of(cards, new Random()));
+    CardState cardStateWithDeck = CardState.of(Deck.of(cardsEnough, TestRandomizer.newRandom()));
+    CardState cardStateWithoutDeck = CardState.of(Deck.of(faceUpCards, TestRandomizer.newRandom()));
 
     @Test
     void ofWorks() {
+        assertEquals(
+                true,
+                cardStateWithoutDeck.isDeckEmpty()
+        );
+        assertEquals(
+                faceUpCards.toList(),
+                cardStateWithoutDeck.faceUpCards()
+        );
+        assertEquals(
+                0,
+                cardStateWithoutDeck.discardsSize()
+        );
+        
+        assertEquals(
+                cardsEnough.size() - Constants.FACE_UP_CARDS_COUNT,
+                cardStateWithDeck.deckSize()
+        );
+        assertEquals(
+                false,
+                cardStateWithDeck.isDeckEmpty()
+        );
+        assertEquals(
+                sortedFaceUpCardsEnough,
+                cardStateWithDeck.faceUpCards()
+        );
+        assertEquals(
+                0,
+                cardStateWithDeck.discardsSize()
+        );
+        assertEquals(
+                4,
+                cardStateWithDeck.deckSize()
+        );
     }
 
     @Test
     void ofFails() {
         assertThrows(IllegalArgumentException.class, () ->
-                CardState.of(Deck.of(cardsNotEnough, new Random()))
+                CardState.of(Deck.of(cardsNotEnough, TestRandomizer.newRandom()))
         );
     }
 
     @Test
     void withDrawnFaceUpCardWorks() {
+        var expectedReplaced = List.of(Card.VIOLET, Card.BLUE, Card.RED, Card.RED, Card.LOCOMOTIVE);
+        var expectedReplaced2 = List.of(Card.VIOLET, Card.BLUE, Card.RED, Card.GREEN, Card.LOCOMOTIVE);
+        
+        var newState = cardStateWithDeck.withDrawnFaceUpCard(2);
+        assertEquals(
+                expectedReplaced,
+                newState.faceUpCards()
+        );
+        // TODO: ordre faceUpCards ?
+        assertEquals(
+                expectedReplaced2,
+                newState.withDrawnFaceUpCard(3).faceUpCards()
+        );
+        
+        cardStateWithDeck.withDrawnFaceUpCard(0);
     }
 
     @Test
@@ -56,6 +111,10 @@ class CardStateTest {
 
     @Test
     void topDeckCardWorks() {
+        assertEquals(
+                Card.RED,
+                cardStateWithDeck.topDeckCard()
+        );
     }
 
     @Test
@@ -67,6 +126,28 @@ class CardStateTest {
 
     @Test
     void withoutTopDeckCardWorks() {
+        var newState = cardStateWithDeck.withoutTopDeckCard();
+        
+        assertEquals(
+                cardStateWithDeck.faceUpCards(),
+                newState.faceUpCards()
+        );
+        assertEquals(
+                cardStateWithDeck.discardsSize(),
+                newState.discardsSize()
+        );
+        assertEquals(
+                cardStateWithDeck.deckSize() - 1,
+                newState.deckSize()
+        );
+        assertEquals(
+                cardStateWithDeck.totalSize() - 1,
+                newState.totalSize()
+        );
+        assertEquals(
+                Card.GREEN,
+                newState.topDeckCard()
+        );
     }
 
     @Test
@@ -75,20 +156,65 @@ class CardStateTest {
                 cardStateWithoutDeck.withoutTopDeckCard()
         );
     }
-
+    
     @Test
-    void withDeckRecreatedFromDiscardsWorks() {
-    }
-
-    @Test
-    void withDeckRecreatedFromDiscardsFails() {
-        assertThrows(IllegalArgumentException.class, () ->
-                cardStateWithDeck.withDeckRecreatedFromDiscards(new Random())
+    void withMoreDiscardedCardsWorks() {
+        assertEquals(
+                3,
+                cardStateWithDeck.withMoreDiscardedCards(additional).discardsSize()
+        );
+        assertEquals(
+                cardStateWithDeck.totalSize() + 3,
+                cardStateWithDeck.withMoreDiscardedCards(additional).totalSize()
+        );
+        
+        assertEquals(
+                cardStateWithDeck.discardsSize(),
+                cardStateWithDeck.withMoreDiscardedCards(SortedBag.of()).discardsSize()
+        );
+        assertEquals(
+                cardStateWithDeck.totalSize(),
+                cardStateWithDeck.withMoreDiscardedCards(SortedBag.of()).totalSize()
         );
     }
 
     @Test
-    void withMoreDiscardedCardsWorks() {
-        //assertEquals(, cardStateWithDeck.withMoreDiscardedCards(additional));
+    void withDeckRecreatedFromDiscardsWorks() {
+        var state = cardStateWithoutDeck.withMoreDiscardedCards(cardsEnough);
+        
+        assertEquals(
+                cardStateWithoutDeck.faceUpCards(),
+                state.faceUpCards()
+        );
+        
+        assertEquals(
+                cardsEnough.size(),
+                state.discardsSize()
+        );
+        
+        assertEquals(
+                0,
+                state.withDeckRecreatedFromDiscards(TestRandomizer.newRandom()).discardsSize()
+        );
+        
+        var shuffledDiscards = List.of(Card.BLUE, Card.RED, Card.VIOLET, Card.LOCOMOTIVE, Card.GREEN, Card.RED, Card.GREEN, Card.BLACK, Card.BLUE);
+        
+        CardState tempState = state.withDeckRecreatedFromDiscards(TestRandomizer.newRandom());
+        for (int i = 0; i < state.discardsSize(); ++i) {
+            assertEquals(
+                    shuffledDiscards.get(i),
+                    tempState.topDeckCard()
+            );
+            tempState = tempState.withoutTopDeckCard();
+        }
     }
+
+    @Test
+    void withDeckRecreatedFromDiscardsFails() {
+        assertEquals(0, cardStateWithDeck.discardsSize());
+        assertThrows(IllegalArgumentException.class, () ->
+                cardStateWithDeck.withDeckRecreatedFromDiscards(TestRandomizer.newRandom())
+        );
+    }
+    
 }

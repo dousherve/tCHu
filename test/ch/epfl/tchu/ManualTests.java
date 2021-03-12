@@ -2,9 +2,11 @@ package ch.epfl.tchu;
 
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.ChMap;
+import ch.epfl.tchu.game.Deck;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Trail;
 import ch.epfl.tchu.gui.Info;
+import ch.epfl.test.TestRandomizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,18 @@ public class ManualTests {
                 ))
             )
         );
+    
+        SortedBag<Card> faceUpCards = SortedBag.of(
+                List.of(Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE, Card.GREEN)
+        );
+        SortedBag<Card> cardsEnough = SortedBag.of(
+                List.of(
+                        Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE, Card.GREEN,
+                        Card.GREEN, Card.RED, Card.VIOLET, Card.BLACK
+                )
+        );
+        
+        Deck.of(cardsEnough, TestRandomizer.newRandom());
     }
     
 }

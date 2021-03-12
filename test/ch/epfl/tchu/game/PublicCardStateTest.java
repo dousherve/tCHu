@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PublicCardStateTest {
 
-    List<Card> cards = List.of(
+    List<Card> faceUpCards = List.of(
             Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE, Card.GREEN
     );
 
@@ -17,17 +17,12 @@ class PublicCardStateTest {
             Card.BLUE, Card.RED, Card.LOCOMOTIVE
     );
 
-    List<Card> cardsToMuch = List.of(
+    List<Card> cardsTooMuch = List.of(
             Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE, Card.GREEN
     );
 
-    PublicCardState pcs = new PublicCardState(cards, 25, 10);
-    PublicCardState pcsWithEmptyDeck = new PublicCardState(cards, 0, 10);
-
-    @Test
-    void constructorWorks() {
-
-    }
+    PublicCardState pcs = new PublicCardState(faceUpCards, 25, 10);
+    PublicCardState pcsWithEmptyDeck = new PublicCardState(faceUpCards, 0, 10);
 
     @Test
     void constructorFails() {
@@ -35,25 +30,25 @@ class PublicCardStateTest {
                 new PublicCardState(cardsNotEnough, 15, 25)
         );
         assertThrows(IllegalArgumentException.class, () ->
-                new PublicCardState(cardsToMuch, 15, 25)
+                new PublicCardState(cardsTooMuch, 15, 25)
         );
         assertThrows(IllegalArgumentException.class, () ->
-                new PublicCardState(cards, -5, 25)
+                new PublicCardState(faceUpCards, -5, 25)
         );
         assertThrows(IllegalArgumentException.class, () ->
-                new PublicCardState(cards, 10, -5)
+                new PublicCardState(faceUpCards, 10, -5)
         );
     }
 
     @Test
     void totalSizeWorks() {
-        assertEquals(40, pcs.totalSize());
-        assertEquals(15, pcsWithEmptyDeck.totalSize());
+        assertEquals(5 + 25 + 10, pcs.totalSize());
+        assertEquals(5 + 0 + 10, pcsWithEmptyDeck.totalSize());
     }
 
     @Test
     void faceUpCardsWorks() {
-        assertEquals(cards, pcs.faceUpCards());
+        assertEquals(faceUpCards, pcs.faceUpCards());
     }
 
     @Test
@@ -88,4 +83,5 @@ class PublicCardStateTest {
     void discardsSizeWorks() {
         assertEquals(10, pcs.discardsSize());
     }
+    
 }
