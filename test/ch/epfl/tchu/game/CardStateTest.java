@@ -21,7 +21,7 @@ class CardStateTest {
                     Card.GREEN, Card.GREEN, Card.RED, Card.VIOLET, Card.BLACK
             )
     );
-    List<Card> sortedFaceUpCardsEnough = List.of(Card.VIOLET, Card.BLUE, Card.GREEN, Card.RED, Card.LOCOMOTIVE);
+    List<Card> sortedFaceUpCardsEnough = List.of(Card.BLUE, Card.RED, Card.VIOLET, Card.LOCOMOTIVE, Card.GREEN);
     
     SortedBag<Card> cardsNotEnough = SortedBag.of(
             List.of(Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.BLUE)
@@ -40,7 +40,7 @@ class CardStateTest {
                 cardStateWithoutDeck.isDeckEmpty()
         );
         assertEquals(
-                faceUpCards.toList(),
+                List.of(Card.LOCOMOTIVE, Card.RED, Card.BLUE, Card.GREEN, Card.BLUE),
                 cardStateWithoutDeck.faceUpCards()
         );
         assertEquals(
@@ -79,15 +79,14 @@ class CardStateTest {
 
     @Test
     void withDrawnFaceUpCardWorks() {
-        var expectedReplaced = List.of(Card.VIOLET, Card.BLUE, Card.RED, Card.RED, Card.LOCOMOTIVE);
-        var expectedReplaced2 = List.of(Card.VIOLET, Card.BLUE, Card.RED, Card.GREEN, Card.LOCOMOTIVE);
+        var expectedReplaced = List.of(Card.BLUE, Card.RED, Card.VIOLET, Card.LOCOMOTIVE, Card.RED);
+        var expectedReplaced2 = List.of(Card.BLUE, Card.RED, Card.VIOLET, Card.GREEN, Card.RED);
         
-        var newState = cardStateWithDeck.withDrawnFaceUpCard(2);
+        var newState = cardStateWithDeck.withDrawnFaceUpCard(4);
         assertEquals(
                 expectedReplaced,
                 newState.faceUpCards()
         );
-        // TODO: ordre faceUpCards ?
         assertEquals(
                 expectedReplaced2,
                 newState.withDrawnFaceUpCard(3).faceUpCards()

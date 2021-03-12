@@ -39,9 +39,13 @@ public final class CardState extends PublicCardState {
      */
     public static CardState of(Deck<Card> deck) {
         Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT);
+        
+        List<Card> topCards = new ArrayList<>();
+        for (int slot : Constants.FACE_UP_CARD_SLOTS)
+            topCards.add(deck.withoutTopCards(slot).topCard());
 
         return new CardState(
-                deck.topCards(Constants.FACE_UP_CARDS_COUNT).toList(),  // Cartes face visible
+                topCards,  // Cartes face visible dans l'ordre de tirage depuis le deck
                 deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT),    // Pioche
                 SortedBag.of()  // Défausse vide
         );

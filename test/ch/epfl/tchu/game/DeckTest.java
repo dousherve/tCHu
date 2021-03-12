@@ -6,13 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
 
     List<Card> cardsList = List.of(Card.BLUE, Card.RED, Card.LOCOMOTIVE, Card.ORANGE, Card.BLUE, Card.BLACK);
-    List<Card> shuffledCards = List.of(Card.BLUE, Card.RED, Card.ORANGE, Card.LOCOMOTIVE, Card.BLACK, Card.BLUE);
+    List<Card> shuffledCards = List.of(Card.BLUE, Card.BLACK, Card.LOCOMOTIVE, Card.ORANGE, Card.RED, Card.BLUE);
     
     SortedBag<Card> cards = SortedBag.of(cardsList);
 
@@ -24,10 +23,10 @@ class DeckTest {
 
     @Test
     void ofWorks() {
-        for (int i = cards.size() - 1; i >= 0; --i) {
+        for (int i = 0; i < cards.size(); ++i) {
             assertEquals(
                     shuffledCards.get(i),
-                    deck.withoutTopCards(cards.size() - 1 - i).topCard()
+                    deck.withoutTopCards(i).topCard()
             );
         }
     }
@@ -39,7 +38,7 @@ class DeckTest {
 
     @Test
     void isEmptyOnEmpty() {
-        assertEquals(true, emptyDeck.isEmpty());
+        assertTrue(emptyDeck.isEmpty());
     }
 
     @Test
