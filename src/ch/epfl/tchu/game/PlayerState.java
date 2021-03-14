@@ -7,11 +7,29 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Classe publique, finale et immuable qui représente l'état complet d'un joueur.
+ * Elle hérite de PublicPlayerState.
+ *
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 public final class PlayerState extends PublicPlayerState {
     
     private final SortedBag<Ticket> tickets;
     private final SortedBag<Card> cards;
-    
+
+    /**
+     * Retourne l'état initial d'un joueur auquel les cartes initiales données ont été distribuées.
+     * Dans cet état le joueur ne possède donc encore aucun billet et ne s'est emparé d'aucune route.
+     *
+     * @param initialCards
+     *          les cartes initiales distribuées au joueur
+     * @throws IllegalArgumentException
+     *          si le nombre de cartes initiales ne vaut pas <code>Constant.INITIAL_CARDS_COUNT</code> (4)
+     * @return
+     *          l'état du joueur avec seulement ses cartes initiales
+     */
     public static PlayerState initial(SortedBag<Card> initialCards) {
         Preconditions.checkArgument(initialCards.size() == Constants.INITIAL_CARDS_COUNT);
         
@@ -21,18 +39,43 @@ public final class PlayerState extends PublicPlayerState {
                 Collections.emptyList()
         );
     }
-    
+
+    /**
+     * Construit l'état d'un joueur possédant les billets, cartes et routes donnés.
+     *
+     * @param tickets
+     *          les billets que le joueur possède
+     * @param cards
+     *          les cartes que le joueur possède
+     * @param routes
+     *          la liste des routes que le joueur possède
+     */
     public PlayerState(SortedBag<Ticket> tickets, SortedBag<Card> cards, List<Route> routes) {
         super(tickets.size(), cards.size(), routes);
         
         this.tickets = tickets;
         this.cards = cards;
     }
-    
+
+    /**
+     * Retourne les billets du joueur.
+     *
+     * @return
+     *          les billets du joueur
+     */
     public SortedBag<Ticket> tickets() {
         return tickets;
     }
-    
+
+    /**
+     * Retourne un état identique au récepeteur si ce n'est que le joueur possède
+     * en plus les billets donnés.
+     *
+     * @param newTickets
+     *          l'ensemble des nouveaux billets donnés au joueur
+     * @return
+     *          l'état du joueur avec les nouveaux billets ajoutés
+     */
     public PlayerState withAddedTickets(SortedBag<Ticket> newTickets) {
         return new PlayerState(
                 tickets.union(newTickets),
@@ -40,11 +83,26 @@ public final class PlayerState extends PublicPlayerState {
                 routes()
         );
     }
-    
+
+    /**
+     * Retourne les cartes wagons/locomotives du joueur.
+     *
+     * @return
+     *          les cartes wagons/locomotives du joueur
+     */
     public SortedBag<Card> cards() {
         return cards;
     }
-    
+
+    /**
+     * Retourne un état identique au récepteur si ce n'est que le joueur possède
+     * en plus la carte donnée.
+     *
+     * @param card
+     *          la nouvelle carte donné au joueur
+     * @return
+     *          l'état du joueur avec la nouvelle carte ajoutée
+     */
     public PlayerState withAddedCard(Card card) {
         return new PlayerState(
                 tickets,
@@ -52,7 +110,16 @@ public final class PlayerState extends PublicPlayerState {
                 routes()
         );
     }
-    
+
+    /**
+     * Retourne un état identique au récepteur si ce n'est que le joueur possède
+     * en plus l'ensemble des cartes données.
+     *
+     * @param additionalCards
+     *          l'ensemble des nouvelles cartes données au joueur
+     * @return
+     *          l'état du joueur avec les nouvelles cartes ajoutées
+     */
     public PlayerState withAddedCards(SortedBag<Card> additionalCards) {
         return new PlayerState(
                 tickets,
@@ -60,7 +127,8 @@ public final class PlayerState extends PublicPlayerState {
                 routes()
         );
     }
-    
+
+    // J'ai arrêté la JavaDoc ICI !
     /**
      * Retourne vrai si et seulement si le joueur peut s'emparer de la route donnée,
      * c'est-à-dire s'il lui reste assez de wagons et s'il possède les cartes nécessaires.
@@ -91,5 +159,20 @@ public final class PlayerState extends PublicPlayerState {
         // TODO : implémenter
         return Collections.emptyList();
     }
-    
+
+    public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards) {
+        // TODO: implémenter
+        return null;
+    }
+
+    public int ticketPoints() {
+        // TODO : implémenter
+        return 0;
+    }
+
+    public int finalPoints() {
+        // TODO: implémenter
+        return 0;
+    }
+
 }
