@@ -196,15 +196,19 @@ public final class PlayerState extends PublicPlayerState {
     }
 
     public int ticketPoints() {
-        int maxRouteId = 0;
+        int maxStationId = 0;
         for (Route r : routes())
             for (Station s : r.stations())
-                maxRouteId = Math.max(maxRouteId, s.id());
+                maxStationId = Math.max(maxStationId, s.id());
             
-        StationPartition partition = new StationPartition.Builder(maxRouteId + 1).build();
+        StationPartition.Builder builder = new StationPartition.Builder(maxStationId + 1);
+        for (Route r : routes())
+            builder.connect(r.station1(), r.station2());
+        
+        final StationPartition PARTITION = builder.build();
         int points = 0;
         for (Ticket t : tickets)
-            points += t.points(partition);
+            points += t.points(PARTITION);
         
         return points;
     }

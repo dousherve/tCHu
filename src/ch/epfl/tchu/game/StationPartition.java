@@ -16,9 +16,10 @@ public final class StationPartition implements StationConnectivity {
     private final int[] links;
     
     private StationPartition(int[] links) {
-        this.links = links;
+        this.links = new int[links.length];
+        System.arraycopy(links, 0, this.links, 0, links.length);
     }
-
+    
     /**
      * Méthode de <code>{@link StationConnectivity}</code> qui retourne vrai si et seulement si les
      * gares passées en paramètre sont reliées par le réseau du joueur.
