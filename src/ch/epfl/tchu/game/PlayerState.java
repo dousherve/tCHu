@@ -3,7 +3,9 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -156,23 +158,59 @@ public final class PlayerState extends PublicPlayerState {
     }
     
     public List<SortedBag<Card>> possibleAdditionalCards(int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards) {
-        // TODO : implémenter
-        return Collections.emptyList();
+        Preconditions.checkArgument(additionalCardsCount >= 1 && additionalCardsCount <= 3);
+        Preconditions.checkArgument(! initialCards.isEmpty());
+        Preconditions.checkArgument(initialCards.toSet().size() <= 2);
+        Preconditions.checkArgument(drawnCards.size() == 3);
+        
+        SortedBag.Builder<Card> usableCardsBuilder = new SortedBag.Builder<>();
+        
+        for (Card remaining : cards.difference(initialCards)) {
+            if (initialCards.contains(remaining) || remaining == Card.LOCOMOTIVE) {
+                usableCardsBuilder.add(remaining);
+            }
+        }
+        
+        List<SortedBag<Card>> possibilities = new ArrayList<>(
+                usableCardsBuilder
+                        .build()
+                        .subsetsOfSize(additionalCardsCount)
+        );
+        
+        possibilities.sort(
+                Comparator.comparingInt(cs -> cs.countOf(Card.LOCOMOTIVE))
+        );
+        
+        return Collections.unmodifiableList(possibilities);
     }
 
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards) {
-        // TODO: implémenter
-        return null;
+        List<Route> newRoutes = new ArrayList<>(routes());
+        newRoutes.add(route);
+        
+        return new PlayerState(
+                tickets,
+                cards.difference(claimCards),
+                newRoutes
+        );
     }
 
     public int ticketPoints() {
-        // TODO : implémenter
-        return 0;
+        int maxRouteId = 0;
+        for (Route r : routes())
+            for (Station s : r.stations())
+                maxRouteId = Math.max(maxRouteId, s.id());
+            
+        StationPartition partition = new StationPartition.Builder(maxRouteId + 1).build();
+        int points = 0;
+        for (Ticket t : tickets)
+            points += t.points(partition);
+        
+        return points;
     }
 
     public int finalPoints() {
-        // TODO: implémenter
-        return 0;
+        return claimPoints() + ticketPoints();
     }
 
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Type énuméré qui représente l'identité d'un joueur.
- * Comme tChu ne possède que 2 joueurs alors son nombre d'élément est de 2.
+ * Comme tChu ne possède que 2 joueurs, son nombre d'éléments est de 2.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -12,8 +12,15 @@ import java.util.List;
 public enum PlayerId {
     
     PLAYER_1, PLAYER_2;
-
+    
+    /**
+     * Liste immuable contenant les deux joueurs du type énuméré,
+     * dans leur ordre de définition.
+     */
     public static final List<PlayerId> ALL = List.of(values());
+    /**
+     * Nombre total de joueurs.
+     */
     public static final int COUNT = ALL.size();
 
     /**
@@ -24,7 +31,6 @@ public enum PlayerId {
      *          l'identité du joueur qui suit
      */
     public PlayerId next() {
-        // TODO: equals() ou this == ?
         return (this == PLAYER_1) ? PLAYER_2 : PLAYER_1;
     }
     
