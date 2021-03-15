@@ -30,6 +30,7 @@ public final class Ticket implements Comparable<Ticket> {
     public Ticket(List<Trip> trips) {
         Preconditions.checkArgument(! trips.isEmpty());
         
+        // TODO: amélioration : utiliser un ListIterator
         final String FIRST_STATION_NAME = trips
                 .get(0)
                 .from()
@@ -46,7 +47,7 @@ public final class Ticket implements Comparable<Ticket> {
             );
         }
         
-        this.trips = trips;
+        this.trips = List.copyOf(trips);
         this.text = computeText(trips);
     }
     
@@ -137,6 +138,7 @@ public final class Ticket implements Comparable<Ticket> {
      *          la connectivité du joueur qui le possède
      */
     public int points(StationConnectivity connectivity) {
+        // TODO: amélioration : utiliser un ListIterator
         final int FIRST_TRIP_POINTS = trips
                 .get(0)
                 .points(connectivity);
@@ -150,7 +152,7 @@ public final class Ticket implements Comparable<Ticket> {
            Billet ville à pays ou bien pays à pays :
            On cherche le score maximum parmi tous les trajets.
            Ainsi, le comportement min/max imposé sera automatiquement
-           pris en compte grâce au signe des valeurs retournées par le trajet dont il est question.
+           pris en compte grâce au signe des valeurs retournées par le trajet en question.
         */
         int maxScore = FIRST_TRIP_POINTS;
         for (int i = 1; i < trips.size(); ++i) {
@@ -169,8 +171,8 @@ public final class Ticket implements Comparable<Ticket> {
      * 
      * @param that
      *          le billet avec lequel on effectue la comparaison
-     * @return un entier strictement négatif si this est strictement plus petit que that,
-     *         un entier strictement positif si this est strictement plus grand que that,
+     * @return un entier strictement négatif si this est strictement plus petit que <code>that</code>,
+     *         un entier strictement positif si this est strictement plus grand que <code>that</code>,
      *         et zéro si les deux sont égaux
      */
     @Override
@@ -179,10 +181,11 @@ public final class Ticket implements Comparable<Ticket> {
     }
 
     /**
-     * Retourne la même valeur que la méthode text() : 
+     * Retourne la même valeur que la méthode <code>text()</code> :
+     * la représentation textuelle du billet.
      *
      * @return
-     *          la représentation textuelle
+     *          la représentation textuelle du billet
      */
     @Override
     public String toString() {

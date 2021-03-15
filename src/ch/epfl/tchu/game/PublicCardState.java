@@ -2,7 +2,6 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,7 +43,7 @@ public class PublicCardState {
                 && discardsSize >= 0
         );
 
-        this.faceUpCards = Collections.unmodifiableList(faceUpCards);
+        this.faceUpCards = List.copyOf(faceUpCards);
         this.deckSize = deckSize;
         this.discardsSize = discardsSize;
     }

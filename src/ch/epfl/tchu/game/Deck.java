@@ -21,7 +21,7 @@ public final class Deck<C extends Comparable<C>> {
     private final List<C> cards;
 
     /**
-     * Retourne un tas de cartes ayant les mêmes cartes que le multiensemnle donné,
+     * Retourne un tas de cartes ayant les mêmes cartes que le multiensemble donné,
      * mais les cartes sont mélangées au moyen du générateur de nombre aléatoires <code>rng</code>.
      *
      * @param cards
@@ -41,7 +41,7 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     private Deck(List<C> cards) {
-        this.cards = Collections.unmodifiableList(cards);
+        this.cards = List.copyOf(cards);
     }
 
     /**

@@ -97,7 +97,7 @@ public final class Trail {
     private Trail(Station station1, Station station2, List<Route> routes) {
         this.station1 = station1;
         this.station2 = station2;
-        this.routes = Collections.unmodifiableList(routes);
+        this.routes = List.copyOf(routes);
     
         // La longueur du chemin est la somme 
         // de celles de toutes les routes qui le composent
@@ -159,9 +159,9 @@ public final class Trail {
         
         Station previousStation = station1;
         for (Route r : routes) {
-            final Station STATION = r.stationOpposite(previousStation);
-            stationNames.add(STATION.name());
-            previousStation = STATION;
+            final Station NEW_STATION = r.stationOpposite(previousStation);
+            stationNames.add(NEW_STATION.name());
+            previousStation = NEW_STATION;
         }
         
         return String.format(

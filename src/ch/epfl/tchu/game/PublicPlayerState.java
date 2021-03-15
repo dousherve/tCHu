@@ -2,7 +2,6 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,7 +37,7 @@ public class PublicPlayerState {
         
         this.ticketCount = ticketCount;
         this.cardCount = cardCount;
-        this.routes = Collections.unmodifiableList(routes);
+        this.routes = List.copyOf(routes);
         
         this.carCount = Constants.INITIAL_CAR_COUNT - routes.stream().mapToInt(Route::length).sum();
         this.claimPoints = routes.stream().mapToInt(Route::claimPoints).sum();

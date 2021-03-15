@@ -262,9 +262,8 @@ public final class Route {
         
         int commonCardsCount = 0;
         for (Card c : COLORED_DRAWN_CARDS) {
-            if (claimCards.contains(c)) {
+            if (claimCards.contains(c))
                 ++commonCardsCount;
-            }
         }
         
         return commonCardsCount + drawnCards.countOf(Card.LOCOMOTIVE);
