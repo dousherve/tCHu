@@ -20,6 +20,7 @@ public final class PlayerState extends PublicPlayerState {
     
     private final SortedBag<Ticket> tickets;
     private final SortedBag<Card> cards;
+    private final int ticketPoints;
 
     /**
      * Retourne l'état initial d'un joueur auquel les cartes initiales données ont été distribuées.
@@ -41,6 +42,24 @@ public final class PlayerState extends PublicPlayerState {
                 Collections.emptyList()
         );
     }
+    
+    private int computeTicketPoints() {
+        int maxStationId = 0;
+        for (Route r : routes())
+            for (Station s : r.stations())
+                maxStationId = Math.max(maxStationId, s.id());
+        
+        StationPartition.Builder builder = new StationPartition.Builder(maxStationId + 1);
+        for (Route r : routes())
+            builder.connect(r.station1(), r.station2());
+        
+        final StationPartition PARTITION = builder.build();
+        int points = 0;
+        for (Ticket t : tickets)
+            points += t.points(PARTITION);
+        
+        return points;
+    }
 
     /**
      * Construit l'état d'un joueur possédant les billets, cartes et routes donnés.
@@ -57,6 +76,8 @@ public final class PlayerState extends PublicPlayerState {
         
         this.tickets = tickets;
         this.cards = cards;
+        
+        this.ticketPoints = computeTicketPoints();
     }
 
     /**
@@ -158,10 +179,10 @@ public final class PlayerState extends PublicPlayerState {
     }
     
     public List<SortedBag<Card>> possibleAdditionalCards(int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards) {
-        Preconditions.checkArgument(additionalCardsCount >= 1 && additionalCardsCount <= 3);
+        Preconditions.checkArgument(additionalCardsCount >= 1 && additionalCardsCount <= Constants.ADDITIONAL_TUNNEL_CARDS);
         Preconditions.checkArgument(! initialCards.isEmpty());
         Preconditions.checkArgument(initialCards.toSet().size() <= 2);
-        Preconditions.checkArgument(drawnCards.size() == 3);
+        Preconditions.checkArgument(drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
         
         SortedBag.Builder<Card> usableCardsBuilder = new SortedBag.Builder<>();
         
@@ -178,7 +199,7 @@ public final class PlayerState extends PublicPlayerState {
         );
         
         possibilities.sort(
-                Comparator.comparingInt(cs -> cs.countOf(Card.LOCOMOTIVE))
+                Comparator.comparingInt(bag -> bag.countOf(Card.LOCOMOTIVE))
         );
         
         return Collections.unmodifiableList(possibilities);
@@ -196,21 +217,7 @@ public final class PlayerState extends PublicPlayerState {
     }
 
     public int ticketPoints() {
-        int maxStationId = 0;
-        for (Route r : routes())
-            for (Station s : r.stations())
-                maxStationId = Math.max(maxStationId, s.id());
-            
-        StationPartition.Builder builder = new StationPartition.Builder(maxStationId + 1);
-        for (Route r : routes())
-            builder.connect(r.station1(), r.station2());
-        
-        final StationPartition PARTITION = builder.build();
-        int points = 0;
-        for (Ticket t : tickets)
-            points += t.points(PARTITION);
-        
-        return points;
+        return ticketPoints;
     }
 
     public int finalPoints() {

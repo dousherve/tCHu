@@ -8,7 +8,7 @@ import java.util.List;
  * Classe publique et immuable qui représente la partie publique de l'état d'un joueur.
  *
  * C'est-à-dire : son nombre de billets, son nombre de cartes wagons en possession,
- * la liste des routes dont il s'est emparé et le nombre de point de construction qu'il a ainsi obtenu.
+ * la liste des routes dont il s'est emparé et le nombre de points de construction qu'il a ainsi obtenu.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
