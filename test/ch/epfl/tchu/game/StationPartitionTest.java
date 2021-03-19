@@ -45,7 +45,7 @@ class StationPartitionTest {
     private static final Route MAR_LYO = new Route("MAR_LYO", MAR, LYO, 2, Route.Level.OVERGROUND, Color.BLUE);
 
     @Test
-    void testStationPartition() {
+    void testPartition() {
         StationPartition.Builder builder = new StationPartition.Builder(getMaxId(ROUTES) + 1);
         for (Route r : ROUTES)
             builder.connect(r.station1(), r.station2());
@@ -75,7 +75,7 @@ class StationPartitionTest {
     }
     
     @Test
-    void testFrenchStations() {
+    void testPartitionWithFrenchStations() {
         List<Route> routes = List.of(
                 PAR_NIC,
                 PAR_BRE,

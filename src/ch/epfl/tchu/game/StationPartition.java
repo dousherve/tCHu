@@ -83,7 +83,7 @@ public final class StationPartition implements StationConnectivity {
          * @param s2
          *          la deuxième gare à joindre
          * @return
-         *          le bâtisseur
+         *          ce bâtisseur
          */
         public Builder connect(Station s1, Station s2) {
             // On choisit arbitrairement le représentant de s2

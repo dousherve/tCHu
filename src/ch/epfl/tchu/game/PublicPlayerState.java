@@ -30,7 +30,7 @@ public class PublicPlayerState {
      * @param routes
      *          la liste des routes dont le joueur s'est emparé
      * @throws IllegalArgumentException
-     *          si <code>ticketCount</code> ou si <code>cardCount</code> est stricement négatif (<0)
+     *          si <code>ticketCount</code> ou si <code>cardCount</code> est stricement négatif (< 0)
      */
     public PublicPlayerState(int ticketCount, int cardCount, List<Route> routes) {
         Preconditions.checkArgument(ticketCount >= 0 && cardCount >= 0);

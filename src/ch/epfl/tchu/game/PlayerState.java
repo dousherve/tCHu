@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 /**
  * Classe publique, finale et immuable qui représente l'état complet d'un joueur.
- * Elle hérite de PublicPlayerState.
+ * Elle hérite de <code>{@link PublicPlayerState}</code>.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -20,7 +20,6 @@ public final class PlayerState extends PublicPlayerState {
     
     private final SortedBag<Ticket> tickets;
     private final SortedBag<Card> cards;
-    private final int ticketPoints;
 
     /**
      * Retourne l'état initial d'un joueur auquel les cartes initiales données ont été distribuées.
@@ -42,24 +41,6 @@ public final class PlayerState extends PublicPlayerState {
                 Collections.emptyList()
         );
     }
-    
-    private int computeTicketPoints() {
-        int maxStationId = 0;
-        for (Route r : routes())
-            for (Station s : r.stations())
-                maxStationId = Math.max(maxStationId, s.id());
-        
-        StationPartition.Builder builder = new StationPartition.Builder(maxStationId + 1);
-        for (Route r : routes())
-            builder.connect(r.station1(), r.station2());
-        
-        final StationPartition PARTITION = builder.build();
-        int points = 0;
-        for (Ticket t : tickets)
-            points += t.points(PARTITION);
-        
-        return points;
-    }
 
     /**
      * Construit l'état d'un joueur possédant les billets, cartes et routes donnés.
@@ -73,11 +54,9 @@ public final class PlayerState extends PublicPlayerState {
      */
     public PlayerState(SortedBag<Ticket> tickets, SortedBag<Card> cards, List<Route> routes) {
         super(tickets.size(), cards.size(), routes);
-        
+    
         this.tickets = tickets;
         this.cards = cards;
-        
-        this.ticketPoints = computeTicketPoints();
     }
 
     /**
@@ -91,7 +70,7 @@ public final class PlayerState extends PublicPlayerState {
     }
 
     /**
-     * Retourne un état identique au récepeteur si ce n'est que le joueur possède
+     * Retourne un état identique au récepteur si ce n'est que le joueur possède
      * en plus les billets donnés.
      *
      * @param newTickets
@@ -151,15 +130,14 @@ public final class PlayerState extends PublicPlayerState {
         );
     }
 
-    // J'ai arrêté la JavaDoc ICI !
     /**
      * Retourne vrai si et seulement si le joueur peut s'emparer de la route donnée,
      * c'est-à-dire s'il lui reste assez de wagons et s'il possède les cartes nécessaires.
      * 
      * @implNote
-     *          Ne lançera pas d'<code>{@link IllegalArgumentException}</code> car
-     *          la fonction retournera <code>false</code> avant d'exécuter
-     *          l'appel à <code>possibleClaimCards</code>.
+     *          Ne lançera pas d'<code>{@link IllegalArgumentException}</code> si le joueur
+     *          ne possède pas assez de cartes car la fonction retournera <code>false</code>
+     *          avant d'exécuter l'appel à <code>possibleClaimCards</code>.
      * @param route
      *          la route dont le joueur désire s'emparer
      * @return
@@ -169,8 +147,20 @@ public final class PlayerState extends PublicPlayerState {
         return carCount() >= route.length() && ! possibleClaimCards(route).isEmpty();
     }
     
+    /**
+     * Retourne la liste de tous les ensembles de cartes que le joueur pourrait utiliser
+     * pour prendre possession de la route donnée.
+     * 
+     * @param route
+     *          la route dont le joueur veut s'emparer
+     * @throws IllegalArgumentException
+     *          si le joueur n'a pas assez de wagons pour s'emparer de la route
+     * @return
+     *          la liste de tous les ensembles de cartes que le joueur pourrait utiliser
+     *          pour prendre possession de la route donnée
+     */
     public List<SortedBag<Card>> possibleClaimCards(Route route) {
-        Preconditions.checkArgument(cardCount() >= route.length());
+        Preconditions.checkArgument(carCount() >= route.length());
         
         return route.possibleClaimCards()
                 .stream()
@@ -178,6 +168,25 @@ public final class PlayerState extends PublicPlayerState {
                 .collect(Collectors.toUnmodifiableList());
     }
     
+    /**
+     * Retourne la liste de tous les ensembles de cartes que le joueur pourrait utiliser pour s'emparer d'un tunnel,
+     * trié par ordre croissant du nombre de cartes locomotives, sachant qu'il a initialement posé
+     * les cartes <code>initialCards</code>, que les 3 cartes tirées du sommet de la pioche sont <code>drawnCards</code>,
+     * et que ces dernières forcent le joueur à poser encore <code>additionalCardsCount</code> cartes.
+     * 
+     * @param additionalCardsCount
+     *          le nombre de cartes additionnelles que le joueur doit poser
+     * @param initialCards
+     *          les cartes initialement posées par le joueur
+     * @param drawnCards
+     *          les 3 cartes tirées du sommet de la pioche
+     * @throws IllegalArgumentException
+     *          si le nombre de cartes additionnelles n'est pas compris entre 1 et 3 (inclus),
+     *          si l'ensemble des cartes initiales est vide ou contient plus de 2 types de cartes différents,
+     *          ou bien si l'ensemble des cartes tirées ne contient pas exactement 3 cartes
+     * @return
+     *          la liste de tous les ensembles de cartes que le joueur pourrait utiliser
+     */
     public List<SortedBag<Card>> possibleAdditionalCards(int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards) {
         Preconditions.checkArgument(additionalCardsCount >= 1 && additionalCardsCount <= Constants.ADDITIONAL_TUNNEL_CARDS);
         Preconditions.checkArgument(! initialCards.isEmpty());
@@ -186,11 +195,9 @@ public final class PlayerState extends PublicPlayerState {
         
         SortedBag.Builder<Card> usableCardsBuilder = new SortedBag.Builder<>();
         
-        for (Card remaining : cards.difference(initialCards)) {
-            if (initialCards.contains(remaining) || remaining == Card.LOCOMOTIVE) {
+        for (Card remaining : cards.difference(initialCards))
+            if (initialCards.contains(remaining) || remaining == Card.LOCOMOTIVE)
                 usableCardsBuilder.add(remaining);
-            }
-        }
         
         List<SortedBag<Card>> possibilities = new ArrayList<>(
                 usableCardsBuilder
@@ -204,7 +211,19 @@ public final class PlayerState extends PublicPlayerState {
         
         return Collections.unmodifiableList(possibilities);
     }
-
+    
+    /**
+     * Retourne un état identique au récepteur, si ce n'est que le joueur s'est de plus
+     * emparé de la route donnée au moyen des cartes données.
+     * 
+     * @param route
+     *          la route dont le joueur s'est emparé
+     * @param claimCards
+     *          les cartes au moyen desquelles le joueur s'est emparé de la route donnée
+     * @return
+     *          un état identique au récepteur, mais qui contient la route dont il
+     *          vient de s'emparer
+     */
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards) {
         List<Route> newRoutes = new ArrayList<>(routes());
         newRoutes.add(route);
@@ -215,11 +234,35 @@ public final class PlayerState extends PublicPlayerState {
                 newRoutes
         );
     }
-
+    
+    /**
+     * Retourne le nombre de points (éventuellement négatif) obtenus par le joueur grâce à ses billets.
+     * 
+     * @return
+     *          le nombre de points obtenus par le joueur grâce à ses billets
+     */
     public int ticketPoints() {
-        return ticketPoints;
+        // TODO: amélioration : créer un attribut final ticketPoints et l'instancier dans le constructeur
+        int maxStationId = 0;
+        for (Route r : routes())
+            for (Station s : r.stations())
+                maxStationId = Math.max(maxStationId, s.id());
+    
+        StationPartition.Builder builder = new StationPartition.Builder(maxStationId + 1);
+        for (Route r : routes())
+            builder.connect(r.station1(), r.station2());
+    
+        final StationPartition PARTITION = builder.build();
+    
+        return tickets.stream().mapToInt(t -> t.points(PARTITION)).sum();
     }
-
+    
+    /**
+     * Retourne la totalité des points obtenus par le joueur à la fin de la partie.
+     * 
+     * @return
+     *          la totalité des points obtenus par le joueur à la fin de la partie
+     */
     public int finalPoints() {
         return claimPoints() + ticketPoints();
     }
