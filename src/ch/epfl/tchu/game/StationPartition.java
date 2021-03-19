@@ -86,8 +86,8 @@ public final class StationPartition implements StationConnectivity {
          *          le bâtisseur
          */
         public Builder connect(Station s1, Station s2) {
-            // On choisit arbitrairement le représentant de s1
-            links[s2.id()] = representative(s1.id());
+            // On choisit arbitrairement le représentant de s2
+            links[representative(s1.id())] = representative(s2.id());
             return this;
         }
 
