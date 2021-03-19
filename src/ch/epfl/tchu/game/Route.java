@@ -59,7 +59,7 @@ public final class Route {
                 && length <= Constants.MAX_ROUTE_LENGTH
         );
 
-        // TODO: station1.equals(...) ou station1.id() == station2.id() ?
+        // TODO: amélioration : station1.equals(...) ou station1.id() == station2.id() ?
         Preconditions.checkArgument(
                 ! station1.equals(station2) && IS_IN_BOUNDS
         );

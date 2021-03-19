@@ -25,7 +25,7 @@ public enum PlayerId {
 
     /**
      * Retourne l'identité du joueur qui suit celui auquel on applique la méthode.
-     * C'est-à-dire : pour PLAYER_1 on retourne PLAYER_2 et inversement.
+     * C'est-à-dire : pour <code>PLAYER_1</code> on retourne <code>PLAYER_2</code> et inversement.
      *
      * @return
      *          l'identité du joueur qui suit

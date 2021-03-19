@@ -198,6 +198,11 @@ public final class PlayerState extends PublicPlayerState {
         for (Card remaining : cards.difference(initialCards))
             if (initialCards.contains(remaining) || remaining == Card.LOCOMOTIVE)
                 usableCardsBuilder.add(remaining);
+            
+        // Si le nombre de cartes additionnelles possibles est inférieur
+        // au nombre de cartes additionnelles à jouer, on retourne une liste vide
+        if (usableCardsBuilder.size() < additionalCardsCount)
+            return Collections.emptyList();
         
         List<SortedBag<Card>> possibilities = new ArrayList<>(
                 usableCardsBuilder
