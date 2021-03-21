@@ -14,21 +14,21 @@ public final class GameState extends PublicGameState {
     private final Map<PlayerId, PlayerState> playerState;
     
     public static GameState initial(SortedBag<Ticket> tickets, Random rng) {
-        final Deck<Card> ALL_CARDS = Deck.of(Constants.ALL_CARDS, rng); 
-        final Deck<Card> DECK_CARDS = ALL_CARDS.withoutTopCards(8);
+        final Deck<Card> allCards = Deck.of(Constants.ALL_CARDS, rng); 
+        final Deck<Card> deckCards = allCards.withoutTopCards(8);
         
-        final PlayerId FIRST_PLAYER_ID = PlayerId.ALL.get(rng.nextInt(PlayerId.COUNT));
-        final PlayerId SECOND_PLAYER_ID = FIRST_PLAYER_ID.next();
+        final PlayerId firstPlayerId = PlayerId.ALL.get(rng.nextInt(PlayerId.COUNT));
+        final PlayerId secondPlayerId = firstPlayerId.next();
         
-        final PlayerState FIRST_PLAYER_STATE = PlayerState.initial(ALL_CARDS.topCards(4));
-        final PlayerState SECOND_PLAYER_STATE = PlayerState.initial(ALL_CARDS.withoutTopCards(4).topCards(4));
+        final PlayerState firstPlayerState = PlayerState.initial(allCards.topCards(4));
+        final PlayerState secondPlayerState = PlayerState.initial(allCards.withoutTopCards(4).topCards(4));
         
-        final Map<PlayerId, PlayerState> PLAYER_STATE = Map.of(
-                FIRST_PLAYER_ID, FIRST_PLAYER_STATE,
-                SECOND_PLAYER_ID, SECOND_PLAYER_STATE
+        final Map<PlayerId, PlayerState> playerState = Map.of(
+                firstPlayerId, firstPlayerState,
+                secondPlayerId, secondPlayerState
         );
         
-        return new GameState(tickets, CardState.of(DECK_CARDS), FIRST_PLAYER_ID, PLAYER_STATE);
+        return new GameState(tickets, CardState.of(deckCards), firstPlayerId, playerState);
     }
     
     private GameState(SortedBag<Ticket> tickets, CardState cardState, PlayerId currentPlayerId, Map<PlayerId, PlayerState> playerState, PlayerId lastPlayer) {
@@ -142,6 +142,7 @@ public final class GameState extends PublicGameState {
     }
 
     public boolean lastTurnBegins() {
+        // TODO: <= ou < ?
         return lastPlayer() == null && currentPlayerState().carCount() <= 2;
     }
 
