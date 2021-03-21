@@ -3,6 +3,7 @@ package ch.epfl.tchu;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Deck;
+import ch.epfl.tchu.game.GameState;
 import ch.epfl.tchu.game.Route;
 import ch.epfl.tchu.game.Trail;
 import ch.epfl.tchu.gui.Info;
@@ -80,6 +81,8 @@ public class ManualTests {
         }
     
         System.out.println(Arrays.toString(links));
+        
+        var state = GameState.initial(SortedBag.of(), TestRandomizer.newRandom());
     }
     
     private static int[] links = new int[] {3, 1, 2, 2, 3, 5};

@@ -2,7 +2,6 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.SortedBag;
 
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
@@ -12,14 +11,6 @@ public final class GameState extends PublicGameState {
     private final SortedBag<Ticket> tickets;
     private final CardState cardState;
     private final Map<PlayerId, PlayerState> playerState;
-    
-    private static Map<PlayerId, PublicPlayerState> makePublic(Map<PlayerId, PlayerState> playerState) {
-        EnumMap<PlayerId, PublicPlayerState> publicPlayerState = new EnumMap<>(PlayerId.class);
-        for (var entry : playerState.entrySet())
-            publicPlayerState.put(entry.getKey(), entry.getValue());
-        
-        return Collections.unmodifiableMap(publicPlayerState);
-    }
     
     public static GameState initial(SortedBag<Ticket> tickets, Random rng) {
         final Deck<Card> ALL_CARDS = Deck.of(Constants.ALL_CARDS, rng); 
@@ -40,7 +31,7 @@ public final class GameState extends PublicGameState {
     }
     
     private GameState(SortedBag<Ticket> tickets, CardState cardState, PlayerId currentPlayerId, Map<PlayerId, PlayerState> playerState) {
-        super(tickets.size(), cardState, currentPlayerId, makePublic(playerState), null);
+        super(tickets.size(), cardState, currentPlayerId, new EnumMap<>(playerState), null);
         
         this.tickets = tickets;
         this.cardState = cardState;

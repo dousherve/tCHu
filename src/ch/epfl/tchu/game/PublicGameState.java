@@ -38,7 +38,7 @@ public class PublicGameState {
     }
     
     public boolean canDrawCards() {
-        return (cardState.deckSize() + cardState().discardsSize()) >= 5;
+        return (cardState.deckSize() + cardState.discardsSize()) >= 5;
     }
     
     public PlayerId currentPlayerId() {
