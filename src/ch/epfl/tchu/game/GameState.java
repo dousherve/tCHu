@@ -31,12 +31,12 @@ public final class GameState extends PublicGameState {
         final PlayerState FIRST_PLAYER_STATE = PlayerState.initial(ALL_CARDS.topCards(4));
         final PlayerState SECOND_PLAYER_STATE = PlayerState.initial(ALL_CARDS.withoutTopCards(4).topCards(4));
         
-        final Map<PlayerId, PlayerState> playerState = Map.of(
+        final Map<PlayerId, PlayerState> PLAYER_STATE = Map.of(
                 FIRST_PLAYER_ID, FIRST_PLAYER_STATE,
                 SECOND_PLAYER_ID, SECOND_PLAYER_STATE
         );
         
-        return new GameState(tickets, CardState.of(DECK_CARDS), FIRST_PLAYER_ID, playerState);
+        return new GameState(tickets, CardState.of(DECK_CARDS), FIRST_PLAYER_ID, PLAYER_STATE);
     }
     
     private GameState(SortedBag<Ticket> tickets, CardState cardState, PlayerId currentPlayerId, Map<PlayerId, PlayerState> playerState) {
