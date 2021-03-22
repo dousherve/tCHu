@@ -99,7 +99,6 @@ public final class CardState extends PublicCardState {
      */
     public Card topDeckCard() {
         Preconditions.checkArgument(! deck.isEmpty());
-
         return deck.topCard();
     }
     

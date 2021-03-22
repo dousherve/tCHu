@@ -162,8 +162,7 @@ public final class PlayerState extends PublicPlayerState {
     public List<SortedBag<Card>> possibleClaimCards(Route route) {
         Preconditions.checkArgument(carCount() >= route.length());
         
-        return route.possibleClaimCards()
-                .stream()
+        return route.possibleClaimCards().stream()
                 .filter(cards::contains)
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -247,7 +246,7 @@ public final class PlayerState extends PublicPlayerState {
      *          le nombre de points obtenus par le joueur grâce à ses billets
      */
     public int ticketPoints() {
-        // TODO: amélioration : créer un attribut final ticketPoints et l'instancier dans le constructeur
+        // TODO: amélioration : créer un attribut final ticketPoints et l'instancier dans le constructeur ?
         int maxStationId = 0;
         for (Route r : routes())
             for (Station s : r.stations())
@@ -257,9 +256,9 @@ public final class PlayerState extends PublicPlayerState {
         for (Route r : routes())
             builder.connect(r.station1(), r.station2());
     
-        final StationPartition PARTITION = builder.build();
+        final StationPartition partition = builder.build();
     
-        return tickets.stream().mapToInt(t -> t.points(PARTITION)).sum();
+        return tickets.stream().mapToInt(t -> t.points(partition)).sum();
     }
     
     /**
