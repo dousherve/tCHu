@@ -36,7 +36,7 @@ public final class GameState extends PublicGameState {
         
         this.tickets = tickets;
         this.cardState = cardState;
-        this.playerState = playerState;
+        this.playerState = Collections.unmodifiableMap(playerState);
     }
 
     private GameState(SortedBag<Ticket> tickets, CardState cardState, PlayerId currentPlayerId, Map<PlayerId, PlayerState> playerState) {
