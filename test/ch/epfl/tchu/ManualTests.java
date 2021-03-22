@@ -3,14 +3,15 @@ package ch.epfl.tchu;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Deck;
-import ch.epfl.tchu.game.GameState;
 import ch.epfl.tchu.game.Route;
+import ch.epfl.tchu.game.Ticket;
 import ch.epfl.tchu.game.Trail;
 import ch.epfl.tchu.gui.Info;
 import ch.epfl.test.TestRandomizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ManualTests {
@@ -81,8 +82,10 @@ public class ManualTests {
         }
     
         System.out.println(Arrays.toString(links));
-        
-        var state = GameState.initial(SortedBag.of(), TestRandomizer.newRandom());
+    
+        List<Ticket> tickets = new ArrayList<>(ChMap.tickets());
+        Collections.shuffle(tickets, TestRandomizer.newRandom());
+        System.out.println(tickets);
     }
     
     private static int[] links = new int[] {3, 1, 2, 2, 3, 5};
