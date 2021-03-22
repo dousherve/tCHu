@@ -28,7 +28,7 @@ public final class GameState extends PublicGameState {
         playerState.put(firstPlayerId, firstPlayerState);
         playerState.put(secondPlayerId, secondPlayerState);
         
-        return new GameState(tickets, CardState.of(deckCards), firstPlayerId, Collections.unmodifiableMap(playerState));
+        return new GameState(tickets, CardState.of(deckCards), firstPlayerId, playerState);
     }
     
     private GameState(SortedBag<Ticket> tickets, CardState cardState, PlayerId currentPlayerId, Map<PlayerId, PlayerState> playerState, PlayerId lastPlayer) {
