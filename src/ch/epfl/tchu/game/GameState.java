@@ -40,7 +40,7 @@ public final class GameState extends PublicGameState {
     }
 
     private GameState(SortedBag<Ticket> tickets, CardState cardState, PlayerId currentPlayerId, Map<PlayerId, PlayerState> playerState) {
-        this(tickets, cardState, currentPlayerId, new EnumMap<>(playerState), null);
+        this(tickets, cardState, currentPlayerId, playerState, null);
     }
     
     @Override
