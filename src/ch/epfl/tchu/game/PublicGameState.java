@@ -2,11 +2,11 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class PublicGameState {
     
@@ -54,11 +54,9 @@ public class PublicGameState {
     }
     
     public List<Route> claimedRoutes() {
-        List<Route> claimedRoutes = new ArrayList<>();
-        for (PublicPlayerState state : playerState.values())
-            claimedRoutes.addAll(state.routes());
-        
-        return Collections.unmodifiableList(claimedRoutes);
+        return playerState.values().stream()
+                .flatMap(state -> state.routes().stream())
+                .collect(Collectors.toUnmodifiableList());
     }
     
     public PlayerId lastPlayer() {

@@ -3,6 +3,7 @@ package ch.epfl.tchu.game;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
@@ -23,12 +24,11 @@ public final class GameState extends PublicGameState {
         final PlayerState firstPlayerState = PlayerState.initial(allCards.topCards(4));
         final PlayerState secondPlayerState = PlayerState.initial(allCards.withoutTopCards(4).topCards(4));
         
-        final Map<PlayerId, PlayerState> playerState = Map.of(
-                firstPlayerId, firstPlayerState,
-                secondPlayerId, secondPlayerState
-        );
+        final Map<PlayerId, PlayerState> playerState = new EnumMap<>(PlayerId.class);
+        playerState.put(firstPlayerId, firstPlayerState);
+        playerState.put(secondPlayerId, secondPlayerState);
         
-        return new GameState(tickets, CardState.of(deckCards), firstPlayerId, playerState);
+        return new GameState(tickets, CardState.of(deckCards), firstPlayerId, Collections.unmodifiableMap(playerState));
     }
     
     private GameState(SortedBag<Ticket> tickets, CardState cardState, PlayerId currentPlayerId, Map<PlayerId, PlayerState> playerState, PlayerId lastPlayer) {
@@ -55,7 +55,6 @@ public final class GameState extends PublicGameState {
 
     public SortedBag<Ticket> topTickets(int count) {
         Preconditions.checkArgument(count >= 0 && count <= ticketsCount());
-
         return SortedBag.of(
                 tickets.toList().subList(ticketsCount() - count, ticketsCount())
         );
@@ -67,7 +66,6 @@ public final class GameState extends PublicGameState {
 
     public Card topCard() {
         Preconditions.checkArgument(! cardState.isDeckEmpty());
-
         return cardState.topDeckCard();
     }
 
