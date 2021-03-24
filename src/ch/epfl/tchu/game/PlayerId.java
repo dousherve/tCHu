@@ -3,8 +3,7 @@ package ch.epfl.tchu.game;
 import java.util.List;
 
 /**
- * Type énuméré qui représente l'identité d'un joueur.
- * Comme tChu ne possède que 2 joueurs, son nombre d'éléments est de 2.
+ * Type énuméré qui représente l'identité de l'un des deux joueurs de tCHu.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
