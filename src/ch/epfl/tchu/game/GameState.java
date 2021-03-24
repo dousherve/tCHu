@@ -81,7 +81,8 @@ public final class GameState extends PublicGameState {
     /**
      * Retourne l'état complet du joueur courant, et pas seulement sa partie publique.
      * 
-     * @return l'état complet du joueur courant
+     * @return
+     *          l'état complet du joueur courant
      */
     @Override
     public PlayerState currentPlayerState() {
@@ -127,8 +128,10 @@ public final class GameState extends PublicGameState {
     /**
      * Retourne la carte au sommet de la pioche.
      * 
-     * @throws IllegalArgumentException si la pioche est vide
-     * @return la carte au sommet de la pioche
+     * @throws IllegalArgumentException
+     *          si la pioche est vide
+     * @return
+     *          la carte au sommet de la pioche
      */
     public Card topCard() {
         return cardState.topDeckCard();
@@ -137,8 +140,10 @@ public final class GameState extends PublicGameState {
     /**
      * Retourne un état identique au récepteur mais sans la carte au sommet de la pioche.
      * 
-     * @throws IllegalArgumentException si la pioche est vide
-     * @return un état identique au récepteur mais sans la carte au sommet de la pioche
+     * @throws IllegalArgumentException
+     *          si la pioche est vide
+     * @return
+     *          un état identique au récepteur mais sans la carte au sommet de la pioche
      */
     public GameState withoutTopCard() {
         return new GameState(
@@ -346,7 +351,8 @@ public final class GameState extends PublicGameState {
      * mais que le joueur courant n'a plus que deux wagons ou moins.
      * Cette méthode doit être appelée uniquement à la fin du tour d'un joueur.
      * 
-     * @return vrai si et seulement si le dernier tour commence
+     * @return
+     *          vrai si et seulement si le dernier tour commence
      */
     public boolean lastTurnBegins() {
         return lastPlayer() == null && currentPlayerState().carCount() <= 2;

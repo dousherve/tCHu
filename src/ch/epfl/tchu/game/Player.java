@@ -77,7 +77,8 @@ public interface Player {
      * Méthode appelée au début de la partie pour demander au joueur
      * quels billets il désire garder parmi ceux qu'on lui a distribué initialement.
      * 
-     * @return les billets que le joueur choisit de garder
+     * @return
+     *          les billets que le joueur choisit de garder
      */
     SortedBag<Ticket> chooseInitialTickets();
     
@@ -85,7 +86,8 @@ public interface Player {
      * Méthode appelée au début du tour d'un joueur, pour savoir
      * quel type d'action il désire effectuer durant ce tour.
      * 
-     * @return l'action que le joueur désire effectuer durant ce tour
+     * @return
+     *          l'action que le joueur désire effectuer durant ce tour
      */
     TurnKind nextTurn();
     

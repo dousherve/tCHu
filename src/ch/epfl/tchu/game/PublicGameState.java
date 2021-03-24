@@ -57,17 +57,19 @@ public class PublicGameState {
     /**
      * Retourne la taille de la pioche de billets.
      * 
-     * @return la taille de la pioche de billets
+     * @return
+     *          la taille de la pioche de billets
      */
     public int ticketsCount() {
         return ticketsCount;
     }
-    
+
     /**
      * Retourne vrai si et seulement si il est possible de tirer des billets,
      * c'est-à-dire si la pioche n'est pas vide.
      * 
-     * @return vrai si et seulement si il est possible de tirer des billets
+     * @return
+     *          vrai si et seulement si il est possible de tirer des billets
      */
     public boolean canDrawTickets() {
         return ticketsCount > 0;
@@ -76,7 +78,8 @@ public class PublicGameState {
     /**
      * Retourne la partie publique de l'état des cartes wagon/locomotive.
      * 
-     * @return la partie publique de l'état des cartes wagon/locomotive
+     * @return
+     *          la partie publique de l'état des cartes wagon/locomotive
      */
     public PublicCardState cardState() {
         return cardState;
@@ -86,7 +89,8 @@ public class PublicGameState {
      * Retourne vrai si et seulement si il est possible de tirer des cartes,
      * c'est-à-dire si la pioche et la défausse contiennent entre elles au moins 5 cartes.
      * 
-     * @return vrai si et seulement si il est possible de tirer des cartes
+     * @return
+     *          vrai si et seulement si il est possible de tirer des cartes
      */
     public boolean canDrawCards() {
         return (cardState.deckSize() + cardState.discardsSize()) >= 5;
@@ -95,7 +99,8 @@ public class PublicGameState {
     /**
      * Retourne l'identité du joueur actuel.
      * 
-     * @return  l'identité du joueur actuel
+     * @return
+     *          l'identité du joueur actuel
      */
     public PlayerId currentPlayerId() {
         return currentPlayerId;
@@ -116,7 +121,8 @@ public class PublicGameState {
     /**
      * Retourne la partie publique de l'état du joueur courant.
      * 
-     * @return la partie publique de l'état du joueur courant
+     * @return
+     *          la partie publique de l'état du joueur courant
      */
     public PublicPlayerState currentPlayerState() {
         return playerState(currentPlayerId);
@@ -125,7 +131,8 @@ public class PublicGameState {
     /**
      * Retourne la totalité des routes dont l'un ou l'autre des joueurs s'est emparé.
      * 
-     * @return la totalité des routes dont l'un ou l'autre des joueurs s'est emparé
+     * @return
+     *          la totalité des routes dont l'un ou l'autre des joueurs s'est emparé
      */
     public List<Route> claimedRoutes() {
         return playerState.values().stream()
@@ -137,7 +144,8 @@ public class PublicGameState {
      * Retourne l'identité du dernier joueur, ou <code>null</code>
      * si elle n'est pas encore connue car le dernier tour n'a pas commencé.
      * 
-     * @return l'identité du dernier joueur (ou <code>null</code>)
+     * @return
+     *          l'identité du dernier joueur (ou <code>null</code>)
      */
     public PlayerId lastPlayer() {
         return lastPlayer;
