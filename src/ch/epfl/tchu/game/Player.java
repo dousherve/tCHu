@@ -83,7 +83,7 @@ public interface Player {
     SortedBag<Ticket> chooseInitialTickets();
     
     /**
-     * Méthode appelée au début du tour d'un joueur, pour savoir
+     * Méthode appelée au début du tour d'un joueur pour savoir
      * quel type d'action il désire effectuer durant ce tour.
      * 
      * @return
@@ -105,7 +105,7 @@ public interface Player {
     /**
      * Méthode appelée lorsque le joueur a décidé de tirer des cartes wagon/locomotive,
      * afin de savoir d'où il désire les tirer : d'un des emplacements contenant 
-     * une carte face visible — auquel cas la valeur retourne est comprise entre 0 et 4 inclus —,
+     * une carte face visible — auquel cas la valeur retournée est comprise entre 0 et 4 inclus —,
      * ou de la pioche — auquel cas la valeur retournée vaut <code>Constants.DECK_SLOT</code> (-1).
      * 
      * @return
@@ -133,7 +133,7 @@ public interface Player {
     
     /**
      * Méthode appelée lorsque le joueur a décidé de tenter de s'emparer d'un tunnel
-     * et que des cartes additionnelles sont nécessaires, afin de savoir quelle(s) carte(s) il désire utiliser pour cela,
+     * et que des cartes additionnelles sont nécessaires afin de savoir quelle(s) carte(s) il désire utiliser pour cela,
      * les possibilités lui étant passées en argument.
      * Si le multiensemble retourné est vide, cela signifie que le joueur ne désire pas (ou ne peut pas)
      * choisir l'une de ces possibilités.

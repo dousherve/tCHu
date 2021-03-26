@@ -363,7 +363,8 @@ public final class GameState extends PublicGameState {
      * 
      * @return
      *          un état identique au récepteur si ce n'est que le joueur courant
-     *          est celui qui suit le joueur courant actuel
+     *          est celui qui suit le joueur courant actuel, et si <code>lastTurnBegins</code>
+     *          retourne vrai, le joueur courant actuel devient le dernier joueur
      */
     public GameState forNextTurn() {
         return new GameState(
