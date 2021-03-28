@@ -23,7 +23,7 @@ public final class GameState extends PublicGameState {
     /**
      * Retourne l'état initial d'une partie de tCHu dans laquelle la pioche des billets
      * contient les billets donnés et la pioche des cartes contient les cartes de <code>Constants.ALL_CARDS</code>,
-     * sans les 8 (2×4) du dessus, distribuées aux joueurs.
+     * sans les 8 (2 × <code>Constants.INITIAL_CARDS_COUNT</code>) du dessus, distribuées aux joueurs.
      * Ces pioches sont mélangées au moyen du générateur aléatoire donné,
      * qui est aussi utilisé pour choisir au hasard l'identité du premier joueur.
      * 
@@ -36,13 +36,17 @@ public final class GameState extends PublicGameState {
      */
     public static GameState initial(SortedBag<Ticket> tickets, Random rng) {
         final Deck<Card> allCards = Deck.of(Constants.ALL_CARDS, rng); 
-        final Deck<Card> deckCards = allCards.withoutTopCards(8);
+        final Deck<Card> deckCards = allCards.withoutTopCards(2 * Constants.INITIAL_CARDS_COUNT);
         
         final PlayerId firstPlayerId = PlayerId.ALL.get(rng.nextInt(PlayerId.COUNT));
         final PlayerId secondPlayerId = firstPlayerId.next();
         
-        final PlayerState firstPlayerState = PlayerState.initial(allCards.topCards(4));
-        final PlayerState secondPlayerState = PlayerState.initial(allCards.withoutTopCards(4).topCards(4));
+        final PlayerState firstPlayerState = PlayerState.initial(
+                allCards.topCards(Constants.INITIAL_CARDS_COUNT)
+        );
+        final PlayerState secondPlayerState = PlayerState.initial(
+                allCards.withoutTopCards(Constants.INITIAL_CARDS_COUNT).topCards(Constants.INITIAL_CARDS_COUNT)
+        );
         
         final Map<PlayerId, PlayerState> playerState = new EnumMap<>(PlayerId.class);
         playerState.put(firstPlayerId, firstPlayerState);
