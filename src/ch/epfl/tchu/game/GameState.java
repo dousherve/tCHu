@@ -376,7 +376,7 @@ public final class GameState extends PublicGameState {
                 cardState,
                 currentPlayerId().next(),
                 playerState,
-                lastTurnBegins() ? currentPlayerId() : null
+                lastTurnBegins() ? currentPlayerId() : lastPlayer()
         );
     }
 
