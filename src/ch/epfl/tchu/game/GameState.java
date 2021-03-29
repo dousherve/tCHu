@@ -125,7 +125,8 @@ public final class GameState extends PublicGameState {
                 tickets.withoutTopCards(count),
                 cardState,
                 currentPlayerId(),
-                playerState, lastPlayer()
+                playerState,
+                lastPlayer()
         );
     }
     
