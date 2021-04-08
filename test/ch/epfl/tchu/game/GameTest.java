@@ -1,12 +1,10 @@
 package ch.epfl.tchu.game;
 
-import ch.epfl.tchu.SortedBag;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Random;
-
 class GameTest {
+    /*
+
     private static final class TestPlayer implements Player {
         private static final int TURN_LIMIT = 1000;
 
@@ -41,7 +39,7 @@ class GameTest {
                 throw new Error("Trop de tours joués !");
 
             // Détermine les routes dont ce joueur peut s'emparer
-            List<Route> claimableRoutes = /* ... */;
+            List<Route> claimableRoutes =;
             if (claimableRoutes.isEmpty()) {
                 return TurnKind.DRAW_CARDS;
             } else {
@@ -56,6 +54,7 @@ class GameTest {
         }
     }
 
+    */
 
     @Test
     void play() {
