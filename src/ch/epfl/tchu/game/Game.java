@@ -190,7 +190,7 @@ public final class Game {
             longest = secondTrail;
             winner = PlayerId.PLAYER_2;
         } else if (firstTrail.length() == secondTrail.length()) {
-            winner = null;
+            winner = null; // Pour l'égalité
         }
         
         if (winner == null) {
