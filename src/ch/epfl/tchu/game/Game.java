@@ -102,7 +102,6 @@ public final class Game {
                 case DRAW_CARDS:
                     for (int i = 0; i < 2; ++i) {
                         state = state.withCardsDeckRecreatedIfNeeded(rng);
-                        // TODO: re-broadcast si recréation ?
                         final int slot = currentPlayer.drawSlot();
                         
                         if (slot == -1) {
@@ -127,7 +126,8 @@ public final class Game {
                         // Route en surface
                         state = state.withClaimedRoute(route, claimCards);
                         broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, claimCards), players);
-                    } else {
+                    }
+                    else if (route.level() == Route.Level.UNDERGROUND) {
                         // Route en tunnel
                         broadcastInfo(infos.get(currentPlayerId).attemptsTunnelClaim(route, claimCards), players);
                         
@@ -149,7 +149,6 @@ public final class Game {
                         if (addtitionalCardsCount >= 1 && ! options.isEmpty()) {
                             final SortedBag<Card> chosenAdditional = currentPlayer.chooseAdditionalCards(options);
                             if (! chosenAdditional.isEmpty()) {
-                                // TODO: demander si totalCards est OK
                                 final SortedBag<Card> totalCards = claimCards.union(chosenAdditional);
                                 state = state.withClaimedRoute(route, totalCards);
                                 broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, totalCards), players);
@@ -174,38 +173,37 @@ public final class Game {
         
         // Fin d'une partie de tCHu
         final GameState finalState = state;
-        boolean draw = false;
         
-        Map<PlayerId, Trail> roadmap = Map.of(
-                PlayerId.PLAYER_1, Trail.longest(state.playerState(PlayerId.PLAYER_1).routes()),
-                PlayerId.PLAYER_2, Trail.longest(state.playerState(PlayerId.PLAYER_2).routes())
-        );
+        Trail firstLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_1).routes());
+        Trail secondLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_2).routes());
+        Trail longest;
+        PlayerId bonusWinner;
         
-        Trail firstTrail = roadmap.get(PlayerId.PLAYER_1);
-        Trail secondTrail = roadmap.get(PlayerId.PLAYER_2);
-        Trail longest = firstTrail;
-        PlayerId winner = PlayerId.PLAYER_1;
-        
-        if (firstTrail.length() < secondTrail.length()) {
-            longest = secondTrail;
-            winner = PlayerId.PLAYER_2;
-        } else if (firstTrail.length() == secondTrail.length()) {
-            winner = null; // Pour l'égalité
-        }
-        
-        if (winner == null) {
-            // Égalité
-            broadcastInfo(infos.get(PlayerId.PLAYER_1).getsLongestTrailBonus(firstTrail), players);
-            broadcastInfo(infos.get(PlayerId.PLAYER_2).getsLongestTrailBonus(secondTrail), players);
+        if (firstLongest.length() > secondLongest.length()) {
+            longest = firstLongest;
+            bonusWinner = PlayerId.PLAYER_1;
+        } else if (secondLongest.length() > firstLongest.length()) {
+            longest = secondLongest;
+            bonusWinner = PlayerId.PLAYER_2;
         } else {
-            broadcastInfo(infos.get(winner).getsLongestTrailBonus(longest), players);
+            bonusWinner = null;
+            longest = null;
         }
-        
+    
+        Map<PlayerId, Integer> results = new EnumMap<>(PlayerId.class);
+        players.forEach((playerId, player) -> results.put(playerId, finalState.playerState(playerId).finalPoints()));
+    
         broadcastStateChange(finalState, players);
         
-        Map<PlayerId, Integer> results = new EnumMap<>(PlayerId.class);
-        
-        players.forEach((playerId, player) -> results.put(playerId, finalState.playerState(playerId).finalPoints()));
+        if (bonusWinner != null) {
+            broadcastInfo(infos.get(bonusWinner).getsLongestTrailBonus(longest), players);
+            results.put(bonusWinner, results.get(bonusWinner) + 10);
+        } else {
+            // Égalité des plus longs chemins
+            broadcastInfo(infos.get(PlayerId.PLAYER_1).getsLongestTrailBonus(firstLongest), players);
+            broadcastInfo(infos.get(PlayerId.PLAYER_2).getsLongestTrailBonus(secondLongest), players);
+            results.forEach((id, points) -> results.put(id, points + 10));
+        }
 
         final int offset = results.get(PlayerId.PLAYER_1).compareTo(results.get(PlayerId.PLAYER_2));
         if (offset == 0) {
