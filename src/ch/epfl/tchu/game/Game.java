@@ -142,18 +142,25 @@ public final class Game {
                         final int addtitionalCardsCount = route.additionalClaimCardsCount(claimCards, drawnCards);
                         broadcastInfo(infos.get(currentPlayerId).drewAdditionalCards(drawnCards, addtitionalCardsCount), players);
     
-                        final List<SortedBag<Card>> options = state
-                                .currentPlayerState()
-                                .possibleAdditionalCards(addtitionalCardsCount, claimCards, drawnCards);
+                        if (addtitionalCardsCount == 0) {
+                            // Les cartes jouées n'impliquent aucune carte additionnelle
+                            state = state.withClaimedRoute(route, claimCards);
+                            broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, claimCards), players);
+                        } else {
+                            // Les cartes jouées impliquent au moins une carte additionnelle
+                            final List<SortedBag<Card>> options = state
+                                    .currentPlayerState()
+                                    .possibleAdditionalCards(addtitionalCardsCount, claimCards, drawnCards);
     
-                        if (addtitionalCardsCount >= 1 && ! options.isEmpty()) {
-                            final SortedBag<Card> chosenAdditional = currentPlayer.chooseAdditionalCards(options);
-                            if (! chosenAdditional.isEmpty()) {
-                                final SortedBag<Card> totalCards = claimCards.union(chosenAdditional);
-                                state = state.withClaimedRoute(route, totalCards);
-                                broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, totalCards), players);
-                            } else {
-                                broadcastInfo(infos.get(currentPlayerId).didNotClaimRoute(route), players);
+                            if (addtitionalCardsCount >= 1 && ! options.isEmpty()) {
+                                final SortedBag<Card> chosenAdditional = currentPlayer.chooseAdditionalCards(options);
+                                if (! chosenAdditional.isEmpty()) {
+                                    final SortedBag<Card> totalCards = claimCards.union(chosenAdditional);
+                                    state = state.withClaimedRoute(route, totalCards);
+                                    broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, totalCards), players);
+                                } else {
+                                    broadcastInfo(infos.get(currentPlayerId).didNotClaimRoute(route), players);
+                                }
                             }
                         }
     
