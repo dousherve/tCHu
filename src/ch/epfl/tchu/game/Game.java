@@ -49,7 +49,7 @@ public final class Game {
     public static void play(Map<PlayerId, Player> players, Map<PlayerId, String> playerNames, SortedBag<Ticket> tickets, Random rng) {
         Preconditions.checkArgument(players.size() == 2 && playerNames.size() == 2);
         
-        // Initialisation de la partie
+        // Initialisation d'une partie de tCHu
         GameState state = GameState.initial(tickets, rng);
         
         players.forEach((playerId, player) -> player.initPlayers(playerId, playerNames));
@@ -74,7 +74,6 @@ public final class Game {
             state = state.withInitiallyChosenTickets(id, player.chooseInitialTickets());
         }
         
-        // TODO: demander aux assistants si c'est OK comme ça
         final GameState tempState = state;
         infos.forEach((playerId, info) -> broadcastInfo(
                 info.keptTickets(tempState.playerState(playerId).ticketCount()),
@@ -83,6 +82,7 @@ public final class Game {
         
         // Logique d'une partie de tCHu
         boolean isPlaying = true;
+        
         while (isPlaying) {
             final PlayerId currentPlayerId = state.currentPlayerId();
             final Player currentPlayer = players.get(currentPlayerId);
@@ -124,11 +124,12 @@ public final class Game {
                     
                     if (route.level() == Route.Level.OVERGROUND) {
                         // Route en surface
+                        
                         state = state.withClaimedRoute(route, claimCards);
                         broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, claimCards), players);
-                    }
-                    else if (route.level() == Route.Level.UNDERGROUND) {
+                    } else if (route.level() == Route.Level.UNDERGROUND) {
                         // Route en tunnel
+                        
                         broadcastInfo(infos.get(currentPlayerId).attemptsTunnelClaim(route, claimCards), players);
                         
                         final SortedBag.Builder<Card> b = new SortedBag.Builder<>();
@@ -180,35 +181,34 @@ public final class Game {
         
         // Fin d'une partie de tCHu
         final GameState finalState = state;
+        broadcastStateChange(finalState, players);
         
-        Trail firstLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_1).routes());
-        Trail secondLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_2).routes());
+        Trail fstPlayerLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_1).routes());
+        Trail sndPlayerLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_2).routes());
         Trail longest;
         PlayerId bonusWinner;
         
-        if (firstLongest.length() > secondLongest.length()) {
-            longest = firstLongest;
+        if (fstPlayerLongest.length() > sndPlayerLongest.length()) {
+            longest = fstPlayerLongest;
             bonusWinner = PlayerId.PLAYER_1;
-        } else if (secondLongest.length() > firstLongest.length()) {
-            longest = secondLongest;
+        } else if (sndPlayerLongest.length() > fstPlayerLongest.length()) {
+            longest = sndPlayerLongest;
             bonusWinner = PlayerId.PLAYER_2;
         } else {
             bonusWinner = null;
             longest = null;
         }
-    
+        
         Map<PlayerId, Integer> results = new EnumMap<>(PlayerId.class);
         players.forEach((playerId, player) -> results.put(playerId, finalState.playerState(playerId).finalPoints()));
-    
-        broadcastStateChange(finalState, players);
         
         if (bonusWinner != null) {
             broadcastInfo(infos.get(bonusWinner).getsLongestTrailBonus(longest), players);
             results.put(bonusWinner, results.get(bonusWinner) + 10);
         } else {
             // Égalité des plus longs chemins
-            broadcastInfo(infos.get(PlayerId.PLAYER_1).getsLongestTrailBonus(firstLongest), players);
-            broadcastInfo(infos.get(PlayerId.PLAYER_2).getsLongestTrailBonus(secondLongest), players);
+            broadcastInfo(infos.get(PlayerId.PLAYER_1).getsLongestTrailBonus(fstPlayerLongest), players);
+            broadcastInfo(infos.get(PlayerId.PLAYER_2).getsLongestTrailBonus(sndPlayerLongest), players);
             results.forEach((id, points) -> results.put(id, points + 10));
         }
 
@@ -220,7 +220,6 @@ public final class Game {
             PlayerId winnerId = (offset < 0) ? PlayerId.PLAYER_2 : PlayerId.PLAYER_1;
             broadcastInfo(infos.get(winnerId).won(results.get(winnerId), results.get(winnerId.next())), players);
         }
-        
     }
     
     private Game() {}
