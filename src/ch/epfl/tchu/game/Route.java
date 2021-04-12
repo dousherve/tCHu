@@ -30,7 +30,11 @@ public final class Route {
     }
 
     /**
-     * Construit une route avec les paramètres donnés.
+     * Construit une route avec l'identité <code>id</code>,
+     * les gares <code>station1</code> et <code>station2</code>,
+     * la longueur <code>length</code>,
+     * le niveau <code>level</code> ainsi que
+     * la couleur <code>color</code> donnés.
      *
      * @param id
      *          l'identité unique de la route
@@ -43,7 +47,7 @@ public final class Route {
      * @param level
      *          le niveau auquel la route se trouve : à la surface ou bien dans un tunnel
      * @param color
-     *          la couleur de la route, ou null si elle est de couleur neutre
+     *          la couleur de la route, ou <code>null</code> si elle est de couleur neutre
      *
      * @throws IllegalArgumentException
      *          si les deux gares sont égales (au sens de la méthode <code>equals</code>)
@@ -51,17 +55,16 @@ public final class Route {
      *          <code>Constants.MIN_ROUTE_LENGTH</code> et <code>Constants.MAX_ROUTE_LENGTH</code>
      *
      * @throws NullPointerException
-     *          si l'identité, l'une des 2 gares ou bien le niveau sont null
+     *          si l'identité, l'une des 2 gares ou bien le niveau sont <code>null</code>
      */
     public Route(String id, Station station1, Station station2, int length, Level level, Color color) {
-        final boolean IS_IN_BOUNDS = (
+        final boolean isInBounds = (
                 length >= Constants.MIN_ROUTE_LENGTH
                 && length <= Constants.MAX_ROUTE_LENGTH
         );
-
-        // TODO: amélioration : station1.equals(...) ou station1.id() == station2.id() ?
+        
         Preconditions.checkArgument(
-                ! station1.equals(station2) && IS_IN_BOUNDS
+                ! station1.equals(station2) && isInBounds
         );
 
         this.id = Objects.requireNonNull(id);
@@ -127,7 +130,7 @@ public final class Route {
      *
      * @return
      *          la couleur de la Route
-     *          ou null si la couleur est neutre
+     *          ou <code>null</code> si la couleur est neutre
      */
     public Color color() {
         return color;
@@ -230,9 +233,7 @@ public final class Route {
             );
         }
         
-        return Collections.unmodifiableList(
-                possibleClaimCards
-        );
+        return Collections.unmodifiableList(possibleClaimCards);
     }
 
     /**
@@ -256,12 +257,12 @@ public final class Route {
                 level == Level.UNDERGROUND && drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS
         );
         
-        final SortedBag<Card> COLORED_DRAWN_CARDS = drawnCards.difference(
+        final SortedBag<Card> coloredDrawnCards = drawnCards.difference(
                 SortedBag.of(drawnCards.countOf(Card.LOCOMOTIVE), Card.LOCOMOTIVE)
         );
         
         int commonCardsCount = 0;
-        for (Card c : COLORED_DRAWN_CARDS) {
+        for (Card c : coloredDrawnCards) {
             if (claimCards.contains(c))
                 ++commonCardsCount;
         }

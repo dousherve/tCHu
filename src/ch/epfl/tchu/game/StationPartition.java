@@ -5,8 +5,8 @@ import ch.epfl.tchu.Preconditions;
 /**
  * Classe publique, finale et immuable qui représente une partition (aplatie) de gares.
  *
- * Elle implémente l'interface <code>{@link StationConnectivity}</code> car ses instances ont pour but
- * d'être passées à la méthode <code>points()</code> de <code>{@link Ticket}</code>.
+ * Elle implémente l'interface <code>{@link StationConnectivity}</code>, ses instances ayant pour but
+ * d'être passées à la méthode <code>points</code> de <code>{@link Ticket}</code>.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -28,7 +28,8 @@ public final class StationPartition implements StationConnectivity {
      *          la gare de départ
      * @param s2
      *          la gare d'arrivée
-     * @return un booléen indiquant si les gares passées en paramètre
+     * @return 
+     *          un booléen indiquant si les gares passées en paramètre
      *          sont reliées par le réseau du joueur
      */
     @Override
@@ -63,6 +64,8 @@ public final class StationPartition implements StationConnectivity {
          * 0 (inclus) et <code>stationCount</code> (exclus)
          *
          * @param stationCount
+         *          le nombre de gares que contiendra la partition,
+         *          représenté par l'identité la plus grande parmi celles des gares concernées
          * @throws IllegalArgumentException
          *          si <code>stationCount</code> est strictement négatif (< 0)
          */

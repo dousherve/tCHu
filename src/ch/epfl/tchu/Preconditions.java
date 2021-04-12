@@ -1,27 +1,28 @@
 package ch.epfl.tchu;
 
 /**
- * Classe utilitaire servant à vérifier les préconditions
- * de fonctions.
+ * Classe utilitaire servant à vérifier les arguments passées
+ * à certaines fonctions.
  * 
+ * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
  */
 public final class Preconditions {
     
-    private Preconditions() {}
-    
     /**
      * Vérifie que l'argument passé en paramètre est vrai,
-     * retourne une {@link IllegalArgumentException} sinon.
+     * lance une {@link IllegalArgumentException} sinon.
      * 
      * @param shouldBeTrue
-     *          booléen vérifié par la fonction (doit être vrai)
+     *          booléen vérifié par la fonction qui doit être vrai
      * @throws IllegalArgumentException
-     *          si le booléen shouldBeTrue est faux
+     *          si le booléen <code>shouldBeTrue</code> est faux
      */
     public static void checkArgument(boolean shouldBeTrue) {
         if (! shouldBeTrue)
             throw new IllegalArgumentException();
     }
+    
+    private Preconditions() {}
     
 }

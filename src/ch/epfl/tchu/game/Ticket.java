@@ -2,21 +2,64 @@ package ch.epfl.tchu.game;
 
 import ch.epfl.tchu.Preconditions;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Classe immuable représentant un billet.
+ * Classe publique, finale et immuable représentant un billet.
  * 
- * @author Louis Hervé (312937)
  * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
  */
 public final class Ticket implements Comparable<Ticket> {
     
     private final List<Trip> trips;
     private final String text;
+    
+    /**
+     * Méthode privée et statique qui retourne la représentation textuelle du billet
+     * selon la liste de trajets passée en paramètre.
+     *
+     * @param trips
+     *          la liste de trajets du billet
+     * @return
+     *          la représentation textuelle du billet
+     */
+    private static String computeText(List<Trip> trips) {
+        final Trip firstTrip = trips.get(0);
+        final String fromStationName = firstTrip.from().name();
+        
+        if (trips.size() == 1) {
+            // Billet ville à ville, car il contient un seul trajet
+            final String toStationName = firstTrip.to().name();
+            
+            return String.format(
+                    "%s - %s (%d)",
+                    fromStationName,
+                    toStationName,
+                    firstTrip.points()
+            );
+        }
+        
+        // Billet ville à pays ou bien pays à pays
+        Set<String> destinationsDescriptions = new TreeSet<>();
+        for (Trip trip : trips) {
+            destinationsDescriptions.add(
+                    String.format(
+                            "%s (%d)",
+                            trip.to().name(),
+                            trip.points()
+                    )
+            );
+        }
+        
+        return String.format(
+                "%s - {%s}",
+                fromStationName,
+                String.join(", ", destinationsDescriptions)
+        );
+    }
     
     /**
      * Construit un billet constitué de la liste de trajets donnée.
@@ -30,22 +73,11 @@ public final class Ticket implements Comparable<Ticket> {
     public Ticket(List<Trip> trips) {
         Preconditions.checkArgument(! trips.isEmpty());
         
-        // TODO: amélioration : utiliser un ListIterator
-        final String FIRST_STATION_NAME = trips
-                .get(0)
-                .from()
-                .name();
-
-        for (int i = 1; i < trips.size(); ++i) {
-            final String CURRENT_STATION_NAME = trips
-                    .get(i)
-                    .from()
-                    .name();
-
+        final String firstStationName = trips.get(0).from().name();
+        for (Trip trip : trips)
             Preconditions.checkArgument(
-                    CURRENT_STATION_NAME.equals(FIRST_STATION_NAME)
+                    trip.from().name().equals(firstStationName)
             );
-        }
         
         this.trips = List.copyOf(trips);
         this.text = computeText(trips);
@@ -62,66 +94,15 @@ public final class Ticket implements Comparable<Ticket> {
      *          le nombre de points que vaut le trajet
      */
     public Ticket(Station from, Station to, int points) {
-        this(Collections.singletonList(
+        this(List.of(
                 new Trip(from, to, points)
         ));
     }
     
     /**
-     * Méthode privée et statique qui retourne la représentation textuelle du billet
-     * selon la liste de trajets passée en paramètre.
-     * 
-     * @param trips
-     *          la liste de trajets du billet
-     * @return
-     *          la représentation textuelle du billet
-     */
-    private static String computeText(List<Trip> trips) {
-        final Trip FIRST_TRIP = trips.get(0);
-        final String FROM_STATION_NAME = FIRST_TRIP.from().name();
-        
-        if (trips.size() == 1) {
-            // Billet ville à ville, car il contient un seul trajet
-            final String TO_STATION_NAME = FIRST_TRIP.to().name();
-            
-            return String.format(
-                    "%s - %s (%d)",
-                    FROM_STATION_NAME,
-                    TO_STATION_NAME,
-                    FIRST_TRIP.points()
-            );
-        }
-        
-        // Billet ville à pays ou bien pays à pays
-    
-        Set<String> destinationsDescriptions = new TreeSet<>();
-        
-        for (Trip trip : trips) {
-            destinationsDescriptions.add(
-                    String.format(
-                            "%s (%d)",
-                            trip.to().name(),
-                            trip.points()
-                    )
-            );
-        }
-        
-        final String FORMATTED_DESCRITPIONS = String.join(
-                ", ", destinationsDescriptions
-        );
-    
-        return String.format(
-                "%s - {%s}",
-                FROM_STATION_NAME,
-                FORMATTED_DESCRITPIONS
-        );
-    }
-    
-    /**
      * Retourne la représentation textuelle du billet.
      * 
-     * @return
-     *          la représentation textuelle du billet
+     * @return la représentation textuelle du billet
      */
     public String text() {
         return text;
@@ -138,15 +119,11 @@ public final class Ticket implements Comparable<Ticket> {
      *          la connectivité du joueur qui le possède
      */
     public int points(StationConnectivity connectivity) {
-        // TODO: amélioration : utiliser un ListIterator
-        final int FIRST_TRIP_POINTS = trips
-                .get(0)
-                .points(connectivity);
+        final int firstTripPoints = trips.get(0).points(connectivity);
         
-        if (trips.size() == 1) {
-            // Billet ville à ville : trajet unique
-            return FIRST_TRIP_POINTS;
-        }
+        // Billet ville à ville : trajet unique
+        if (trips.size() == 1)
+            return firstTripPoints;
     
         /* 
            Billet ville à pays ou bien pays à pays :
@@ -154,25 +131,28 @@ public final class Ticket implements Comparable<Ticket> {
            Ainsi, le comportement min/max imposé sera automatiquement
            pris en compte grâce au signe des valeurs retournées par le trajet en question.
         */
-        int maxScore = FIRST_TRIP_POINTS;
-        for (int i = 1; i < trips.size(); ++i) {
+        int maxScore = firstTripPoints;
+        for (Trip trip : trips)
             maxScore = Math.max(
                     maxScore,
-                    trips.get(i).points(connectivity)
+                    trip.points(connectivity)
             );
-        }
             
         return maxScore;
     }
 
     /**
-     * Compare ce billet à celui passé en argument
-     * selon l'ordre alphabétique de leur représentation textuelle.
+     * Compare le billet auquel on l'applique à celui passé en argument (<code>that</code>)
+     * par ordre alphabétique de leur représentation textuelle,
+     * et retourne un entier strictement négatif si il est strictement plus petit que <code>that</code>,
+     * un entier strictement positif si il est strictement plus grand que <code>that</code>,
+     * et zéro si les deux sont égaux.
      * 
      * @param that
      *          le billet avec lequel on effectue la comparaison
-     * @return un entier strictement négatif si this est strictement plus petit que <code>that</code>,
-     *         un entier strictement positif si this est strictement plus grand que <code>that</code>,
+     * @return 
+     *         un entier strictement négatif si <code>this</code> est strictement plus petit que <code>that</code>,
+     *         un entier strictement positif si <code>this</code> est strictement plus grand que <code>that</code>,
      *         et zéro si les deux sont égaux
      */
     @Override
@@ -184,8 +164,7 @@ public final class Ticket implements Comparable<Ticket> {
      * Retourne la même valeur que la méthode <code>text()</code> :
      * la représentation textuelle du billet.
      *
-     * @return
-     *          la représentation textuelle du billet
+     * @return la représentation textuelle du billet
      */
     @Override
     public String toString() {

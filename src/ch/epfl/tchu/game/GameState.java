@@ -45,7 +45,9 @@ public final class GameState extends PublicGameState {
                 allCards.topCards(Constants.INITIAL_CARDS_COUNT)
         );
         final PlayerState secondPlayerState = PlayerState.initial(
-                allCards.withoutTopCards(Constants.INITIAL_CARDS_COUNT).topCards(Constants.INITIAL_CARDS_COUNT)
+                allCards
+                        .withoutTopCards(Constants.INITIAL_CARDS_COUNT)
+                        .topCards(Constants.INITIAL_CARDS_COUNT)
         );
         
         final Map<PlayerId, PlayerState> playerState = new EnumMap<>(PlayerId.class);

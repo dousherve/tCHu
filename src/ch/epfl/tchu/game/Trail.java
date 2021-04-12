@@ -78,13 +78,13 @@ public final class Trail {
     
                     // La gare de départ ne change pas, mais la nouvelle gare
                     // d'arrivée est l'opposée de l'ancienne par rapport à la route ajoutée
-                    final Trail NEW_TRAIL = new Trail(
+                    final Trail newTrail = new Trail(
                             t.station1,
                             r.stationOpposite(t.station2),
                             newTrailRoutes
                     );
                     
-                    tempTrails.add(NEW_TRAIL);
+                    tempTrails.add(newTrail);
                 }
             }
             
@@ -148,20 +148,18 @@ public final class Trail {
      */
     @Override
     public String toString() {
-        if (length == 0) {
+        if (length == 0)
             return "Empty trail";
-        }
         
         List<String> stationNames = new ArrayList<>();
-        
         // On ajoute le nom de la gare de départ du chemin
         stationNames.add(station1.name());
         
         Station previousStation = station1;
         for (Route r : routes) {
-            final Station NEW_STATION = r.stationOpposite(previousStation);
-            stationNames.add(NEW_STATION.name());
-            previousStation = NEW_STATION;
+            final Station newStation = r.stationOpposite(previousStation);
+            stationNames.add(newStation.name());
+            previousStation = newStation;
         }
         
         return String.format(

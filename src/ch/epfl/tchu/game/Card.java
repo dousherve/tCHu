@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Représente les différents types de cartes du jeu :
- * huit cartes wagon, une carte locomotive.
+ * Type énuméré qui représente les différents types de cartes du jeu :
+ * huit cartes wagon et une carte locomotive.
  * 
+ * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
  */
 public enum Card {
@@ -45,16 +46,6 @@ public enum Card {
     private final Color color;
     
     /**
-     * Construit une nouvelle carte en prenant sa couleur en paramètre.
-     * 
-     * @param color
-     *          la couleur de la carte (peut être null)
-     */
-    Card(Color color) {
-        this.color = color;
-    }
-    
-    /**
      * Retourne l'unique carte wagon dont la couleur est celle 
      * passée en paramètre.
      * 
@@ -62,25 +53,51 @@ public enum Card {
      *          la couleur de la carte désirée (non-null)
      * @throws NullPointerException
      *          si la couleur passée en paramètre est null
-     * @return l'unique carte wagon dont la couleur est color
+     * @return
+     *          l'unique carte wagon dont la couleur est color
      */
     public static Card of(Color color) {
         Objects.requireNonNull(color);
-        
-        for (Card car : CARS) {
-            if (car.color == color)
-                return car;
+    
+        switch (color) {
+            case BLACK:
+                return Card.BLACK;
+            case VIOLET:
+                return Card.VIOLET;
+            case BLUE:
+                return Card.BLUE;
+            case GREEN:
+                return Card.GREEN;
+            case YELLOW:
+                return Card.YELLOW;
+            case ORANGE:
+                return Card.ORANGE;
+            case RED:
+                return Card.RED;
+            case WHITE:
+                return Card.WHITE;
+            default:
+                throw new IllegalArgumentException("Il n'existe aucune carte de la couleur donnée.");
         }
         
-        throw new NullPointerException("Il n'y a pas de carte wagon correpondant à cette couleur");
+    }
+    
+    /**
+     * Construit une nouvelle carte en prenant sa couleur en paramètre.
+     *
+     * @param color
+     *          la couleur de la carte (peut être <code>null</code>)
+     */
+    Card(Color color) {
+        this.color = color;
     }
     
     /**
      * Retourne la couleur de cette carte si c'est un wagon,
-     * ou null si c'est une locomotive.
+     * ou <code>null</code> si c'est une locomotive.
      *
      * @return la couleur de cette carte si c'est un wagon, 
-     *          ou null si c'est une locomotive.
+     *          ou <code>null</code> si c'est une locomotive.
      */
     public Color color() {
         return color;

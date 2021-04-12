@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Classe publique et immuable qui représente la partie publique de l'état d'un joueur.
  *
- * C'est-à-dire : son nombre de billets, son nombre de cartes wagons en possession,
+ * Elle contient son nombre de billets, le nombre de cartes wagons qu'il possède,
  * la liste des routes dont il s'est emparé et le nombre de points de construction qu'il a ainsi obtenu.
  *
  * @author Mallory Henriet (311258)
@@ -20,8 +20,9 @@ public class PublicPlayerState {
     private final int carCount, claimPoints;
 
     /**
-     * Construit l'état public d'un joueur possédant le nombre de billets et de cartes donnés
-     * ainsi que la liste de routes donnée.
+     * Construit l'état public d'un joueur possédant le nombre de billets et de cartes
+     * donnés dans <code>ticketCount</code> et dans <code>cardCount</code>,
+     * et s'étant emparé des routes données dans <code>routes</code>.
      *
      * @param ticketCount
      *          le nombre de billets
@@ -30,7 +31,7 @@ public class PublicPlayerState {
      * @param routes
      *          la liste des routes dont le joueur s'est emparé
      * @throws IllegalArgumentException
-     *          si <code>ticketCount</code> ou si <code>cardCount</code> est stricement négatif (< 0)
+     *          si <code>ticketCount</code> ou <code>cardCount</code> est stricement négatif (< 0)
      */
     public PublicPlayerState(int ticketCount, int cardCount, List<Route> routes) {
         Preconditions.checkArgument(ticketCount >= 0 && cardCount >= 0);
@@ -57,7 +58,7 @@ public class PublicPlayerState {
      * Retourne le nombre de cartes que possède le joueur.
      *
      * @return
-     *          le nombre cartes que possède le joueur
+     *          le nombre de cartes que possède le joueur
      */
     public int cardCount() {
         return cardCount;

@@ -24,7 +24,7 @@ public class PublicGameState {
      * Construit la partie publique de l'état d'une partie de tCHu dans laquelle
      * la pioche de billets a une taille de <code>ticketsCount</code>,
      * l'état public des cartes wagon/locomotive est <code>cardState</code>,
-     * le joueur courant est <code>currentPlayerId</code>,
+     * l'identité du joueur courant est <code>currentPlayerId</code>,
      * l'état public des joueurs est contenu dans <code>playerState</code>,
      * et l'identité du dernier joueur est <code>lastPlayer</code> (qui peut être <code>null</code>)
      * 
@@ -42,7 +42,7 @@ public class PublicGameState {
      *          si la taille de la pioche est strictement négative, ou
      *          si <code>playerState</code> ne contient pas exactement deux paires clé/valeur
      * @throws NullPointerException
-     *          si l'un des autres arguments (<code>lastPlayer</code> excepté) est <code>null</code>
+     *          si l'un des arguments (<code>lastPlayer</code> excepté) est <code>null</code>
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer) {
         Preconditions.checkArgument(ticketsCount >= 0 && playerState.size() == 2);
@@ -135,7 +135,8 @@ public class PublicGameState {
      *          la totalité des routes dont l'un ou l'autre des joueurs s'est emparé
      */
     public List<Route> claimedRoutes() {
-        return playerState.values().stream()
+        return playerState.values()
+                .stream()
                 .flatMap(state -> state.routes().stream())
                 .collect(Collectors.toUnmodifiableList());
     }

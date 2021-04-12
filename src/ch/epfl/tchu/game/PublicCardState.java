@@ -7,12 +7,13 @@ import java.util.Objects;
 
 /**
  * Classe publique et immuable qui représente (une partie de) l'état des cartes
- * wagons/locomotive qui ne sont pas en main des joueurs.
+ * wagons/locomotive qui ne sont pas dans la main des joueurs.
  *
- * C'est à dire les 5 cartes disposées face visible à côté du plateau, la pioche et la défausse.
+ * Cette classe représente donc les 5 cartes disposées face visible
+ * à côté du plateau, la pioche ainsi que la défausse.
  *
- * Il s'agit de la partie de l'état des cartes connue de tous les joueurs,
- * par exemple : la taille de la pioche, mais pas son contenu exact.
+ * Il s'agit de la partie de l'état des cartes connue de tous les joueurs.
+ * Par exemple, elle contient la taille de la pioche, mais pas son contenu exact.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -23,7 +24,10 @@ public class PublicCardState {
     private final int deckSize, discardsSize;
 
     /**
-     * Constructeur de PublicCardState.
+     * Construit un état public des cartes dans lequel les cartes
+     * face visible sont celles données dans <code>faceUpCards</code>,
+     * la pioche contient <code>deckSize</code> cartes
+     * et la défausse en contient <code>discardsSize</code>.
      *
      * @param faceUpCards
      *          les cartes face visible données
@@ -63,7 +67,7 @@ public class PublicCardState {
      * Retourne les 5 cartes face visible sous la forme d'une liste de 5 éléments.
      *
      * @return
-     *          retourne une liste de 5 élements formée des cartes face visible.
+     *          retourne une liste de 5 élements formée des cartes face visible
      */
     public List<Card> faceUpCards() {
         return faceUpCards;

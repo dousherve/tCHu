@@ -3,9 +3,10 @@ package ch.epfl.tchu.game;
 import java.util.List;
 
 /**
- * Représente les huit couleurs utilisées dans le jeu
+ * Type énuméré qui représente les huit couleurs utilisées dans tCHu
  * pour colorer les cartes wagon et les routes.
  * 
+ * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
  */
 public enum Color {
@@ -24,7 +25,6 @@ public enum Color {
      * dans leur ordre de déclaration.
      */
     public static final List<Color> ALL = List.of(values());
-    
     /**
      * Nombre total de couleurs.
      */
