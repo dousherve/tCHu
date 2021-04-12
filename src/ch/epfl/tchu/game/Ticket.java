@@ -74,10 +74,11 @@ public final class Ticket implements Comparable<Ticket> {
         Preconditions.checkArgument(! trips.isEmpty());
         
         final String firstStationName = trips.get(0).from().name();
-        for (Trip trip : trips)
+        for (Trip trip : trips) {
             Preconditions.checkArgument(
                     trip.from().name().equals(firstStationName)
             );
+        }
         
         this.trips = List.copyOf(trips);
         this.text = computeText(trips);
@@ -132,11 +133,12 @@ public final class Ticket implements Comparable<Ticket> {
            pris en compte grâce au signe des valeurs retournées par le trajet en question.
         */
         int maxScore = firstTripPoints;
-        for (Trip trip : trips)
+        for (Trip trip : trips) {
             maxScore = Math.max(
                     maxScore,
                     trip.points(connectivity)
             );
+        }
             
         return maxScore;
     }

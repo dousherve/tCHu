@@ -36,12 +36,12 @@ public enum Card {
     /**
      * Liste immuable contenant uniquement les cartes wagon,
      * dans leur ordre de définition.
+     * 
+     * @implNote Sous-liste immuable de ALL du premier jusqu'à
+     *           l'avant-dernier élément, le dernier étant LOCOMOTIVE.
      */
-    public static final List<Card> CARS = Collections.unmodifiableList(
-            // Sous-liste de ALL du premier jusqu'à l'avant-dernier élément,
-            // le dernier étant LOCOMOTIVE.
-            ALL.subList(0, COUNT - 1)
-    );
+    public static final List<Card> CARS =
+            Collections.unmodifiableList(ALL.subList(0, COUNT - 1));
     
     private final Color color;
     
@@ -50,11 +50,11 @@ public enum Card {
      * passée en paramètre.
      * 
      * @param color
-     *          la couleur de la carte désirée (non-null)
+     *          la couleur de la carte désirée
      * @throws NullPointerException
-     *          si la couleur passée en paramètre est null
+     *          si la couleur passée en paramètre est <code>null</code>
      * @return
-     *          l'unique carte wagon dont la couleur est color
+     *          l'unique carte wagon dont la couleur est <code>color</code>
      */
     public static Card of(Color color) {
         Objects.requireNonNull(color);

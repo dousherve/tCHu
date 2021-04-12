@@ -1,11 +1,11 @@
 package ch.epfl.tchu.game;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * Classe finale et immuable représentant un chemin dans le réseau d'un joueur.
+ * Classe publique, finale et immuable représentant
+ * un chemin dans le réseau d'un joueur.
  * 
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -31,40 +31,26 @@ public final class Trail {
     public static Trail longest(List<Route> routes) {
         // Si la liste de routes est vide, on retourne un chemin vide
         // dont les gares sont null
-        if (routes.isEmpty()) {
-            return new Trail(
-                    null, null, Collections.emptyList()
-            );
-        }
+        if (routes.isEmpty())
+            return new Trail(null, null, List.of());
             
         List<Trail> trails = new ArrayList<>();
         // On ajoute tous les chemins constitués d'une seule route
         for (Route r : routes) {
-            trails.add(
-                    new Trail(
-                            r.station1(), r.station2(),
-                            Collections.singletonList(r)
-                    )
-            );
-            trails.add(
-                    new Trail(
-                            r.station2(), r.station1(),
-                            Collections.singletonList(r)
-                    )
-            );
+            trails.add(new Trail(r.station1(), r.station2(), List.of(r)));
+            trails.add(new Trail(r.station2(), r.station1(), List.of(r)));
         }
     
         // On sait que trails n'est pas vide, il contient à ce stade
         // au minimum deux chemins, s'il n'y a qu'une route
         Trail longestTrail = trails.get(0);
-    
+        
         while (! trails.isEmpty()) {
             List<Trail> tempTrails = new ArrayList<>();
             
             for (Trail t : trails) {
-                if (t.length > longestTrail.length) {
+                if (t.length > longestTrail.length)
                     longestTrail = t;
-                }
                 
                 List<Route> newRoutes = new ArrayList<>(routes);
                 // On retire les routes qui appartiennent déjà au chemin...
@@ -78,13 +64,9 @@ public final class Trail {
     
                     // La gare de départ ne change pas, mais la nouvelle gare
                     // d'arrivée est l'opposée de l'ancienne par rapport à la route ajoutée
-                    final Trail newTrail = new Trail(
-                            t.station1,
-                            r.stationOpposite(t.station2),
-                            newTrailRoutes
-                    );
-                    
-                    tempTrails.add(newTrail);
+                    tempTrails.add(new Trail(
+                            t.station1, r.stationOpposite(t.station2), newTrailRoutes
+                    ));
                 }
             }
             
@@ -98,19 +80,16 @@ public final class Trail {
         this.station1 = station1;
         this.station2 = station2;
         this.routes = List.copyOf(routes);
-    
-        // La longueur du chemin est la somme 
-        // de celles de toutes les routes qui le composent
+        
         this.length = routes.stream()
                 .mapToInt(Route::length)
                 .sum();
     }
 
     /**
-     * Retourne la longueur du chemin
+     * Retourne la longueur du chemin.
      *
-     * @return
-     *          la longueur du chemin
+     * @return la longueur du chemin
      */
     public int length() {
         return length;
@@ -121,7 +100,7 @@ public final class Trail {
      *
      * @return
      *          la gare de départ du chemin
-     *          ou null si le chemin est de longueur zéro
+     *          ou <code>null</code> si le chemin est de longueur zéro
      */
     public Station station1() {
         return station1;
@@ -132,7 +111,7 @@ public final class Trail {
      *
      * @return
      *          la gare d'arrivée du chemin
-     *          ou null si le chemin est de longueur zéro
+     *          ou <code>null</code> si le chemin est de longueur zéro
      */
     public Station station2() {
         return station2;
