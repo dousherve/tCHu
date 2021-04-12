@@ -21,7 +21,7 @@ class TrailTest {
     @Test
     void longestWorksOnEmptyList() {
         var trail = Trail.longest(Collections.emptyList());
-        assertEquals("Empty trail", trail.toString());
+        assertEquals("Chemin vide", trail.toString());
     }
 
     @Test

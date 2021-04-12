@@ -128,7 +128,7 @@ public final class Trail {
     @Override
     public String toString() {
         if (length == 0)
-            return "Empty trail";
+            return "Chemin vide";
         
         List<String> stationNames = new ArrayList<>();
         // On ajoute le nom de la gare de départ du chemin

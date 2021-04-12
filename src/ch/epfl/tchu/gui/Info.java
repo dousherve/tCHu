@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Classe finale et immuable représentant un générateur de messages
+ * Classe publique, finale et immuable représentant un générateur de messages
  * qui permet de générer les textes décrivant le déroulement de la partie.
  * 
  * Les messages dépendent des chaînes de caractères de <code>{@link StringsFr}</code>
@@ -35,26 +35,23 @@ public final class Info {
         List<String> cardsDescriptions = new ArrayList<>();
         
         for (Card c : cards.toSet()) {
-            final int COUNT = cards.countOf(c);
-            cardsDescriptions.add(
-                    COUNT + " " + cardName(c, COUNT)
-            );
+            final int count = cards.countOf(c);
+            cardsDescriptions.add(count + " " + cardName(c, count));
         }
         
-        StringBuilder descrBuilder = new StringBuilder();
+        StringBuilder descrB = new StringBuilder();
         
-        var it = cardsDescriptions.listIterator();
-        while (it.hasNext()) {
-            descrBuilder.append(it.next());
+        var descrIt = cardsDescriptions.listIterator();
+        while (descrIt.hasNext()) {
+            descrB.append(descrIt.next());
     
-            if (it.nextIndex() < cardsDescriptions.size() - 1) {
-                descrBuilder.append(", ");
-            } else if (it.nextIndex() == cardsDescriptions.size() - 1) {
-                descrBuilder.append(StringsFr.AND_SEPARATOR);
-            }
+            if (descrIt.nextIndex() < cardsDescriptions.size() - 1)
+                descrB.append(", ");
+            else if (descrIt.nextIndex() == cardsDescriptions.size() - 1)
+                descrB.append(StringsFr.AND_SEPARATOR);
         }
         
-        return descrBuilder.toString();
+        return descrB.toString();
     }
     
     /**
@@ -142,10 +139,7 @@ public final class Info {
      * @return le message déclarant que le joueur jouera en premier
      */
     public String willPlayFirst() {
-        return String.format(
-                StringsFr.WILL_PLAY_FIRST,
-                playerName
-        );
+        return String.format(StringsFr.WILL_PLAY_FIRST, playerName);
     }
     
     /**
@@ -153,7 +147,8 @@ public final class Info {
      * 
      * @param count
      *          le nombre de billets que le joueur a décidé de garder
-     * @return le message déclarant que le joueur a gardé le nombre de billets donné
+     * @return
+     *          le message déclarant que le joueur a gardé le nombre de billets donné
      */
     public String keptTickets(int count) {
         return String.format(
@@ -169,10 +164,7 @@ public final class Info {
      * @return le message déclarant que le joueur peut jouer
      */
     public String canPlay() {
-        return String.format(
-                StringsFr.CAN_PLAY,
-                playerName
-        );
+        return String.format(StringsFr.CAN_PLAY, playerName);
     }
     
     /**
@@ -196,10 +188,7 @@ public final class Info {
      * @return le message déclarant que le joueur a tiré une carte du sommet de la pioche
      */
     public String drewBlindCard() {
-        return String.format(
-                StringsFr.DREW_BLIND_CARD,
-                playerName
-        );
+        return String.format(StringsFr.DREW_BLIND_CARD, playerName);
     }
     
     /**
@@ -207,7 +196,8 @@ public final class Info {
      * 
      * @param card
      *          la carte face visible tirée par le joueur
-     * @return le message déclarant que le joueur a tiré la carte disposée face visible donnée
+     * @return
+     *          le message déclarant que le joueur a tiré la carte disposée face visible donnée
      */
     public String drewVisibleCard(Card card) {
         return String.format(
@@ -227,8 +217,8 @@ public final class Info {
      *          le message déclarant que le joueur s'est emparé de la route donnée au moyen des cartes données
      */
     public String claimedRoute(Route route, SortedBag<Card> cards) {
-        final Card CARD = cards.get(0);
-        final int CARD_COUNT = cards.countOf(CARD);
+        final Card card = cards.get(0);
+        final int cardCount = cards.countOf(card);
         
         return String.format(
                 StringsFr.CLAIMED_ROUTE,
@@ -273,23 +263,23 @@ public final class Info {
      *          et qu'elles impliquent un coût additionel du nombre de cartes donné
      */
     public String drewAdditionalCards(SortedBag<Card> drawnCards, int additionalCost) {
-        StringBuilder descrBuilder = new StringBuilder();
+        StringBuilder descrB = new StringBuilder();
         
-        descrBuilder.append(String.format(
+        descrB.append(String.format(
                 StringsFr.ADDITIONAL_CARDS_ARE,
                 cardsDescription(drawnCards)
         ));
         
         if (additionalCost == 0) {
-            descrBuilder.append(StringsFr.NO_ADDITIONAL_COST);
+            descrB.append(StringsFr.NO_ADDITIONAL_COST);
         } else {
-            descrBuilder.append(String.format(
+            descrB.append(String.format(
                     StringsFr.SOME_ADDITIONAL_COST,
                     additionalCost, StringsFr.plural(additionalCost)
             ));
         }
         
-        return descrBuilder.toString();
+        return descrB.toString();
     }
     
     /**
@@ -297,7 +287,8 @@ public final class Info {
      * 
      * @param route
      *          la route en tunnel dont le joueur ne s'est pas emparé
-     * @return le message déclarant que le joueur n'a pas pu (ou voulu) s'emparer du tunnel donné
+     * @return
+     *          le message déclarant que le joueur n'a pas pu (ou voulu) s'emparer du tunnel donné
      */
     public String didNotClaimRoute(Route route) {
         return String.format(
@@ -336,16 +327,12 @@ public final class Info {
      *          grâce au chemin donné
      */
     public String getsLongestTrailBonus(Trail longestTrail) {
-        final String TRAIL_DESCRIPTION = 
+        final String trailDescr = 
                 longestTrail.station1().name()
                 + StringsFr.EN_DASH_SEPARATOR
                 + longestTrail.station2().name();
         
-        return String.format(
-                StringsFr.GETS_BONUS,
-                playerName,
-                TRAIL_DESCRIPTION
-        );
+        return String.format(StringsFr.GETS_BONUS, playerName, trailDescr);
     }
     
     /**

@@ -36,16 +36,14 @@ public class PublicCardState {
      * @param discardsSize
      *          la taille de la défausse
      * @throws IllegalArgumentException
-     *          si <code>faceUpCards</code> ne contient pas le bon nombre d'éléments (<code>Constants.FACE_UP_CARDS_COUNT</code>),
+     *          si <code>faceUpCards</code> ne contient pas le bon nombre d'éléments
+     *          (<code>Constants.FACE_UP_CARDS_COUNT</code>),
      *          si la taille de la pioche est négative,
      *          ou bien si la taille de la défausse est négative
      */
     public PublicCardState(List<Card> faceUpCards, int deckSize, int discardsSize) {
-        Preconditions.checkArgument(
-                faceUpCards.size() == Constants.FACE_UP_CARDS_COUNT
-                && deckSize >= 0
-                && discardsSize >= 0
-        );
+        Preconditions.checkArgument(faceUpCards.size() == Constants.FACE_UP_CARDS_COUNT);
+        Preconditions.checkArgument(deckSize >= 0 && discardsSize >= 0);
 
         this.faceUpCards = List.copyOf(faceUpCards);
         this.deckSize = deckSize;
@@ -56,8 +54,7 @@ public class PublicCardState {
      * Retoune le nombre total de cartes qui ne sont pas en main des joueurs,
      * c'est à dire les cartes face visible, celles de la pioche et celles de la défausse.
      *
-     * @return
-     *          le nombre total de cartes qui ne sont pas en main des joueurs
+     * @return le nombre total de cartes qui ne sont pas en main des joueurs
      */
     public int totalSize() {
         return faceUpCards.size() + deckSize + discardsSize;
@@ -66,8 +63,7 @@ public class PublicCardState {
     /**
      * Retourne les 5 cartes face visible sous la forme d'une liste de 5 éléments.
      *
-     * @return
-     *          retourne une liste de 5 élements formée des cartes face visible
+     * @return retourne une liste de 5 élements formée des cartes face visible
      */
     public List<Card> faceUpCards() {
         return faceUpCards;
@@ -85,15 +81,13 @@ public class PublicCardState {
      */
     public Card faceUpCard(int slot) {
         return faceUpCards.get(
-                Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT)
-        );
+                Objects.checkIndex(slot, Constants.FACE_UP_CARDS_COUNT));
     }
 
     /**
      * Retourne la taille de la pioche.
      *
-     * @return
-     *          la taille de la pioche
+     * @return la taille de la pioche
      */
     public int deckSize() {
         return deckSize;
@@ -113,8 +107,7 @@ public class PublicCardState {
     /**
      * Retourne la taille de la défausse.
      *
-     * @return
-     *          la taille de la défausse
+     * @return la taille de la défausse
      */
     public int discardsSize() {
         return discardsSize;

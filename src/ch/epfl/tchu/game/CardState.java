@@ -9,9 +9,9 @@ import java.util.Objects;
 import java.util.Random;
 
 /**
- * Classe finale et immuable héritant de <code>{@link PublicCardState}</code>
+ * Classe publique, finale et immuable héritant de <code>{@link PublicCardState}</code>
  * qui représente l'état des cartes wagon/locomotive qui ne sont pas en main des joueurs,
- * c'est-à-dire les cartes que contiennent la pioche et la défausse.
+ * c'est-à-dire le contenu de la pioche et de la défausse.
  * 
  * Elle ajoute à <code>{@link PublicCardState}</code> les éléments privés de l'état
  * ainsi que les méthodes correspondantes.
@@ -83,11 +83,7 @@ public final class CardState extends PublicCardState {
         List<Card> newFaceUpCards = new ArrayList<>(faceUpCards());
         newFaceUpCards.set(slot, deck.topCard());
 
-        return new CardState(
-                newFaceUpCards,
-                deck.withoutTopCard(),
-                discards
-        );
+        return new CardState(newFaceUpCards, deck.withoutTopCard(), discards);
     }
     
     /**
@@ -114,12 +110,7 @@ public final class CardState extends PublicCardState {
      */
     public CardState withoutTopDeckCard() {
         Preconditions.checkArgument(! deck.isEmpty());
-
-        return new CardState(
-                faceUpCards(),
-                deck.withoutTopCard(),
-                discards
-        );
+        return new CardState(faceUpCards(), deck.withoutTopCard(), discards);
     }
     
     /**
@@ -135,12 +126,7 @@ public final class CardState extends PublicCardState {
      */
     public CardState withDeckRecreatedFromDiscards(Random rng) {
         Preconditions.checkArgument(deck.isEmpty());
-
-        return new CardState(
-                faceUpCards(),
-                Deck.of(discards, rng),
-                SortedBag.of()
-        );
+        return new CardState(faceUpCards(), Deck.of(discards, rng), SortedBag.of());
     }
     
     /**

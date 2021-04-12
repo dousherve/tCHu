@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Classe finale et immuable qui représente un tas de cartes quelconques :
+ * Classe publique, finale et immuable qui représente un tas de cartes quelconques :
  * des wagons, des locomotives ou des billets.
  *
- * Elle est générique car le type de cartes n'est pas fixé à l'avance.
+ * Elle est générique, le type de cartes n'étant pas fixé à l'avance.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -21,17 +21,17 @@ public final class Deck<C extends Comparable<C>> {
     private final List<C> cards;
 
     /**
-     * Retourne un tas de cartes ayant les mêmes cartes que le multiensemble donné,
+     * Retourne un tas de cartes ayant les mêmes cartes que le multiensemble <code>cards</code> donné,
      * mais les cartes sont mélangées au moyen du générateur de nombre aléatoires <code>rng</code>.
      *
      * @param cards
-     *          Multiensemble de cartes donné
+     *          le multiensemble de cartes donné
      * @param rng
-     *          Nombre aléatoire pour le mélange
+     *          générateur de nombre aléatoires pour le mélange
      * @param <C>
-     *          Type des cartes
+     *          le type des cartes contenues dans le tas
      * @return
-     *          un tas de cartes ayant les mêmes cartes que le multiensemble mais mélangées
+     *          un tas de cartes ayant les mêmes cartes que le multiensemble, mais mélangées
      */
     public static <C extends Comparable<C>> Deck<C> of(SortedBag<C> cards, Random rng) {
         List<C> toBeShuffled = cards.toList();
@@ -45,10 +45,9 @@ public final class Deck<C extends Comparable<C>> {
     }
 
     /**
-     * Retourne la taille du tas, c'est à dire le nombre de cartes qu'il contient.
+     * Retourne la taille du tas, c'est-à-dire le nombre de cartes qu'il contient.
      *
-     * @return
-     *          la taille du tas
+     * @return la taille du tas
      */
     public int size() {
         return cards.size();
@@ -58,7 +57,7 @@ public final class Deck<C extends Comparable<C>> {
      * Retourne vrai si et seulement si le tas est vide.
      *
      * @return
-     *          vrai si le tas est vide
+     *          vrai si le tas est vide,
      *          faux dans le cas contraire
      */
     public boolean isEmpty() {
@@ -67,10 +66,10 @@ public final class Deck<C extends Comparable<C>> {
 
     /**
      * Retourne la carte au sommet du tas.
-     * Dans notre implémentation, le sommet du tas se situe à la fin de la liste.
      *
+     * @implNote Le sommet du tas se situe à la fin de la liste.
      * @throws IllegalArgumentException
-     *          si le tas de carte est vide
+     *          si le tas de cartes est vide
      * @return
      *          la carte au sommet du tas
      */
@@ -83,7 +82,7 @@ public final class Deck<C extends Comparable<C>> {
      * Retourne un tas identique au récepteur mais sans la carte au sommet.
      *
      * @throws IllegalArgumentException
-     *          si le tas de carte est vide
+     *          si le tas de cartes est vide
      * @return
      *          un tas identique au récepteur mais sans la carte au sommet
      */
@@ -96,11 +95,11 @@ public final class Deck<C extends Comparable<C>> {
      * Retourne un multiensemble contenant les <code>count</code> cartes se trouvant au sommet du tas.
      *
      * @param count
-     *          le nombre des cartes du sommet du tas à prendre
+     *          le nombre de cartes du sommet du tas à retourner
      * @throws IllegalArgumentException
      *          si <code>count</code> n'est pas compris entre 0 (inclus) et la taille du tas (incluse)
      * @return
-     *          un multiensemble des <code>count</code> cartes au sommet du tas.
+     *          un multiensemble contenant les <code>count</code> cartes au sommet du tas
      */
     public SortedBag<C> topCards(int count) {
         Preconditions.checkArgument(count >= 0 && count <= size());
@@ -111,7 +110,7 @@ public final class Deck<C extends Comparable<C>> {
      * Retourne un tas identique au récepteur mais sans les <code>count</code> cartes du sommet.
      *
      * @param count
-     *          le nombre de cartes du sommet du tas à enlever
+     *          le nombre de cartes à enlever du sommet du tas
      * @throws IllegalArgumentException
      *          si <code>count</code> n'est pas compris entre 0 (inclus) et la taille du tas (incluse)
      * @return
