@@ -29,8 +29,6 @@ public final class Trail {
      *          si la liste est vide, retourne un chemin de longueur zéro dont les gares sont égales à null
      */
     public static Trail longest(List<Route> routes) {
-        // Si la liste de routes est vide, on retourne un chemin vide
-        // dont les gares sont null
         if (routes.isEmpty())
             return new Trail(null, null, List.of());
             

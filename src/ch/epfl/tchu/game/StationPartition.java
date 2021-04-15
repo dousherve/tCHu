@@ -50,7 +50,7 @@ public final class StationPartition implements StationConnectivity {
      */
     public static final class Builder {
         
-        private int[] links;
+        private final int[] links;
 
         private int representative(int id) {
             while (links[id] != id)

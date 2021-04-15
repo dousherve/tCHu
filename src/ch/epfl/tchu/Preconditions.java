@@ -1,7 +1,7 @@
 package ch.epfl.tchu;
 
 /**
- * Classe utilitaire servant à vérifier les arguments passées
+ * Classe utilitaire servant à vérifier les arguments passés
  * à certaines fonctions.
  * 
  * @author Mallory Henriet (311258)

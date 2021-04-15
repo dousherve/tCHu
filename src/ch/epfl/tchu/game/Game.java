@@ -17,12 +17,14 @@ import java.util.Random;
  */
 public final class Game {
     
+    private Game() {}
+    
     private static void broadcastInfo(String info, Map<PlayerId, Player> players) {
-        players.forEach((playerId, player) -> player.receiveInfo(info));
+        players.forEach((id, player) -> player.receiveInfo(info));
     }
     
     private static void broadcastStateChange(GameState newState, Map<PlayerId, Player> players) {
-        players.forEach((playerId, player) -> player.updateState(newState, newState.playerState(playerId)));
+        players.forEach((id, player) -> player.updateState(newState, newState.playerState(id)));
     }
     
     /**
@@ -86,17 +88,18 @@ public final class Game {
         while (isPlaying) {
             final PlayerId currentPlayerId = state.currentPlayerId();
             final Player currentPlayer = players.get(currentPlayerId);
+            final Info currentPlayerInfo = infos.get(currentPlayerId);
             
             broadcastStateChange(state, players);
-            broadcastInfo(infos.get(currentPlayerId).canPlay(), players);
+            broadcastInfo(currentPlayerInfo.canPlay(), players);
             
             switch (currentPlayer.nextTurn()) {
                 case DRAW_TICKETS:
                     SortedBag<Ticket> drawnTickets = state.topTickets(Constants.IN_GAME_TICKETS_COUNT);
                     SortedBag<Ticket> chosenTickets = currentPlayer.chooseTickets(drawnTickets);
-                    broadcastInfo(infos.get(currentPlayerId).drewTickets(Constants.IN_GAME_TICKETS_COUNT), players);
+                    broadcastInfo(currentPlayerInfo.drewTickets(Constants.IN_GAME_TICKETS_COUNT), players);
                     state = state.withChosenAdditionalTickets(drawnTickets, chosenTickets);
-                    broadcastInfo(infos.get(currentPlayerId).keptTickets(chosenTickets.size()), players);
+                    broadcastInfo(currentPlayerInfo.keptTickets(chosenTickets.size()), players);
                     break;
                     
                 case DRAW_CARDS:
@@ -106,11 +109,11 @@ public final class Game {
                         
                         if (slot == -1) {
                             state = state.withBlindlyDrawnCard();
-                            broadcastInfo(infos.get(currentPlayerId).drewBlindCard(), players);
+                            broadcastInfo(currentPlayerInfo.drewBlindCard(), players);
                         } else {
                             Card drawnCard = state.cardState().faceUpCard(slot);
                             state = state.withDrawnFaceUpCard(slot);
-                            broadcastInfo(infos.get(currentPlayerId).drewVisibleCard(drawnCard), players);
+                            broadcastInfo(currentPlayerInfo.drewVisibleCard(drawnCard), players);
                         }
                         
                         if (i == 0)
@@ -120,47 +123,45 @@ public final class Game {
                     
                 case CLAIM_ROUTE:
                     Route route = currentPlayer.claimedRoute();
-                    SortedBag<Card> claimCards = currentPlayer.initialClaimCards();
+                    SortedBag<Card> initialCards = currentPlayer.initialClaimCards();
                     
                     if (route.level() == Route.Level.OVERGROUND) {
                         // Route en surface
-                        
-                        state = state.withClaimedRoute(route, claimCards);
-                        broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, claimCards), players);
+                        state = state.withClaimedRoute(route, initialCards);
+                        broadcastInfo(currentPlayerInfo.claimedRoute(route, initialCards), players);
                     } else if (route.level() == Route.Level.UNDERGROUND) {
                         // Route en tunnel
+                        broadcastInfo(currentPlayerInfo.attemptsTunnelClaim(route, initialCards), players);
                         
-                        broadcastInfo(infos.get(currentPlayerId).attemptsTunnelClaim(route, claimCards), players);
-                        
-                        final SortedBag.Builder<Card> b = new SortedBag.Builder<>();
+                        final SortedBag.Builder<Card> drawnB = new SortedBag.Builder<>();
                         for (int i = 0; i < Constants.ADDITIONAL_TUNNEL_CARDS; ++i) {
                             state = state.withCardsDeckRecreatedIfNeeded(rng);
-                            b.add(state.topCard());
+                            drawnB.add(state.topCard());
                             state = state.withoutTopCard();
                         }
-                        final SortedBag<Card> drawnCards = b.build();
+                        final SortedBag<Card> drawnCards = drawnB.build();
     
-                        final int addtitionalCardsCount = route.additionalClaimCardsCount(claimCards, drawnCards);
-                        broadcastInfo(infos.get(currentPlayerId).drewAdditionalCards(drawnCards, addtitionalCardsCount), players);
+                        final int addtitionalCardsCount = route.additionalClaimCardsCount(initialCards, drawnCards);
+                        broadcastInfo(currentPlayerInfo.drewAdditionalCards(drawnCards, addtitionalCardsCount), players);
     
                         if (addtitionalCardsCount == 0) {
-                            // Les cartes jouées n'impliquent aucune carte additionnelle
-                            state = state.withClaimedRoute(route, claimCards);
-                            broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, claimCards), players);
+                            // Les cartes tirées n'impliquent aucune carte additionnelle
+                            state = state.withClaimedRoute(route, initialCards);
+                            broadcastInfo(currentPlayerInfo.claimedRoute(route, initialCards), players);
                         } else {
-                            // Les cartes jouées impliquent au moins une carte additionnelle
+                            // Les cartes tirées impliquent au moins une carte additionnelle
                             final List<SortedBag<Card>> options = state
                                     .currentPlayerState()
-                                    .possibleAdditionalCards(addtitionalCardsCount, claimCards, drawnCards);
+                                    .possibleAdditionalCards(addtitionalCardsCount, initialCards, drawnCards);
     
                             if (addtitionalCardsCount >= 1 && ! options.isEmpty()) {
                                 final SortedBag<Card> chosenAdditional = currentPlayer.chooseAdditionalCards(options);
                                 if (! chosenAdditional.isEmpty()) {
-                                    final SortedBag<Card> totalCards = claimCards.union(chosenAdditional);
+                                    final SortedBag<Card> totalCards = initialCards.union(chosenAdditional);
                                     state = state.withClaimedRoute(route, totalCards);
-                                    broadcastInfo(infos.get(currentPlayerId).claimedRoute(route, totalCards), players);
+                                    broadcastInfo(currentPlayerInfo.claimedRoute(route, totalCards), players);
                                 } else {
-                                    broadcastInfo(infos.get(currentPlayerId).didNotClaimRoute(route), players);
+                                    broadcastInfo(currentPlayerInfo.didNotClaimRoute(route), players);
                                 }
                             }
                         }
@@ -171,9 +172,9 @@ public final class Game {
             }
             
             if (state.lastTurnBegins())
-                broadcastInfo(infos.get(currentPlayerId).lastTurnBegins(state.currentPlayerState().carCount()), players);
+                broadcastInfo(currentPlayerInfo.lastTurnBegins(state.currentPlayerState().carCount()), players);
             
-            if (state.currentPlayerId() == state.lastPlayer())
+            if (currentPlayerId == state.lastPlayer())
                 isPlaying = false;
             else
                 state = state.forNextTurn();
@@ -186,30 +187,35 @@ public final class Game {
         Trail fstPlayerLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_1).routes());
         Trail sndPlayerLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_2).routes());
         Trail longest;
-        PlayerId bonusWinner;
+        PlayerId bonusWinnerId;
         
         if (fstPlayerLongest.length() > sndPlayerLongest.length()) {
             longest = fstPlayerLongest;
-            bonusWinner = PlayerId.PLAYER_1;
+            bonusWinnerId = PlayerId.PLAYER_1;
         } else if (sndPlayerLongest.length() > fstPlayerLongest.length()) {
             longest = sndPlayerLongest;
-            bonusWinner = PlayerId.PLAYER_2;
+            bonusWinnerId = PlayerId.PLAYER_2;
         } else {
-            bonusWinner = null;
+            bonusWinnerId = null;
             longest = null;
         }
         
         Map<PlayerId, Integer> results = new EnumMap<>(PlayerId.class);
-        players.forEach((playerId, player) -> results.put(playerId, finalState.playerState(playerId).finalPoints()));
+        players.forEach((id, player) -> results.put(id, finalState.playerState(id).finalPoints()));
         
-        if (bonusWinner != null) {
-            broadcastInfo(infos.get(bonusWinner).getsLongestTrailBonus(longest), players);
-            results.put(bonusWinner, results.get(bonusWinner) + 10);
+        if (bonusWinnerId != null) {
+            results.put(
+                    bonusWinnerId,
+                    results.get(bonusWinnerId) + Constants.LONGEST_TRAIL_BONUS_POINTS
+            );
+            broadcastInfo(infos.get(bonusWinnerId).getsLongestTrailBonus(longest), players);
         } else {
             // Égalité des plus longs chemins
+            results.forEach((id, points) -> {
+                results.put(id, points + Constants.LONGEST_TRAIL_BONUS_POINTS);
+            });
             broadcastInfo(infos.get(PlayerId.PLAYER_1).getsLongestTrailBonus(fstPlayerLongest), players);
             broadcastInfo(infos.get(PlayerId.PLAYER_2).getsLongestTrailBonus(sndPlayerLongest), players);
-            results.forEach((id, points) -> results.put(id, points + 10));
         }
 
         final int offset = results.get(PlayerId.PLAYER_1).compareTo(results.get(PlayerId.PLAYER_2));
@@ -221,7 +227,5 @@ public final class Game {
             broadcastInfo(infos.get(winnerId).won(results.get(winnerId), results.get(winnerId.next())), players);
         }
     }
-    
-    private Game() {}
         
 }

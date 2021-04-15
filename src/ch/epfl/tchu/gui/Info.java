@@ -217,9 +217,6 @@ public final class Info {
      *          le message déclarant que le joueur s'est emparé de la route donnée au moyen des cartes données
      */
     public String claimedRoute(Route route, SortedBag<Card> cards) {
-        final Card card = cards.get(0);
-        final int cardCount = cards.countOf(card);
-        
         return String.format(
                 StringsFr.CLAIMED_ROUTE,
                 playerName,
