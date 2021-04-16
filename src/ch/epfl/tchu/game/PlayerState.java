@@ -20,6 +20,9 @@ public final class PlayerState extends PublicPlayerState {
     
     private final SortedBag<Ticket> tickets;
     private final SortedBag<Card> cards;
+    
+    // Nombre maximum de cartes différentes lors de la prise d'un tunnel
+    private static final int MAX_CARD_TYPES_COUNT = 2;
 
     /**
      * Retourne l'état initial d'un joueur auquel les cartes initiales données ont été distribuées.
@@ -180,10 +183,10 @@ public final class PlayerState extends PublicPlayerState {
      *          la liste de tous les ensembles de cartes que le joueur pourrait utiliser
      */
     public List<SortedBag<Card>> possibleAdditionalCards(int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards) {
-        Preconditions.checkArgument(additionalCardsCount >= 1);
+        Preconditions.checkArgument(additionalCardsCount > 0);
         Preconditions.checkArgument(additionalCardsCount <= Constants.ADDITIONAL_TUNNEL_CARDS);
         Preconditions.checkArgument(! initialCards.isEmpty());
-        Preconditions.checkArgument(initialCards.toSet().size() <= 2);
+        Preconditions.checkArgument(initialCards.toSet().size() <= MAX_CARD_TYPES_COUNT);
         Preconditions.checkArgument(drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
         
         SortedBag.Builder<Card> usableCardsB = new SortedBag.Builder<>();
@@ -242,7 +245,8 @@ public final class PlayerState extends PublicPlayerState {
         final int maxStationId = routes().stream()
                 .flatMap(r -> r.stations().stream())
                 .mapToInt(Station::id)
-                .max().orElse(0);
+                .max()
+                .orElse(0);
     
         final StationPartition.Builder partitionB = new StationPartition.Builder(maxStationId + 1);
         routes().forEach(r -> partitionB.connect(r.station1(), r.station2()));

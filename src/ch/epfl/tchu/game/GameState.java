@@ -38,7 +38,7 @@ public final class GameState extends PublicGameState {
      */
     public static GameState initial(SortedBag<Ticket> tickets, Random rng) {
         final Deck<Card> allCards = Deck.of(Constants.ALL_CARDS, rng); 
-        final Deck<Card> deckCards = allCards.withoutTopCards(2 * Constants.INITIAL_CARDS_COUNT);
+        final Deck<Card> deckCards = allCards.withoutTopCards(PlayerId.COUNT * Constants.INITIAL_CARDS_COUNT);
         
         final PlayerId firstPlayerId = PlayerId.ALL.get(rng.nextInt(PlayerId.COUNT));
         final PlayerId secondPlayerId = firstPlayerId.next();

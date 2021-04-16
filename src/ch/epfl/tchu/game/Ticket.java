@@ -115,11 +115,9 @@ public final class Ticket implements Comparable<Ticket> {
      *          la connectivité du joueur qui le possède
      */
     public int points(StationConnectivity connectivity) {
-        final int firstTripPoints = trips.get(0).points(connectivity);
-        
         // Billet ville à ville : trajet unique
         if (trips.size() == 1)
-            return firstTripPoints;
+            return trips.get(0).points(connectivity);
     
         /* 
            Billet ville à pays ou bien pays à pays :
@@ -127,15 +125,10 @@ public final class Ticket implements Comparable<Ticket> {
            Ainsi, le comportement min/max imposé sera automatiquement
            pris en compte grâce au signe des valeurs retournées par le trajet en question.
         */
-        int maxScore = firstTripPoints;
-        for (Trip trip : trips) {
-            maxScore = Math.max(
-                    maxScore,
-                    trip.points(connectivity)
-            );
-        }
-            
-        return maxScore;
+        return trips.stream()
+                .mapToInt(t -> t.points(connectivity))
+                .max()
+                .getAsInt();    // On utilise cette méthode car la liste de trajets n'est jamais vide
     }
 
     /**
