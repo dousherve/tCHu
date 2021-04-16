@@ -24,6 +24,13 @@ public final class CardState extends PublicCardState {
     private final Deck<Card> deck;
     private final SortedBag<Card> discards;
     
+    private CardState(List<Card> faceUpCards, Deck<Card> deck, SortedBag<Card> discards) {
+        super(faceUpCards, deck.size(), discards.size());
+        
+        this.deck = deck;
+        this.discards = discards;
+    }
+    
     /**
      * Retourne un état dans lequel les 5 cartes disposées faces visibles sont les 5 premières du tas donné,
      * la pioche est constituée des cartes du tas restantes, et la défausse est vide.
@@ -40,7 +47,7 @@ public final class CardState extends PublicCardState {
     public static CardState of(Deck<Card> deck) {
         Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT);
         
-        List<Card> topCards = new ArrayList<>();
+        final List<Card> topCards = new ArrayList<>();
         for (int slot : Constants.FACE_UP_CARD_SLOTS)
             topCards.add(deck.withoutTopCards(slot).topCard());
 
@@ -49,13 +56,6 @@ public final class CardState extends PublicCardState {
                 deck.withoutTopCards(Constants.FACE_UP_CARDS_COUNT),    // Pioche
                 SortedBag.of()  // Défausse vide
         );
-    }
-
-    private CardState(List<Card> faceUpCards, Deck<Card> deck, SortedBag<Card> discards) {
-        super(faceUpCards, deck.size(), discards.size());
-        
-        this.deck = deck;
-        this.discards = discards;
     }
     
     /**
@@ -80,7 +80,7 @@ public final class CardState extends PublicCardState {
         // topDeckCard() afin d'éviter une copie éventuellement inutile de faceUpCards().
         Preconditions.checkArgument(! deck.isEmpty());
         
-        List<Card> newFaceUpCards = new ArrayList<>(faceUpCards());
+        final List<Card> newFaceUpCards = new ArrayList<>(faceUpCards());
         newFaceUpCards.set(slot, deck.topCard());
 
         return new CardState(newFaceUpCards, deck.withoutTopCard(), discards);
@@ -122,7 +122,8 @@ public final class CardState extends PublicCardState {
      *          le générateur aléatoire à utiliser pour mélanger les cartes
      * @throws IllegalArgumentException
      *          si la pioche du récepteur n'est pas vide
-     * @return un état dont la défausse a été mélangée pour former la nouvelle pioche
+     * @return
+     *          un état dont la défausse a été mélangée pour former la nouvelle pioche
      */
     public CardState withDeckRecreatedFromDiscards(Random rng) {
         Preconditions.checkArgument(deck.isEmpty());

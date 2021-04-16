@@ -46,12 +46,7 @@ public final class Ticket implements Comparable<Ticket> {
         Set<String> destinationsDescriptions = new TreeSet<>();
         for (Trip trip : trips) {
             destinationsDescriptions.add(
-                    String.format(
-                            "%s (%d)",
-                            trip.to().name(),
-                            trip.points()
-                    )
-            );
+                    String.format("%s (%d)", trip.to().name(), trip.points()));
         }
         
         return String.format(

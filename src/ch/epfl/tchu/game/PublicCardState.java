@@ -75,7 +75,8 @@ public class PublicCardState {
      * @param slot
      *          index de la carte face visible à retourner
      * @throws IndexOutOfBoundsException
-     *          si <code>slot</code> n'est pas compris entre 0 (inclus) et 5 (exclus)
+     *          si <code>slot</code> n'est pas compris entre 0 (inclus)
+     *          et <code>Constants.FACE_UP_CARDS_COUNT</code> (exclus)
      * @return
      *          la carte d'index <code>slot</code> des <code>faceUpCards</code>
      */

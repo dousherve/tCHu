@@ -9,6 +9,8 @@ package ch.epfl.tchu;
  */
 public final class Preconditions {
     
+    private Preconditions() {}
+    
     /**
      * Vérifie que l'argument passé en paramètre est vrai,
      * lance une {@link IllegalArgumentException} sinon.
@@ -22,7 +24,5 @@ public final class Preconditions {
         if (! shouldBeTrue)
             throw new IllegalArgumentException();
     }
-    
-    private Preconditions() {}
     
 }

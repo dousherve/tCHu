@@ -19,6 +19,10 @@ import java.util.Random;
 public final class Deck<C extends Comparable<C>> {
 
     private final List<C> cards;
+    
+    private Deck(List<C> cards) {
+        this.cards = List.copyOf(cards);
+    }
 
     /**
      * Retourne un tas de cartes ayant les mêmes cartes que le multiensemble <code>cards</code> donné,
@@ -34,14 +38,10 @@ public final class Deck<C extends Comparable<C>> {
      *          un tas de cartes ayant les mêmes cartes que le multiensemble, mais mélangées
      */
     public static <C extends Comparable<C>> Deck<C> of(SortedBag<C> cards, Random rng) {
-        List<C> toBeShuffled = cards.toList();
+        final List<C> toBeShuffled = cards.toList();
         Collections.shuffle(toBeShuffled, rng);
 
         return new Deck<>(toBeShuffled);
-    }
-
-    private Deck(List<C> cards) {
-        this.cards = List.copyOf(cards);
     }
 
     /**

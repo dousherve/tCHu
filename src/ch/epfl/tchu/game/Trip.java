@@ -39,9 +39,8 @@ public final class Trip {
      *          celles de la seconde liste
      */
     public static List<Trip> all(List<Station> from, List<Station> to, int points) {
-        Preconditions.checkArgument(
-                ! from.isEmpty() && ! to.isEmpty() && points > 0
-        );
+        Preconditions.checkArgument(! from.isEmpty() && ! to.isEmpty());
+        Preconditions.checkArgument(points > 0);
         
         List<Trip> allTrips = new ArrayList<>();
         for (Station fromStation : from)

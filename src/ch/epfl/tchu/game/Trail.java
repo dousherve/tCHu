@@ -94,7 +94,7 @@ public final class Trail {
     }
 
     /**
-     * Retourne la gare de départ du chemin
+     * Retourne la gare de départ du chemin.
      *
      * @return
      *          la gare de départ du chemin
@@ -105,7 +105,7 @@ public final class Trail {
     }
 
     /**
-     * Retourne la gare d'arrivée du chemin
+     * Retourne la gare d'arrivée du chemin.
      *
      * @return
      *          la gare d'arrivée du chemin
@@ -121,7 +121,7 @@ public final class Trail {
      *
      * @return
      *          la représentation textuelle du chemin
-     *          ou "Empty trail" si sa longueur est zéro
+     *          ou "Chemin vide" si sa longueur est zéro
      */
     @Override
     public String toString() {

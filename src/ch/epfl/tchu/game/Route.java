@@ -188,14 +188,16 @@ public final class Route {
                     possibleClaimCards.add(
                             SortedBag.of(
                                     length - l, Card.of(color),
-                                    l, Card.LOCOMOTIVE));
+                                    l, Card.LOCOMOTIVE
+                            ));
                 } else {
                     // Tunnel de couleur neutre
                     for (Color c : Color.values()) {
                         possibleClaimCards.add(
                                 SortedBag.of(
                                         length - l, Card.of(c),
-                                        l, Card.LOCOMOTIVE));
+                                        l, Card.LOCOMOTIVE
+                                ));
                     }
                 }
             }
@@ -229,8 +231,7 @@ public final class Route {
         Preconditions.checkArgument(drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
         
         final SortedBag<Card> coloredDrawnCards = drawnCards.difference(
-                SortedBag.of(drawnCards.countOf(Card.LOCOMOTIVE), Card.LOCOMOTIVE)
-        );
+                SortedBag.of(drawnCards.countOf(Card.LOCOMOTIVE), Card.LOCOMOTIVE));
         
         final int commonCardsCount = (int) coloredDrawnCards.stream()
                 .filter(claimCards::contains)

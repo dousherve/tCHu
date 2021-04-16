@@ -7,6 +7,7 @@ import ch.epfl.tchu.game.Trail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Classe publique, finale et immuable représentant un générateur de messages
@@ -32,7 +33,7 @@ public final class Info {
     }
     
     private static String cardsDescription(SortedBag<Card> cards) {
-        List<String> cardsDescriptions = new ArrayList<>();
+        final List<String> cardsDescriptions = new ArrayList<>();
         
         for (Card c : cards.toSet()) {
             final int count = cards.countOf(c);
@@ -40,8 +41,8 @@ public final class Info {
         }
         
         StringBuilder descrB = new StringBuilder();
+        ListIterator<String> descrIt = cardsDescriptions.listIterator();
         
-        var descrIt = cardsDescriptions.listIterator();
         while (descrIt.hasNext()) {
             descrB.append(descrIt.next());
     
@@ -55,8 +56,9 @@ public final class Info {
     }
     
     /**
-     * Méthode publique et statique qui retourne le nom (français) de la carte donnée,
-     * au singulier si et seulement si la valeur absolue du second argument vaut 1.
+     * Méthode publique et statique qui retourne le nom (français) de la carte donnée
+     * au singulier si et seulement si la valeur absolue du second argument vaut 1,
+     * au pluriel sinon.
      * 
      * @param card
      *          la carte dont on veut le nom
@@ -66,7 +68,7 @@ public final class Info {
      *          le nom accordé en genre et en nombre de la carte <code>card</code> donnée
      */
     public static String cardName(Card card, int count) {
-        String cardDescription;
+        final String cardDescription;
         
         switch (card) {
             case BLACK:
@@ -105,7 +107,7 @@ public final class Info {
     
     /**
      * Méthode publique et statique qui retourne le message déclarant que les joueurs,
-     * dont les noms sont ceux donnés, ont terminé la partie ex æqo
+     * dont les noms sont ceux donnés dans <code>playerNames</code>, ont terminé la partie ex æqo
      * en ayant chacun remporté les points donnés.
      * 
      * @param playerNames
@@ -172,7 +174,8 @@ public final class Info {
      * 
      * @param count
      *          le nombre de billets tirés par le joueur
-     * @return le message déclarant que le joueur a tiré le nombre donné de billets
+     * @return
+     *          le message déclarant que le joueur a tiré le nombre donné de billets
      */
     public String drewTickets(int count) {
         return String.format(
@@ -324,12 +327,12 @@ public final class Info {
      *          grâce au chemin donné
      */
     public String getsLongestTrailBonus(Trail longestTrail) {
-        final String trailDescr = 
+        final String longestTrailDescr = 
                 longestTrail.station1().name()
                 + StringsFr.EN_DASH_SEPARATOR
                 + longestTrail.station2().name();
         
-        return String.format(StringsFr.GETS_BONUS, playerName, trailDescr);
+        return String.format(StringsFr.GETS_BONUS, playerName, longestTrailDescr);
     }
     
     /**
