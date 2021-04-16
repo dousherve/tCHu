@@ -77,8 +77,7 @@ public interface Player {
      * Méthode appelée au début de la partie pour demander au joueur
      * quels billets il désire garder parmi ceux qu'on lui a distribué initialement.
      * 
-     * @return
-     *          les billets que le joueur choisit de garder
+     * @return les billets que le joueur choisit de garder
      */
     SortedBag<Ticket> chooseInitialTickets();
     
@@ -86,8 +85,7 @@ public interface Player {
      * Méthode appelée au début du tour d'un joueur pour savoir
      * quel type d'action il désire effectuer durant ce tour.
      * 
-     * @return
-     *          l'action que le joueur désire effectuer durant ce tour
+     * @return l'action que le joueur désire effectuer durant ce tour
      */
     TurnKind nextTurn();
     
@@ -108,8 +106,7 @@ public interface Player {
      * une carte face visible — auquel cas la valeur retournée est comprise entre 0 et 4 inclus —,
      * ou de la pioche — auquel cas la valeur retournée vaut <code>Constants.DECK_SLOT</code> (-1).
      * 
-     * @return
-     *          l'emplacement duquel le joueur veut tirer les cartes
+     * @return l'emplacement duquel le joueur veut tirer les cartes
      */
     int drawSlot();
     
@@ -117,8 +114,7 @@ public interface Player {
      * Méthode appelée lorsque le joueur a décidé de (tenter de) s'emparer d'une route,
      * afin de savoir de quelle route il s'agit.
      * 
-     * @return
-     *          la route dont le joueur veut s'emparer
+     * @return la route dont le joueur veut s'emparer
      */
     Route claimedRoute();
     
@@ -126,8 +122,7 @@ public interface Player {
      * Méthode appelée lorsque le joueur a décidé de (tenter de) s'emparer d'une route,
      * afin de savoir quelle(s) carte(s) il désire initialement utiliser pour cela.
      * 
-     * @return
-     *          les cartes utilisées initialement par le joueur pour s'emparer de la route
+     * @return les cartes utilisées initialement par le joueur pour s'emparer de la route
      */
     SortedBag<Card> initialClaimCards();
     

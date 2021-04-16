@@ -20,6 +20,8 @@ public final class GameState extends PublicGameState {
     private final CardState cardState;
     private final Map<PlayerId, PlayerState> playerState;
     
+    private static final int LAST_TURN_CAR_COUNT_THRESHOLD = 2;
+    
     /**
      * Retourne l'état initial d'une partie de tCHu dans laquelle la pioche des billets
      * contient les billets donnés et la pioche des cartes contient les cartes de <code>Constants.ALL_CARDS</code>,
@@ -87,8 +89,7 @@ public final class GameState extends PublicGameState {
     /**
      * Retourne l'état complet du joueur courant, et pas seulement sa partie publique.
      * 
-     * @return
-     *          l'état complet du joueur courant
+     * @return l'état complet du joueur courant
      */
     @Override
     public PlayerState currentPlayerState() {
@@ -188,7 +189,7 @@ public final class GameState extends PublicGameState {
      * @param rng
      *          le générateur aléatoire à utiliser pour mélanger les cartes
      * @return
-     *          un état identique sauf si la pioche de cartes est vide,
+     *          un état identique sauf si la pioche de cartes est vide, auquel cas
      *          elle est recréée et mélangée à partir de la défausse
      */
     public GameState withCardsDeckRecreatedIfNeeded(Random rng) {
@@ -198,8 +199,8 @@ public final class GameState extends PublicGameState {
                         cardState.withDeckRecreatedFromDiscards(rng),
                         currentPlayerId(),
                         playerState,
-                        lastPlayer()
-                ) : this;
+                        lastPlayer())
+                : this;
     }
     
     // MARK:- États dérivés de l'état courant
@@ -221,7 +222,7 @@ public final class GameState extends PublicGameState {
     public GameState withInitiallyChosenTickets(PlayerId playerId, SortedBag<Ticket> chosenTickets) {
         Preconditions.checkArgument(playerState(playerId).ticketCount() <= 0);
 
-        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 playerId,
                 playerState(playerId).withAddedTickets(chosenTickets)
@@ -248,7 +249,7 @@ public final class GameState extends PublicGameState {
     public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets, SortedBag<Ticket> chosenTickets) {
         Preconditions.checkArgument(drawnTickets.contains(chosenTickets));
 
-        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
                 currentPlayerState().withAddedTickets(chosenTickets)
@@ -278,7 +279,7 @@ public final class GameState extends PublicGameState {
     public GameState withDrawnFaceUpCard(int slot) {
         Preconditions.checkArgument(canDrawCards());
 
-        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
                 currentPlayerState().withAddedCard(cardState.faceUpCard(slot))
@@ -306,7 +307,7 @@ public final class GameState extends PublicGameState {
     public GameState withBlindlyDrawnCard() {
         Preconditions.checkArgument(canDrawCards());
 
-        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
                 currentPlayerState().withAddedCard(cardState.topDeckCard())
@@ -335,7 +336,7 @@ public final class GameState extends PublicGameState {
      *          s'est emparé de la route donnée au moyen des cartes données
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards) {
-        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
                 currentPlayerState().withClaimedRoute(route, cards)
@@ -358,11 +359,11 @@ public final class GameState extends PublicGameState {
      * mais que le joueur courant n'a plus que deux wagons ou moins.
      * Cette méthode doit être appelée uniquement à la fin du tour d'un joueur.
      * 
-     * @return
-     *          vrai si et seulement si le dernier tour commence
+     * @return vrai si et seulement si le dernier tour commence
      */
     public boolean lastTurnBegins() {
-        return lastPlayer() == null && currentPlayerState().carCount() <= 2;
+        return lastPlayer() == null 
+                && (currentPlayerState().carCount() <= LAST_TURN_CAR_COUNT_THRESHOLD);
     }
     
     /**

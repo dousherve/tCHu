@@ -8,7 +8,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Classe immuable qui représente la composante publique de l'état d'une partie de tCHu.
+ * Classe publique et immuable qui représente la composante publique
+ * de l'état d'une partie de tCHu.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
@@ -19,6 +20,8 @@ public class PublicGameState {
     private final PublicCardState cardState;
     private final PlayerId currentPlayerId, lastPlayer;
     private final Map<PlayerId, PublicPlayerState> playerState;
+    
+    private static final int MIN_TOTAL_CARDS_COUNT_TO_DRAW = 5;
     
     /**
      * Construit la partie publique de l'état d'une partie de tCHu dans laquelle
@@ -45,7 +48,8 @@ public class PublicGameState {
      *          si l'un des arguments (<code>lastPlayer</code> excepté) est <code>null</code>
      */
     public PublicGameState(int ticketsCount, PublicCardState cardState, PlayerId currentPlayerId, Map<PlayerId, PublicPlayerState> playerState, PlayerId lastPlayer) {
-        Preconditions.checkArgument(ticketsCount >= 0 && playerState.size() == 2);
+        Preconditions.checkArgument(ticketsCount >= 0);
+        Preconditions.checkArgument(playerState.size() == PlayerId.COUNT);
         
         this.ticketsCount = ticketsCount;
         this.cardState = Objects.requireNonNull(cardState);
@@ -57,8 +61,7 @@ public class PublicGameState {
     /**
      * Retourne la taille de la pioche de billets.
      * 
-     * @return
-     *          la taille de la pioche de billets
+     * @return la taille de la pioche de billets
      */
     public int ticketsCount() {
         return ticketsCount;
@@ -68,8 +71,7 @@ public class PublicGameState {
      * Retourne vrai si et seulement si il est possible de tirer des billets,
      * c'est-à-dire si la pioche n'est pas vide.
      * 
-     * @return
-     *          vrai si et seulement si il est possible de tirer des billets
+     * @return vrai si et seulement si il est possible de tirer des billets
      */
     public boolean canDrawTickets() {
         return ticketsCount > 0;
@@ -78,8 +80,7 @@ public class PublicGameState {
     /**
      * Retourne la partie publique de l'état des cartes wagon/locomotive.
      * 
-     * @return
-     *          la partie publique de l'état des cartes wagon/locomotive
+     * @return la partie publique de l'état des cartes wagon/locomotive
      */
     public PublicCardState cardState() {
         return cardState;
@@ -89,18 +90,16 @@ public class PublicGameState {
      * Retourne vrai si et seulement si il est possible de tirer des cartes,
      * c'est-à-dire si la pioche et la défausse contiennent entre elles au moins 5 cartes.
      * 
-     * @return
-     *          vrai si et seulement si il est possible de tirer des cartes
+     * @return vrai si et seulement si il est possible de tirer des cartes
      */
     public boolean canDrawCards() {
-        return (cardState.deckSize() + cardState.discardsSize()) >= 5;
+        return (cardState.deckSize() + cardState.discardsSize()) >= MIN_TOTAL_CARDS_COUNT_TO_DRAW;
     }
     
     /**
      * Retourne l'identité du joueur actuel.
      * 
-     * @return
-     *          l'identité du joueur actuel
+     * @return l'identité du joueur actuel
      */
     public PlayerId currentPlayerId() {
         return currentPlayerId;
@@ -121,8 +120,7 @@ public class PublicGameState {
     /**
      * Retourne la partie publique de l'état du joueur courant.
      * 
-     * @return
-     *          la partie publique de l'état du joueur courant
+     * @return la partie publique de l'état du joueur courant
      */
     public PublicPlayerState currentPlayerState() {
         return playerState(currentPlayerId);
@@ -131,8 +129,7 @@ public class PublicGameState {
     /**
      * Retourne la totalité des routes dont l'un ou l'autre des joueurs s'est emparé.
      * 
-     * @return
-     *          la totalité des routes dont l'un ou l'autre des joueurs s'est emparé
+     * @return la totalité des routes dont l'un ou l'autre des joueurs s'est emparé
      */
     public List<Route> claimedRoutes() {
         return playerState.values()
@@ -145,8 +142,7 @@ public class PublicGameState {
      * Retourne l'identité du dernier joueur, ou <code>null</code>
      * si elle n'est pas encore connue car le dernier tour n'a pas commencé.
      * 
-     * @return
-     *          l'identité du dernier joueur (ou <code>null</code>)
+     * @return l'identité du dernier joueur (ou <code>null</code>)
      */
     public PlayerId lastPlayer() {
         return lastPlayer;
