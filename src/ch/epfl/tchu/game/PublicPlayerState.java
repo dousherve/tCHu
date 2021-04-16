@@ -40,15 +40,19 @@ public class PublicPlayerState {
         this.cardCount = cardCount;
         this.routes = List.copyOf(routes);
         
-        this.carCount = Constants.INITIAL_CAR_COUNT - routes.stream().mapToInt(Route::length).sum();
-        this.claimPoints = routes.stream().mapToInt(Route::claimPoints).sum();
+        this.carCount = Constants.INITIAL_CAR_COUNT
+                - routes.stream()
+                .mapToInt(Route::length)
+                .sum();
+        this.claimPoints = routes.stream()
+                .mapToInt(Route::claimPoints)
+                .sum();
     }
 
     /**
      * Retourne le nombre de billets que possède le joueur.
      *
-     * @return
-     *          le nombre de billets que possède le joueur
+     * @return le nombre de billets que possède le joueur
      */
     public int ticketCount() {
         return ticketCount;
@@ -57,8 +61,7 @@ public class PublicPlayerState {
     /**
      * Retourne le nombre de cartes que possède le joueur.
      *
-     * @return
-     *          le nombre de cartes que possède le joueur
+     * @return le nombre de cartes que possède le joueur
      */
     public int cardCount() {
         return cardCount;
@@ -67,8 +70,7 @@ public class PublicPlayerState {
     /**
      * Retourne les routes dont le joueur s'est emparé.
      *
-     * @return
-     *          les routes dont le joueur s'est emparé
+     * @return les routes dont le joueur s'est emparé
      */
     public List<Route> routes() {
         return routes;
@@ -77,8 +79,7 @@ public class PublicPlayerState {
     /**
      * Retourne le nombre de wagons que possède le joueur.
      *
-     * @return
-     *          le nombre de wagons que possède le joueur
+     * @return le nombre de wagons que possède le joueur
      */
     public int carCount() {
         return carCount;
@@ -87,8 +88,7 @@ public class PublicPlayerState {
     /**
      * Retourne le nombre de points de construction obtenus par le joueur.
      *
-     * @return
-     *          le nombre de points de construction obtenus par le joueur
+     * @return le nombre de points de construction obtenus par le joueur
      */
     public int claimPoints() {
         return claimPoints;

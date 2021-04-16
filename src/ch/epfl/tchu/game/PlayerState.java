@@ -23,23 +23,18 @@ public final class PlayerState extends PublicPlayerState {
 
     /**
      * Retourne l'état initial d'un joueur auquel les cartes initiales données ont été distribuées.
-     * Dans cet état le joueur ne possède donc encore aucun billet et ne s'est emparé d'aucune route.
+     * Dans cet état, le joueur ne possède donc encore aucun billet et ne s'est emparé d'aucune route.
      *
      * @param initialCards
      *          les cartes initiales distribuées au joueur
      * @throws IllegalArgumentException
-     *          si le nombre de cartes initiales ne vaut pas <code>Constant.INITIAL_CARDS_COUNT</code> (4)
+     *          si le nombre de cartes initiales ne vaut pas <code>Constant.INITIAL_CARDS_COUNT</code>
      * @return
      *          l'état du joueur avec seulement ses cartes initiales
      */
     public static PlayerState initial(SortedBag<Card> initialCards) {
         Preconditions.checkArgument(initialCards.size() == Constants.INITIAL_CARDS_COUNT);
-        
-        return new PlayerState(
-                SortedBag.of(),
-                initialCards,
-                Collections.emptyList()
-        );
+        return new PlayerState(SortedBag.of(), initialCards, List.of());
     }
 
     /**
@@ -62,8 +57,7 @@ public final class PlayerState extends PublicPlayerState {
     /**
      * Retourne les billets du joueur.
      *
-     * @return
-     *          les billets du joueur
+     * @return les billets du joueur
      */
     public SortedBag<Ticket> tickets() {
         return tickets;
@@ -89,8 +83,7 @@ public final class PlayerState extends PublicPlayerState {
     /**
      * Retourne les cartes wagons/locomotives du joueur.
      *
-     * @return
-     *          les cartes wagons/locomotives du joueur
+     * @return les cartes wagons/locomotives du joueur
      */
     public SortedBag<Card> cards() {
         return cards;
@@ -187,24 +180,25 @@ public final class PlayerState extends PublicPlayerState {
      *          la liste de tous les ensembles de cartes que le joueur pourrait utiliser
      */
     public List<SortedBag<Card>> possibleAdditionalCards(int additionalCardsCount, SortedBag<Card> initialCards, SortedBag<Card> drawnCards) {
-        Preconditions.checkArgument(additionalCardsCount >= 1 && additionalCardsCount <= Constants.ADDITIONAL_TUNNEL_CARDS);
+        Preconditions.checkArgument(additionalCardsCount >= 1);
+        Preconditions.checkArgument(additionalCardsCount <= Constants.ADDITIONAL_TUNNEL_CARDS);
         Preconditions.checkArgument(! initialCards.isEmpty());
         Preconditions.checkArgument(initialCards.toSet().size() <= 2);
         Preconditions.checkArgument(drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
         
-        SortedBag.Builder<Card> usableCardsBuilder = new SortedBag.Builder<>();
+        SortedBag.Builder<Card> usableCardsB = new SortedBag.Builder<>();
         
         for (Card remaining : cards.difference(initialCards))
             if (initialCards.contains(remaining) || remaining == Card.LOCOMOTIVE)
-                usableCardsBuilder.add(remaining);
+                usableCardsB.add(remaining);
             
         // Si le nombre de cartes additionnelles possibles est inférieur
         // au nombre de cartes additionnelles à jouer, on retourne une liste vide
-        if (usableCardsBuilder.size() < additionalCardsCount)
-            return Collections.emptyList();
+        if (usableCardsB.size() < additionalCardsCount)
+            return List.of();
         
-        List<SortedBag<Card>> possibilities = new ArrayList<>(
-                usableCardsBuilder
+        final List<SortedBag<Card>> possibilities = new ArrayList<>(
+                usableCardsB
                         .build()
                         .subsetsOfSize(additionalCardsCount)
         );
@@ -225,11 +219,11 @@ public final class PlayerState extends PublicPlayerState {
      * @param claimCards
      *          les cartes au moyen desquelles le joueur s'est emparé de la route donnée
      * @return
-     *          un état identique au récepteur, mais qui contient la route dont il
-     *          vient de s'emparer
+     *          un état identique au récepteur, mais qui contient la route
+     *          dont il vient de s'emparer
      */
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards) {
-        List<Route> newRoutes = new ArrayList<>(routes());
+        final List<Route> newRoutes = new ArrayList<>(routes());
         newRoutes.add(route);
         
         return new PlayerState(
@@ -242,30 +236,27 @@ public final class PlayerState extends PublicPlayerState {
     /**
      * Retourne le nombre de points (éventuellement négatif) obtenus par le joueur grâce à ses billets.
      * 
-     * @return
-     *          le nombre de points obtenus par le joueur grâce à ses billets
+     * @return le nombre de points obtenus par le joueur grâce à ses billets
      */
     public int ticketPoints() {
-        // TODO: amélioration : créer un attribut final ticketPoints et l'instancier dans le constructeur ?
-        int maxStationId = 0;
-        for (Route r : routes())
-            for (Station s : r.stations())
-                maxStationId = Math.max(maxStationId, s.id());
+        final int maxStationId = routes().stream()
+                .flatMap(r -> r.stations().stream())
+                .mapToInt(Station::id)
+                .max().orElse(0);
     
-        StationPartition.Builder builder = new StationPartition.Builder(maxStationId + 1);
-        for (Route r : routes())
-            builder.connect(r.station1(), r.station2());
-    
-        final StationPartition partition = builder.build();
-    
-        return tickets.stream().mapToInt(t -> t.points(partition)).sum();
+        final StationPartition.Builder partitionB = new StationPartition.Builder(maxStationId + 1);
+        routes().forEach(r -> partitionB.connect(r.station1(), r.station2()));
+        
+        final StationPartition partition = partitionB.build();
+        return tickets.stream()
+                .mapToInt(t -> t.points(partition))
+                .sum();
     }
     
     /**
      * Retourne la totalité des points obtenus par le joueur à la fin de la partie.
      * 
-     * @return
-     *          la totalité des points obtenus par le joueur à la fin de la partie
+     * @return la totalité des points obtenus par le joueur à la fin de la partie
      */
     public int finalPoints() {
         return claimPoints() + ticketPoints();

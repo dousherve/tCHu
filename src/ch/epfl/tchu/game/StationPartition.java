@@ -34,12 +34,10 @@ public final class StationPartition implements StationConnectivity {
      */
     @Override
     public boolean connected(Station s1, Station s2) {
-        if (s1.id() >= links.length || s2.id() >= links.length) {
-            // TODO: amélioration : surcharger Station.equals() ?
+        if (s1.id() >= links.length || s2.id() >= links.length)
             return s1.id() == s2.id();
-        } else {
+        else
             return links[s1.id()] == links[s2.id()];
-        }
     }
 
     /**
@@ -64,8 +62,7 @@ public final class StationPartition implements StationConnectivity {
          * 0 (inclus) et <code>stationCount</code> (exclus)
          *
          * @param stationCount
-         *          le nombre de gares que contiendra la partition,
-         *          représenté par l'identité la plus grande parmi celles des gares concernées
+         *          le nombre de gares que contiendra la partition
          * @throws IllegalArgumentException
          *          si <code>stationCount</code> est strictement négatif (< 0)
          */
