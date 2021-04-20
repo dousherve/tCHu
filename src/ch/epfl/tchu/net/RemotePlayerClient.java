@@ -16,10 +16,10 @@ import java.net.Socket;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
 import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
+import static ch.epfl.tchu.net.Serde.split;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public final class RemotePlayerClient {
@@ -30,10 +30,11 @@ public final class RemotePlayerClient {
     private final Socket socket;
     
     private <T> void sendResponse(Serde<T> serde, T response) {
-        try (BufferedWriter w =
-                     new BufferedWriter(
-                             new OutputStreamWriter(socket.getOutputStream(), US_ASCII))
-        ) {
+        try {
+            BufferedWriter w =
+                    new BufferedWriter(
+                            new OutputStreamWriter(socket.getOutputStream(), US_ASCII));
+            
             w.write(serde.serialize(response));
             w.write('\n');
             w.flush();
@@ -58,10 +59,10 @@ public final class RemotePlayerClient {
         ) {
             String line;
             while ((line = r.readLine()) != null) {
-                String[] split = line.split(Pattern.quote(SPACE), -1);
-                MessageId id = MessageId.valueOf(split[0]);
+                String[] split = split(line, SPACE);
+                MessageId message = MessageId.valueOf(split[0]);
     
-                switch (id) {
+                switch (message) {
                     case INIT_PLAYERS:
                         PlayerId ownId = Serdes.PLAYER_ID.deserialize(split[1]);
                         List<String> names = Serdes.STRING_LIST.deserialize(split[2]);
@@ -71,41 +72,50 @@ public final class RemotePlayerClient {
                         playerNames.put(PLAYER_2, names.get(1));
                         player.initPlayers(ownId, playerNames);
                         break;
+                        
                     case RECEIVE_INFO:
-                        player.receiveInfo(split[1]);
+                        player.receiveInfo(Serdes.STRING.deserialize(split[1]));
                         break;
+                        
                     case UPDATE_STATE:
                         player.updateState(
                                 Serdes.PUBLIC_GAME_STATE.deserialize(split[1]),
                                 Serdes.PLAYER_STATE.deserialize(split[2])
                         );
                         break;
+                        
                     case SET_INITIAL_TICKETS:
                         player.setInitialTicketChoice(Serdes.TICKET_BAG.deserialize(split[1]));
                         break;
+                        
                     case CHOOSE_INITIAL_TICKETS:
                         sendResponse(Serdes.TICKET_BAG, player.chooseInitialTickets());
                         break;
+                        
                     case NEXT_TURN:
                         sendResponse(Serdes.TURN_KIND, player.nextTurn());
                         break;
+                        
                     case CHOOSE_TICKETS:
-                        final SortedBag<Ticket> chosenTickets = 
-                                player.chooseTickets(Serdes.TICKET_BAG.deserialize(split[1]));
-                        sendResponse(Serdes.TICKET_BAG, chosenTickets);
+                        final SortedBag<Ticket> ticketOptions = Serdes.TICKET_BAG.deserialize(split[1]);
+                        sendResponse(Serdes.TICKET_BAG, player.chooseTickets(ticketOptions));
                         break;
+                        
                     case DRAW_SLOT:
                         sendResponse(Serdes.INTEGER, player.drawSlot());
                         break;
+                        
                     case ROUTE:
                         sendResponse(Serdes.ROUTE, player.claimedRoute());
                         break;
+                        
                     case CARDS:
                         sendResponse(Serdes.CARD_BAG, player.initialClaimCards());
                         break;
+                        
                     case CHOOSE_ADDITIONAL_CARDS:
-                        final List<SortedBag<Card>> options = Serdes.CARD_BAG_LIST.deserialize(split[1]);
-                        sendResponse(Serdes.CARD_BAG, player.chooseAdditionalCards(options));
+                        final List<SortedBag<Card>> cardOptions = Serdes.CARD_BAG_LIST.deserialize(split[1]);
+                        sendResponse(Serdes.CARD_BAG, player.chooseAdditionalCards(cardOptions));
                         break;
                 }
             }

@@ -9,12 +9,32 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public interface Serde<T> {
+    
+    // MARK:- Séparateurs
+    
+    String COMMA = ",";
+    String SEMI_COLON = ";";
+    String COLON = ":";
+    
+    // MARK:- Méthodes statiques de découpage de String
+    
+    static String[] split(String toSplit, String separator) {
+        return toSplit.split(Pattern.quote(separator), -1);
+    }
+    
+    static String[] split(String toSplit) {
+        return split(toSplit, SEMI_COLON);
+    }
+    
+    // MARK:- Méthodes statiques de construction de serdes
 
     static <T> Serde<T> of(Function<T, String> serializer, Function<String, T> deserializer) {
         return new Serde<>() {
             @Override
             public String serialize(T raw) {
-                return raw != null ? serializer.apply(raw) : "";
+                return raw != null
+                        ? serializer.apply(raw)
+                        : "";
             }
 
             @Override
@@ -28,43 +48,40 @@ public interface Serde<T> {
 
     static <T> Serde<T> oneOf(List<T> elements) {
         return Serde.of(
-                t -> String.valueOf(elements.indexOf(t)),
+                raw -> String.valueOf(elements.indexOf(raw)),
                 s -> elements.get(Integer.parseInt(s))
         );
     }
 
     static <T> Serde<List<T>> listOf(Serde<T> serde, String separator) {
-        return new Serde<>() {
-            @Override
-            public String serialize(List<T> raw) {
-                return raw.stream()
+        return Serde.of(
+                raw -> raw.stream()
                         .map(serde::serialize)
-                        .collect(Collectors.joining(separator));
-            }
-
-            @Override
-            public List<T> deserialize(String serialized) {
-                return Arrays.stream(serialized.split(Pattern.quote(separator), -1))
+                        .collect(Collectors.joining(separator)),
+                
+                s -> Arrays.stream(split(s, separator))
                         .map(serde::deserialize)
-                        .collect(Collectors.toUnmodifiableList());
-            }
-        };
+                        .collect(Collectors.toUnmodifiableList())
+        );
+    }
+    
+    static <T> Serde<List<T>> listOf(Serde<T> serde) {
+        return listOf(serde, COMMA);
     }
 
     static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> serde, String separator) {
-        Serde<List<T>> listSerde = listOf(serde, separator);
-        return new Serde<>() {
-            @Override
-            public String serialize(SortedBag<T> raw) {
-                return listSerde.serialize(raw.toList());
-            }
-
-            @Override
-            public SortedBag<T> deserialize(String serialized) {
-                return SortedBag.of(listSerde.deserialize(serialized));
-            }
-        };
+        final Serde<List<T>> listSerde = listOf(serde, separator);
+        return Serde.of(
+                raw -> listSerde.serialize(raw.toList()),
+                s -> SortedBag.of(listSerde.deserialize(s))
+        );
     }
+    
+    static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> serde) {
+        return bagOf(serde, COMMA);
+    }
+    
+    // MARK:- Méthodes de Serde
     
     String serialize(T raw);
     T deserialize(String serialized);
