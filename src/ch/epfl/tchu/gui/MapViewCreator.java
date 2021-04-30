@@ -12,7 +12,9 @@ import static ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
 
 final class MapViewCreator {
 
-    public ImageView createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> handler, CardChooser cardChooser) {
+    private MapViewCreator() {}
+
+    public static ImageView createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> handler, CardChooser cardChooser) {
         return new ImageView("map.png");
     }
 
@@ -20,4 +22,5 @@ final class MapViewCreator {
     interface CardChooser {
         void chooseCards(List<SortedBag<Card>> options, ChooseCardsHandler handler);
     }
+
 }

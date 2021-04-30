@@ -13,4 +13,7 @@ public final class ObservableGameState {
     public ObservableGameState(PlayerId playerId) {
 
     }
+
+    public void setState(PublicGameState publicGameState, PlayerState p1State) {
+    }
 }
