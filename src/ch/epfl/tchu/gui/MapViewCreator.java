@@ -22,8 +22,7 @@ final class MapViewCreator {
 
     public static Pane createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> handler, CardChooser cardChooser) {
         Pane mapView = new Pane();
-        mapView.getStylesheets().add("map.css");
-        mapView.getStylesheets().add("colors.css");
+        mapView.getStylesheets().addAll("map.css", "colors.css");
 
         ImageView mapImageView = new ImageView();
         mapView.getChildren().add(mapImageView);
@@ -46,10 +45,7 @@ final class MapViewCreator {
                 // TODO: Créer des constantes
                 // ---- Rectangle voie ----
                 Rectangle trackRect = new Rectangle(36, 12);
-                trackRect.getStyleClass().add("track");
-                // TODO: Ajouter la classe filled si personne ne s'est emparé de la route
-                //track.getStyleClass().add();
-
+                trackRect.getStyleClass().addAll("track", "filled");
 
                 // ---- Groupe Wagon ----
                 // TODO: si l'identité d'un joueur est attachée au wagon
