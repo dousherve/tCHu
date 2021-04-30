@@ -25,10 +25,18 @@ final class MapViewCreator {
     private static final int CIRCLE_RADIUS = 3;
     private static final int CIRCLE_CENTER_X = 12;
     private static final int CIRCLE_CENTER_Y = 6;
+    
+    private static final String MAP_STYLES = "map.css";
+    private static final String COLORS_STYLES = "colors.css";
+    private static final String ROUTE_CLASS = "route";
+    private static final String NEUTRAL_CLASS = "NEUTRAL";
+    private static final String TRACK_CLASS = "track";
+    private static final String FILLED_CLASS = "filled";
+    private static final String CAR_CLASS = "car";
 
-    public static Pane createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> handler, CardChooser cardChooser) {
+    static Pane createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> handler, CardChooser cardChooser) {
         Pane mapView = new Pane();
-        mapView.getStylesheets().addAll("map.css", "colors.css");
+        mapView.getStylesheets().addAll(MAP_STYLES, COLORS_STYLES);
 
         ImageView mapImageView = new ImageView();
         mapView.getChildren().add(mapImageView);
@@ -37,10 +45,10 @@ final class MapViewCreator {
             Group routeGroup = new Group();
             routeGroup.setId(route.id());
             routeGroup.getStyleClass().addAll(
-                    "route",
+                    ROUTE_CLASS,
                     route.level().name(),
                     route.color() == null
-                            ? "NEUTRAL"
+                            ? NEUTRAL_CLASS
                             : route.color().name()
             );
 
@@ -50,18 +58,18 @@ final class MapViewCreator {
 
                 // Rectangle de la voie
                 Rectangle trackRect = new Rectangle(RECT_WIDTH, RECT_HEIGHT);
-                trackRect.getStyleClass().addAll("track", "filled");
+                trackRect.getStyleClass().addAll(TRACK_CLASS, FILLED_CLASS);
 
                 // Groupe du wagon
                 // TODO: si l'identité d'un joueur est attachée au wagon
                 boolean visible = false;
 
                 Group carGroup = new Group();
-                carGroup.getStyleClass().add("car");
+                carGroup.getStyleClass().add(CAR_CLASS);
                 carGroup.setVisible(visible);
     
                 Rectangle carRect = new Rectangle(RECT_WIDTH, RECT_HEIGHT);
-                carRect.getStyleClass().add("filled");
+                carRect.getStyleClass().add(FILLED_CLASS);
     
                 Circle circle1 = new Circle(CIRCLE_CENTER_X, CIRCLE_CENTER_Y, CIRCLE_RADIUS);
                 Circle circle2 = new Circle(2 * CIRCLE_CENTER_X, CIRCLE_CENTER_Y, CIRCLE_RADIUS);
