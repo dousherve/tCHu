@@ -19,6 +19,12 @@ import static ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
 final class MapViewCreator {
 
     private MapViewCreator() {}
+    
+    private static final int RECT_WIDTH = 36;
+    private static final int RECT_HEIGHT = 12;
+    private static final int CIRCLE_RADIUS = 3;
+    private static final int CIRCLE_CENTER_X = 12;
+    private static final int CIRCLE_CENTER_Y = 6;
 
     public static Pane createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> handler, CardChooser cardChooser) {
         Pane mapView = new Pane();
@@ -30,9 +36,9 @@ final class MapViewCreator {
         for (Route route : ChMap.routes()) {
             Group routeGroup = new Group();
             routeGroup.setId(route.id());
-            routeGroup.getStyleClass().add("route");
-            routeGroup.getStyleClass().add(route.level().name());
-            routeGroup.getStyleClass().add(
+            routeGroup.getStyleClass().addAll(
+                    "route",
+                    route.level().name(),
                     route.color() == null
                             ? "NEUTRAL"
                             : route.color().name()
@@ -42,26 +48,25 @@ final class MapViewCreator {
                 Group cellGroup = new Group();
                 cellGroup.setId(route.id() + "_" + i);
 
-                // TODO: Créer des constantes
-                // ---- Rectangle voie ----
-                Rectangle trackRect = new Rectangle(36, 12);
+                // Rectangle de la voie
+                Rectangle trackRect = new Rectangle(RECT_WIDTH, RECT_HEIGHT);
                 trackRect.getStyleClass().addAll("track", "filled");
 
-                // ---- Groupe Wagon ----
+                // Groupe du wagon
                 // TODO: si l'identité d'un joueur est attachée au wagon
                 boolean visible = false;
 
                 Group carGroup = new Group();
                 carGroup.getStyleClass().add("car");
                 carGroup.setVisible(visible);
-
-                Rectangle carRect = new Rectangle(36, 12);
+    
+                Rectangle carRect = new Rectangle(RECT_WIDTH, RECT_HEIGHT);
                 carRect.getStyleClass().add("filled");
-
-                Circle circle1 = new Circle(12, 6, 3);
-                Circle circle2 = new Circle(24, 6, 3);
-
-                // ---- Ajouts enfants ----
+    
+                Circle circle1 = new Circle(CIRCLE_CENTER_X, CIRCLE_CENTER_Y, CIRCLE_RADIUS);
+                Circle circle2 = new Circle(2 * CIRCLE_CENTER_X, CIRCLE_CENTER_Y, CIRCLE_RADIUS);
+    
+                // Ajout des enfants
                 carGroup.getChildren().addAll(carRect, circle1, circle2);
                 cellGroup.getChildren().addAll(trackRect, carGroup);
                 routeGroup.getChildren().add(cellGroup);
