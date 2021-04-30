@@ -28,6 +28,7 @@ public final class RemotePlayerProxy implements Player {
     
     private static final String SPACE = " ";
     
+    // TODO: quand fermer le socket ?
     private Socket socket;
     
     private void sendMessage(MessageId messageId, String message) {
@@ -74,9 +75,9 @@ public final class RemotePlayerProxy implements Player {
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         sendMessage(INIT_PLAYERS, String.join(SPACE,
                 Serdes.PLAYER_ID.serialize(ownId),
-                Serdes.STRING_LIST.serialize(
-                        List.of(playerNames.get(PLAYER_1), playerNames.get(PLAYER_2))
-                )
+                Serdes.STRING_LIST.serialize(List.of(
+                        playerNames.get(PLAYER_1), playerNames.get(PLAYER_2)
+                ))
         ));
     }
     
