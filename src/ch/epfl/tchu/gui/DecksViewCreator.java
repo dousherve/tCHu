@@ -140,6 +140,8 @@ final class DecksViewCreator {
         Rectangle fgRect = new Rectangle(GAUGE_WIDTH, GAUGE_HEIGHT);
         fgRect.getStyleClass().add(FOREGROUND_CLASS);
         
+        fgRect.setWidth(20);
+        
         gauge.getChildren().addAll(bgRect, fgRect);
 
         Button button = new Button(label);
