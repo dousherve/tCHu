@@ -33,8 +33,13 @@ final class MapViewCreator {
     private static final String TRACK_CLASS = "track";
     private static final String FILLED_CLASS = "filled";
     private static final String CAR_CLASS = "car";
+    
+    @FunctionalInterface
+    interface CardChooser {
+        void chooseCards(List<SortedBag<Card>> options, ChooseCardsHandler handler);
+    }
 
-    static Pane createMapView(ObservableGameState ogs, ObjectProperty<ClaimRouteHandler> handler, CardChooser cardChooser) {
+    static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         Pane mapView = new Pane();
         mapView.getStylesheets().addAll(MAP_STYLES, COLORS_STYLES);
 
@@ -51,7 +56,28 @@ final class MapViewCreator {
                             ? NEUTRAL_CLASS
                             : route.color().name()
             );
-
+            
+            gameState.routeOwner(route).addListener((obsId, oV, nV) -> {
+                routeGroup.getStyleClass().add(obsId.getValue().name());
+            });
+    
+            routeGroup.disableProperty().bind(
+                    claimRouteHP.isNull().or(gameState.claimable(route).not())
+            );
+            
+            routeGroup.setOnMouseClicked(e -> {
+                List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
+                ClaimRouteHandler claimRouteH = claimRouteHP.get();
+                
+                if (possibleClaimCards.size() == 1) {
+                    claimRouteH.onClaimRoute(route, possibleClaimCards.get(0));
+                } else if (possibleClaimCards.size() > 1) {
+                    cardChooser.chooseCards(possibleClaimCards, chosenCards -> {
+                        claimRouteH.onClaimRoute(route, chosenCards);
+                    });
+                }
+            });
+            
             for (int i = 1; i <= route.length(); ++i) {
                 Group cellGroup = new Group();
                 cellGroup.setId(route.id() + "_" + i);
@@ -61,12 +87,8 @@ final class MapViewCreator {
                 trackRect.getStyleClass().addAll(TRACK_CLASS, FILLED_CLASS);
 
                 // Groupe du wagon
-                // TODO: si l'identité d'un joueur est attachée au wagon
-                boolean visible = false;
-
                 Group carGroup = new Group();
                 carGroup.getStyleClass().add(CAR_CLASS);
-                carGroup.setVisible(visible);
     
                 Rectangle carRect = new Rectangle(RECT_WIDTH, RECT_HEIGHT);
                 carRect.getStyleClass().add(FILLED_CLASS);
@@ -84,11 +106,6 @@ final class MapViewCreator {
         }
 
         return mapView;
-    }
-
-    @FunctionalInterface
-    interface CardChooser {
-        void chooseCards(List<SortedBag<Card>> options, ChooseCardsHandler handler);
     }
 
 }

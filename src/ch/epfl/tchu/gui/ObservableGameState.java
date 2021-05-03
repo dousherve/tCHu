@@ -265,7 +265,7 @@ public final class ObservableGameState {
         return cardCountPerType.get(card);
     }
     
-    public ReadOnlyBooleanProperty canClaimRoute(Route route) {
+    public ReadOnlyBooleanProperty claimable(Route route) {
         return routesClaimabilty.get(route);
     }
     

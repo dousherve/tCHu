@@ -1,7 +1,14 @@
 package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.SortedBag;
-import ch.epfl.tchu.game.*;
+import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.ChMap;
+import ch.epfl.tchu.game.PlayerId;
+import ch.epfl.tchu.game.PlayerState;
+import ch.epfl.tchu.game.PublicCardState;
+import ch.epfl.tchu.game.PublicGameState;
+import ch.epfl.tchu.game.PublicPlayerState;
+import ch.epfl.tchu.game.Route;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -23,7 +30,7 @@ public final class Stage9Test extends Application {
     @Override
     public void start(Stage primaryStage) {
         ObservableGameState gameState = new ObservableGameState(PLAYER_1);
-
+        
         ObjectProperty<ClaimRouteHandler> claimRoute =
                 new SimpleObjectProperty<>(Stage9Test::claimRoute);
         ObjectProperty<DrawTicketsHandler> drawTickets =
@@ -42,7 +49,7 @@ public final class Stage9Test extends Application {
                 new BorderPane(mapView, null, cardsView, handView, null);
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.show();
-
+    
         setState(gameState);
     }
 
