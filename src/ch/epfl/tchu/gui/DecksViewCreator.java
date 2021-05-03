@@ -41,7 +41,7 @@ final class DecksViewCreator {
     private static final String COUNT_CLASS = "count";
     private static final String GAUGED_CLASS = "gauged";
     private static final String BACKGROUND_CLASS = "background";
-    private static final String FOREROUND_CLASS = "foreground";
+    private static final String FOREGROUND_CLASS = "foreground";
     private static final String NEUTRAL_CLASS = "NEUTRAL";
 
     static Node createHandView(ObservableGameState ogs) {
@@ -138,8 +138,8 @@ final class DecksViewCreator {
         Rectangle bgRect = new Rectangle(GAUGE_WIDTH, GAUGE_HEIGHT);
         bgRect.getStyleClass().add(BACKGROUND_CLASS);
         Rectangle fgRect = new Rectangle(GAUGE_WIDTH, GAUGE_HEIGHT);
-        bgRect.getStyleClass().add(FOREROUND_CLASS);
-
+        fgRect.getStyleClass().add(FOREGROUND_CLASS);
+        
         gauge.getChildren().addAll(bgRect, fgRect);
 
         Button button = new Button(label);
