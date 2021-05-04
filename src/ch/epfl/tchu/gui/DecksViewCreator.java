@@ -2,13 +2,16 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Constants;
+import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -79,6 +82,10 @@ final class DecksViewCreator {
             button.disableProperty().bind(handlerProperty.isNull());
         }
         
+        void setOnMouseClicked(EventHandler<? super MouseEvent> handler) {
+            button.setOnMouseClicked(handler);
+        }
+        
     }
     
     private static StackPane createCardViewPane() {
@@ -111,7 +118,7 @@ final class DecksViewCreator {
         HBox handView = new HBox();
         handView.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);
 
-        ListView<String> ticketsView = new ListView<>();
+        ListView<Ticket> ticketsView = new ListView<>(gameState.tickets());
         ticketsView.setId(TICKETS_ID);
         handView.getChildren().add(ticketsView);
 
@@ -149,18 +156,21 @@ final class DecksViewCreator {
         GaugedButton ticketsBtn = new GaugedButton(StringsFr.TICKETS);
         ticketsBtn.bindDisable(drawTicketsHP);
         ticketsBtn.bindPercentage(gameState.ticketsPercentage());
+        ticketsBtn.setOnMouseClicked(e -> drawTicketsHP.get().onDrawTickets());
         
         GaugedButton cardsBtn = new GaugedButton(StringsFr.CARDS);
         cardsBtn.bindDisable(drawCardHP);
         cardsBtn.bindPercentage(gameState.cardsPercentage());
-
+        cardsBtn.setOnMouseClicked(e -> drawCardHP.get().onDrawCard(Constants.DECK_SLOT));
+    
         cardPane.getChildren().add(ticketsBtn.get());
     
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             StackPane faceUpPane = createCardViewPane();
             
             gameState.faceUpCard(slot).addListener((o, oV, card) -> addCardClass(faceUpPane, card));
-            
+            faceUpPane.setOnMouseClicked(e -> drawCardHP.get().onDrawCard(slot));
+    
             cardPane.getChildren().add(faceUpPane);
         }
 

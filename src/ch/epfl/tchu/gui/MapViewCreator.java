@@ -57,13 +57,11 @@ final class MapViewCreator {
                             : route.color().name()
             );
             
-            gameState.routeOwner(route).addListener((obsId, oV, nV) -> {
-                routeGroup.getStyleClass().add(obsId.getValue().name());
-            });
+            gameState.routeOwner(route)
+                    .addListener((o, oV, id) -> routeGroup.getStyleClass().add(id.name()));
     
             routeGroup.disableProperty().bind(
-                    claimRouteHP.isNull().or(gameState.claimable(route).not())
-            );
+                    claimRouteHP.isNull().or(gameState.claimable(route).not()));
             
             routeGroup.setOnMouseClicked(e -> {
                 List<SortedBag<Card>> possibleClaimCards = gameState.possibleClaimCards(route);
@@ -72,9 +70,10 @@ final class MapViewCreator {
                 if (possibleClaimCards.size() == 1) {
                     claimRouteH.onClaimRoute(route, possibleClaimCards.get(0));
                 } else if (possibleClaimCards.size() > 1) {
-                    cardChooser.chooseCards(possibleClaimCards, chosenCards -> {
-                        claimRouteH.onClaimRoute(route, chosenCards);
-                    });
+                    cardChooser.chooseCards(
+                            possibleClaimCards,
+                            chosenCards -> claimRouteH.onClaimRoute(route, chosenCards)
+                    );
                 }
             });
             
