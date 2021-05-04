@@ -1,5 +1,12 @@
 package ch.epfl.tchu.net;
 
+/**
+ * Type énuméré publique décrivant les types de messages que le serveur
+ * peut envoyer aux clients.
+ *
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 public enum MessageId {
 
     INIT_PLAYERS,

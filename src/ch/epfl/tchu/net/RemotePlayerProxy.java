@@ -24,6 +24,14 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 import static ch.epfl.tchu.net.MessageId.*;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
+/**
+ * Classe publique, finale et immuable représentant un mandataire de joueur distant.
+ * Elle implémente l'interface <code>{@link Player}</code>
+ * et peut ainsi jouer le rôle d'un joueur.
+ * 
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 public final class RemotePlayerProxy implements Player {
     
     private static final String SPACE = " ";
@@ -65,11 +73,27 @@ public final class RemotePlayerProxy implements Player {
         }
     }
     
+    /**
+     * Construit un mandataire de joueur distant en utilisant
+     * le <code>{@link Socket}</code> donné.
+     * 
+     * @param socket
+     *          le socket utilisé pour communiquer à travers le réseau
+     *          avec le client par échange de messages textuels
+     */
     public RemotePlayerProxy(Socket socket) {
         this.socket = socket;
     }
     
     // MARK:- Méthodes de Player
+    
+    /*
+        Pour chacune des méthodes de Player, on sérialise ses arguments
+        et on envoie le message au serveur.
+        Si la méthode renvoie une valeur,
+        on la récupère depuis le réseau sous forme sérialisée,
+        puis on la désérialise avant de la renvoyer.
+     */
     
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {

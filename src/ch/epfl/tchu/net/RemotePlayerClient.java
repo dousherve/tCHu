@@ -22,6 +22,12 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 import static ch.epfl.tchu.net.Serde.split;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
+/**
+ * Classe publique, finale et immuable représentant un client de joueur distant.
+ *
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 public final class RemotePlayerClient {
     
     private static final String SPACE = " ";
@@ -43,6 +49,16 @@ public final class RemotePlayerClient {
         }
     }
     
+    /**
+     * Construit un nouveau client de joueur distant avec les paramètres donnés.
+     * 
+     * @param player
+     *          le joueur auquel l'objet doit fournir un accès distant
+     * @param host
+     *          le nom d'hôte à utiliser pour se connecter au mandataire
+     * @param port
+     *          le port à utiliser pour se connecter au mandataire
+     */
     public RemotePlayerClient(Player player, String host, int port) {
         this.player = player;
         try {
@@ -52,6 +68,14 @@ public final class RemotePlayerClient {
         }
     }
     
+    /**
+     * Méthode principale de lancement du client.
+     * 
+     * Elle attend un message en provenance du mandataire,
+     * puis appelle la méthode correspondante du joueur.
+     * Si cette méthode retourne un résultat,
+     * elle le renvoie au mandataire en réponse.
+     */
     public void run() {
         try (BufferedReader r =
                      new BufferedReader(
