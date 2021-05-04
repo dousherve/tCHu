@@ -1,18 +1,20 @@
 package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.Constants;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-
-import java.util.List;
 
 import static ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import static ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
@@ -43,8 +45,69 @@ final class DecksViewCreator {
     private static final String BACKGROUND_CLASS = "background";
     private static final String FOREGROUND_CLASS = "foreground";
     private static final String NEUTRAL_CLASS = "NEUTRAL";
+    
+    private static final class GaugedButton {
+        
+        private final Button button;
+        private final Rectangle gaugeRect;
+        
+        GaugedButton(String label) {
+            Group gaugeGroup = new Group();
+            
+            Rectangle bgRect = new Rectangle(GAUGE_WIDTH, GAUGE_HEIGHT);
+            bgRect.getStyleClass().add(BACKGROUND_CLASS);
+            this.gaugeRect = new Rectangle(GAUGE_WIDTH, GAUGE_HEIGHT);
+            this.gaugeRect.getStyleClass().add(FOREGROUND_CLASS);
+            
+            gaugeGroup.getChildren().addAll(bgRect, gaugeRect);
+            
+            this.button = new Button(label);
+            this.button.getStyleClass().add(GAUGED_CLASS);
+            this.button.setGraphic(gaugeGroup);
+        }
+        
+        Button get() {
+            return button;
+        }
+        
+        void bindPercentage(ReadOnlyIntegerProperty percentageProperty) {
+            gaugeRect.widthProperty().bind(
+                    percentageProperty.multiply(GAUGE_WIDTH).divide(100));
+        }
+        
+        <T> void bindDisable(ObjectProperty<T> handlerProperty) {
+            button.disableProperty().bind(handlerProperty.isNull());
+        }
+        
+    }
+    
+    private static StackPane createCardViewPane() {
+        StackPane stackPane = new StackPane();
+        stackPane.getStyleClass().add(CARD_CLASS);
+    
+        Rectangle outsideRect = new Rectangle(OUTSIDE_RECT_WIDTH, OUTSIDE_RECT_HEIGHT);
+        outsideRect.getStyleClass().add(OUTSIDE_RECT_CLASS);
+    
+        Rectangle insideRect = new Rectangle(INSIDE_RECT_WIDTH, INSIDE_RECT_HEIGHT);
+        insideRect.getStyleClass().addAll(FILLED_CLASS, INSIDE_RECT_CLASS);
+    
+        Rectangle trainRect = new Rectangle(INSIDE_RECT_WIDTH, INSIDE_RECT_HEIGHT);
+        trainRect.getStyleClass().add(TRAIN_IMAGE_CLASS);
+    
+        stackPane.getChildren().addAll(outsideRect, insideRect, trainRect);
+        
+        return stackPane;
+    }
+    
+    private static void addCardClass(Pane pane, Card card) {
+        pane.getStyleClass().add(
+                card.color() == null
+                ? NEUTRAL_CLASS
+                : card.color().name()
+        );
+    }
 
-    static Node createHandView(ObservableGameState ogs) {
+    static Node createHandView(ObservableGameState gameState) {
         HBox handView = new HBox();
         handView.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);
 
@@ -56,32 +119,20 @@ final class DecksViewCreator {
         handPane.setId(HAND_PANE_ID);
 
         for (Card card : Card.ALL) {
-            StackPane stackPane = new StackPane();
-            stackPane.getStyleClass().addAll(
-                    card.color() == null
-                            ? NEUTRAL_CLASS
-                            : card.color().name(),
-                    CARD_CLASS
-            );
-            // TODO: check la visibilité
-            stackPane.setVisible(true);
-
-            // Carte
-            Rectangle outsideRect = new Rectangle(OUTSIDE_RECT_WIDTH, OUTSIDE_RECT_HEIGHT);
-            outsideRect.getStyleClass().add(OUTSIDE_RECT_CLASS);
-
-            Rectangle insideRect = new Rectangle(INSIDE_RECT_WIDTH, INSIDE_RECT_HEIGHT);
-            insideRect.getStyleClass().addAll(FILLED_CLASS, INSIDE_RECT_CLASS);
-
-            Rectangle trainRect = new Rectangle(INSIDE_RECT_WIDTH, INSIDE_RECT_HEIGHT);
-            trainRect.getStyleClass().add(TRAIN_IMAGE_CLASS);
+            StackPane stackPane = createCardViewPane();
+            addCardClass(stackPane, card);
+    
+            ReadOnlyIntegerProperty count = gameState.cardCountOfType(card);
+            stackPane.visibleProperty().bind(Bindings.greaterThan(count, 0));
 
             // Compteur
             Text countText = new Text();
             countText.getStyleClass().add(COUNT_CLASS);
+            countText.textProperty().bind(Bindings.convert(count));
+            countText.visibleProperty().bind(Bindings.greaterThan(count, 1));
 
             // Ajout des enfants
-            stackPane.getChildren().addAll(outsideRect, insideRect, trainRect, countText);
+            stackPane.getChildren().add(countText);
             handPane.getChildren().add(stackPane);
         }
 
@@ -90,65 +141,32 @@ final class DecksViewCreator {
         return handView;
     }
 
-    static Node createCardsView(ObservableGameState ogs, ObjectProperty<DrawTicketsHandler> drawTickets, ObjectProperty<DrawCardHandler> drawCard) {
+    static Node createCardsView(ObservableGameState gameState, ObjectProperty<DrawTicketsHandler> drawTicketsHP, ObjectProperty<DrawCardHandler> drawCardHP) {
         VBox cardPane = new VBox();
         cardPane.setId(CARD_PANE_ID);
         cardPane.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);
 
-        Button ticketsBtn = createGaugedButton(StringsFr.TICKETS);
-        Button deckBtn = createGaugedButton(StringsFr.CARDS);
+        GaugedButton ticketsBtn = new GaugedButton(StringsFr.TICKETS);
+        ticketsBtn.bindDisable(drawTicketsHP);
+        ticketsBtn.bindPercentage(gameState.ticketsPercentage());
+        
+        GaugedButton cardsBtn = new GaugedButton(StringsFr.CARDS);
+        cardsBtn.bindDisable(drawCardHP);
+        cardsBtn.bindPercentage(gameState.cardsPercentage());
 
-        cardPane.getChildren().add(ticketsBtn);
-
-        // TODO: boucler sur les faceUp
-        for (Card card : List.of(Card.LOCOMOTIVE, Card.BLUE, Card.RED, Card.ORANGE, Card.RED)) {
-            StackPane stackPane = new StackPane();
-            stackPane.getStyleClass().addAll(
-                    card.color() == null
-                            ? NEUTRAL_CLASS
-                            : card.color().name(),
-                    CARD_CLASS
-            );
-            // TODO: check la visibilité
-            cardPane.setVisible(true);
-
-            // Carte
-            Rectangle outsideRect = new Rectangle(OUTSIDE_RECT_WIDTH, OUTSIDE_RECT_HEIGHT);
-            outsideRect.getStyleClass().add(OUTSIDE_RECT_CLASS);
-
-            Rectangle insideRect = new Rectangle(INSIDE_RECT_WIDTH, INSIDE_RECT_HEIGHT);
-            insideRect.getStyleClass().addAll(FILLED_CLASS, INSIDE_RECT_CLASS);
-
-            Rectangle trainRect = new Rectangle(INSIDE_RECT_WIDTH, INSIDE_RECT_HEIGHT);
-            trainRect.getStyleClass().add(TRAIN_IMAGE_CLASS);
-
-            // Ajout des enfants
-            stackPane.getChildren().addAll(outsideRect, insideRect, trainRect);
-            cardPane.getChildren().add(stackPane);
+        cardPane.getChildren().add(ticketsBtn.get());
+    
+        for (int slot : Constants.FACE_UP_CARD_SLOTS) {
+            StackPane faceUpPane = createCardViewPane();
+            
+            gameState.faceUpCard(slot).addListener((o, oV, card) -> addCardClass(faceUpPane, card));
+            
+            cardPane.getChildren().add(faceUpPane);
         }
 
-        cardPane.getChildren().add(deckBtn);
+        cardPane.getChildren().add(cardsBtn.get());
 
         return cardPane;
-    }
-
-    static Button createGaugedButton(String label) {
-        Group gauge = new Group();
-
-        Rectangle bgRect = new Rectangle(GAUGE_WIDTH, GAUGE_HEIGHT);
-        bgRect.getStyleClass().add(BACKGROUND_CLASS);
-        Rectangle fgRect = new Rectangle(GAUGE_WIDTH, GAUGE_HEIGHT);
-        fgRect.getStyleClass().add(FOREGROUND_CLASS);
-        
-        fgRect.setWidth(20);
-        
-        gauge.getChildren().addAll(bgRect, fgRect);
-
-        Button button = new Button(label);
-        button.getStyleClass().add(GAUGED_CLASS);
-        button.setGraphic(gauge);
-
-        return button;
     }
 
 }

@@ -54,15 +54,15 @@ public final class ObservableGameState {
     
     // MARK:- Méthodes privées et statiques
     
-    private static SimpleIntegerProperty defaultIntProperty() {
+    private static SimpleIntegerProperty createIntProperty() {
         return new SimpleIntegerProperty(0);
     }
     
-    private static SimpleBooleanProperty defaultBoolProperty() {
+    private static SimpleBooleanProperty createBoolProperty() {
         return new SimpleBooleanProperty(false);
     }
     
-    private static <T> SimpleObjectProperty<T> defaultObjectProperty() {
+    private static <T> SimpleObjectProperty<T> createObjectProperty() {
         return new SimpleObjectProperty<>(null);
     }
     
@@ -80,21 +80,21 @@ public final class ObservableGameState {
     private static List<ObjectProperty<Card>> createFaceUpCards() {
         List<ObjectProperty<Card>> faceUpCards = new ArrayList<>();
         for (int slot : Constants.FACE_UP_CARD_SLOTS) 
-            faceUpCards.add(defaultObjectProperty());
+            faceUpCards.add(createObjectProperty());
         
         return faceUpCards;
     }
 
     private static Map<Route, ObjectProperty<PlayerId>> createRoutesOwners() {
         Map<Route, ObjectProperty<PlayerId>> routesOwners = new HashMap<>();
-        ChMap.routes().forEach(r -> routesOwners.put(r, defaultObjectProperty()));
+        ChMap.routes().forEach(r -> routesOwners.put(r, createObjectProperty()));
         
         return routesOwners;
     }
     
-    private static Map<PlayerId, IntegerProperty> defaultCountProperties() {
+    private static Map<PlayerId, IntegerProperty> createCountProperties() {
         final Map<PlayerId, IntegerProperty> defaultCounts = new EnumMap<>(PlayerId.class);
-        PlayerId.ALL.forEach(id -> defaultCounts.put(id, defaultIntProperty()));
+        PlayerId.ALL.forEach(id -> defaultCounts.put(id, createIntProperty()));
         
         return defaultCounts;
     }
@@ -102,8 +102,8 @@ public final class ObservableGameState {
     // MARK:- Méthodes privées
     
     private void updatePublicGameStateProperties(PublicGameState newGameState) {
-        ticketsPercentageProperty.set(newGameState.ticketsCount() / ChMap.tickets().size());
-        cardsPercentageProperty.set(newGameState.cardState().deckSize() / Constants.TOTAL_CARDS_COUNT);
+        ticketsPercentageProperty.set(100 * newGameState.ticketsCount() / ChMap.tickets().size());
+        cardsPercentageProperty.set(100 * newGameState.cardState().deckSize() / Constants.TOTAL_CARDS_COUNT);
         
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             final Card newCard = newGameState.cardState().faceUpCard(slot);
@@ -115,13 +115,14 @@ public final class ObservableGameState {
             newClaimedRoutes.removeAll(gameState.claimedRoutes());
         
         for (Route claimed : newClaimedRoutes) {
-            final boolean ownerIsCurrentPlayer = newGameState.playerState(playerId)
+            final boolean ownerIsCurrentPlayer = newGameState.currentPlayerState()
                     .routes()
                     .contains(claimed);
             
             routesOwners.get(claimed).set(
-                    ownerIsCurrentPlayer ? playerId : playerId.next()
-            );
+                    ownerIsCurrentPlayer
+                            ? newGameState.currentPlayerId()
+                            : newGameState.currentPlayerId().next());
         }
     }
     
@@ -175,26 +176,26 @@ public final class ObservableGameState {
     public ObservableGameState(PlayerId playerId) {
         this.playerId = playerId;
         
-        this.ticketsPercentageProperty = defaultIntProperty();
-        this.cardsPercentageProperty = defaultIntProperty();
+        this.ticketsPercentageProperty = createIntProperty();
+        this.cardsPercentageProperty = createIntProperty();
         this.faceUpCards = createFaceUpCards();
         this.routesOwners = createRoutesOwners();
 
-        this.ticketCounts = defaultCountProperties();
-        this.cardCounts = defaultCountProperties();
-        this.carCounts = defaultCountProperties();
-        this.claimPoints = defaultCountProperties();
+        this.ticketCounts = createCountProperties();
+        this.cardCounts = createCountProperties();
+        this.carCounts = createCountProperties();
+        this.claimPoints = createCountProperties();
 
         this.ticketsProperty = FXCollections.observableArrayList();
         this.cardCountPerType = Card.ALL.stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
-                        card -> defaultIntProperty())
+                        card -> createIntProperty())
                 );
         this.routesClaimabilty = ChMap.routes().stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
-                        route -> defaultBoolProperty())
+                        route -> createBoolProperty())
                 );
     }
 
@@ -217,7 +218,7 @@ public final class ObservableGameState {
         return gameState.canDrawCards();
     }
     
-    // MARK:- Méthodes correspondant directement à l'état du joueur courant
+    // MARK:- Méthode correspondant directement à l'état du joueur courant
 
     public List<SortedBag<Card>> possibleClaimCards(Route route) {
         return playerState.possibleClaimCards(route);
