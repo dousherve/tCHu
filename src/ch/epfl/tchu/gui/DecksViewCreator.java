@@ -13,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -106,8 +105,8 @@ final class DecksViewCreator {
         return stackPane;
     }
     
-    private static void addCardClass(Pane pane, Card card) {
-        pane.getStyleClass().add(
+    private static void addCardStyleClass(Node node, Card card) {
+        node.getStyleClass().add(
                 card.color() == null
                 ? NEUTRAL_CLASS
                 : card.color().name()
@@ -120,30 +119,29 @@ final class DecksViewCreator {
 
         ListView<Ticket> ticketsView = new ListView<>(gameState.tickets());
         ticketsView.setId(TICKETS_ID);
-        handView.getChildren().add(ticketsView);
 
         HBox handPane = new HBox();
         handPane.setId(HAND_PANE_ID);
 
         for (Card card : Card.ALL) {
-            StackPane stackPane = createCardViewPane();
-            addCardClass(stackPane, card);
+            StackPane currentCardsPane = createCardViewPane();
+            addCardStyleClass(currentCardsPane, card);
     
-            ReadOnlyIntegerProperty count = gameState.cardCountOfType(card);
-            stackPane.visibleProperty().bind(Bindings.greaterThan(count, 0));
+            ReadOnlyIntegerProperty countP = gameState.cardCountOf(card);
+            currentCardsPane.visibleProperty().bind(Bindings.greaterThan(countP, 0));
 
             // Compteur
             Text countText = new Text();
             countText.getStyleClass().add(COUNT_CLASS);
-            countText.textProperty().bind(Bindings.convert(count));
-            countText.visibleProperty().bind(Bindings.greaterThan(count, 1));
+            countText.textProperty().bind(Bindings.convert(countP));
+            countText.visibleProperty().bind(Bindings.greaterThan(countP, 1));
 
             // Ajout des enfants
-            stackPane.getChildren().add(countText);
-            handPane.getChildren().add(stackPane);
+            currentCardsPane.getChildren().add(countText);
+            handPane.getChildren().add(currentCardsPane);
         }
 
-        handView.getChildren().add(handPane);
+        handView.getChildren().addAll(ticketsView, handPane);
 
         return handView;
     }
@@ -168,7 +166,7 @@ final class DecksViewCreator {
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             StackPane faceUpPane = createCardViewPane();
             
-            gameState.faceUpCard(slot).addListener((o, oV, card) -> addCardClass(faceUpPane, card));
+            gameState.faceUpCard(slot).addListener((o, oV, card) -> addCardStyleClass(faceUpPane, card));
             faceUpPane.setOnMouseClicked(e -> drawCardHP.get().onDrawCard(slot));
     
             cardPane.getChildren().add(faceUpPane);
