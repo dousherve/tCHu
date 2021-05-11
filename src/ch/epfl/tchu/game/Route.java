@@ -4,7 +4,6 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -167,46 +166,35 @@ public final class Route {
      */
     public List<SortedBag<Card>> possibleClaimCards() {
         List<SortedBag<Card>> possibleClaimCards = new ArrayList<>();
-        
-        if (level == Level.OVERGROUND) { // Route en surface
+    
+        int maxLocoCount = (level == Level.OVERGROUND) ? 0 : length;
+        for (int l = 0; l <= maxLocoCount; ++l) {
+            // l représente le nombre de locomotives
             if (color != null) {
                 // Route colorée
                 possibleClaimCards.add(
-                        SortedBag.of(length, Card.of(color)));
-            } else {
+                        SortedBag.of(
+                                length - l, Card.of(color),
+                                l, Card.LOCOMOTIVE
+                        ));
+            } else if (l < length) {
                 // Route de couleur neutre
                 for (Color c : Color.values()) {
                     possibleClaimCards.add(
-                            SortedBag.of(length, Card.of(c)));
-                }
-            }
-        } else if (level == Level.UNDERGROUND) { // Route en tunnel
-            for (int l = 0; l < length; ++l) {
-                // l représente le nombre de locomotives
-                if (color != null) {
-                    // Tunnel coloré
-                    possibleClaimCards.add(
                             SortedBag.of(
-                                    length - l, Card.of(color),
+                                    length - l, Card.of(c),
                                     l, Card.LOCOMOTIVE
                             ));
-                } else {
-                    // Tunnel de couleur neutre
-                    for (Color c : Color.values()) {
-                        possibleClaimCards.add(
-                                SortedBag.of(
-                                        length - l, Card.of(c),
-                                        l, Card.LOCOMOTIVE
-                                ));
-                    }
                 }
             }
+        }
     
+        if (level == Level.UNDERGROUND && color == null) {
             // Ajout du nombre de cartes locomotive maximum
             possibleClaimCards.add(SortedBag.of(length, Card.LOCOMOTIVE));
         }
         
-        return Collections.unmodifiableList(possibleClaimCards);
+        return possibleClaimCards;
     }
 
     /**
@@ -230,11 +218,8 @@ public final class Route {
         Preconditions.checkArgument(level == Level.UNDERGROUND);
         Preconditions.checkArgument(drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
         
-        final SortedBag<Card> coloredDrawnCards = drawnCards.difference(
-                SortedBag.of(drawnCards.countOf(Card.LOCOMOTIVE), Card.LOCOMOTIVE));
-        
-        final int commonCardsCount = (int) coloredDrawnCards.stream()
-                .filter(claimCards::contains)
+        final int commonCardsCount = (int) drawnCards.stream()
+                .filter(c -> claimCards.contains(c) && c != Card.LOCOMOTIVE)
                 .count();
         
         return commonCardsCount + drawnCards.countOf(Card.LOCOMOTIVE);

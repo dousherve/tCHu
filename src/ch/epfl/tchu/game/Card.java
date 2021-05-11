@@ -1,6 +1,5 @@
 package ch.epfl.tchu.game;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,10 +28,12 @@ public enum Card {
      * dans leur ordre de définition.
      */
     public static final List<Card> ALL = List.of(values());
+    
     /**
      * Nombre total de cartes.
      */
     public static final int COUNT = ALL.size();
+    
     /**
      * Liste immuable contenant uniquement les cartes wagon,
      * dans leur ordre de définition.
@@ -40,8 +41,7 @@ public enum Card {
      * @implNote Sous-liste immuable de ALL du premier jusqu'à
      *           l'avant-dernier élément, le dernier étant LOCOMOTIVE.
      */
-    public static final List<Card> CARS =
-            Collections.unmodifiableList(ALL.subList(0, COUNT - 1));
+    public static final List<Card> CARS = ALL.subList(0, COUNT - 1);
     
     private final Color color;
     

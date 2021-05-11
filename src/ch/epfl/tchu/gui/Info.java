@@ -7,7 +7,6 @@ import ch.epfl.tchu.game.Trail;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Classe publique, finale et immuable représentant un générateur de messages
@@ -33,23 +32,22 @@ public final class Info {
     }
     
     private static String cardsDescription(SortedBag<Card> cards) {
-        final List<String> cardsDescriptions = new ArrayList<>();
+        // TODO: optimiser ?
+        List<String> cardsDescriptions = new ArrayList<>();
+        StringBuilder descrB = new StringBuilder();
         
         for (Card c : cards.toSet()) {
-            final int count = cards.countOf(c);
+            int count = cards.countOf(c);
             cardsDescriptions.add(count + " " + cardName(c, count));
         }
         
-        StringBuilder descrB = new StringBuilder();
-        ListIterator<String> descrIt = cardsDescriptions.listIterator();
-        
-        while (descrIt.hasNext()) {
-            descrB.append(descrIt.next());
-    
-            if (descrIt.nextIndex() < cardsDescriptions.size() - 1)
-                descrB.append(", ");
-            else if (descrIt.nextIndex() == cardsDescriptions.size() - 1)
-                descrB.append(StringsFr.AND_SEPARATOR);
+        int size = cardsDescriptions.size();
+        if (size == 1) {
+            descrB.append(cardsDescriptions.get(0));
+        } else {
+            descrB.append(String.join(", ", cardsDescriptions.subList(0, size - 1)))
+                    .append(StringsFr.AND_SEPARATOR)
+                    .append(cardsDescriptions.get(size - 1));
         }
         
         return descrB.toString();
@@ -99,7 +97,7 @@ public final class Info {
                 cardDescription = StringsFr.LOCOMOTIVE_CARD;
                 break;
             default:
-                return "Carte inconnue";
+                throw new IllegalArgumentException("Carte inconnue");
         }
         
         return cardDescription + StringsFr.plural(count);

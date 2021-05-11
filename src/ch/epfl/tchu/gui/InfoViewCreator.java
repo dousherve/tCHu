@@ -28,7 +28,7 @@ final class InfoViewCreator {
         VBox infoView = new VBox();
         infoView.getStylesheets().addAll(INFO_STYLES, COLORS_STYLES);
 
-        // PLAYER STATS
+        // Statistiques des joueurs
         VBox playerStats = new VBox();
         playerStats.setId(PLAYER_STATS_ID);
 
@@ -56,15 +56,14 @@ final class InfoViewCreator {
             playerStats.getChildren().add(statsTF);
         }
 
-        // SEPARATOR
         Separator separator = new Separator(Orientation.HORIZONTAL);
 
-        // MESSAGES
+        // Messages
         TextFlow messagesTF = new TextFlow();
         messagesTF.setId(GAME_INFO_ID);
         Bindings.bindContent(messagesTF.getChildren(), infoTexts);
 
-        // AJOUTS DES ENFANTS
+        // Ajout des enfants
         infoView.getChildren().addAll(playerStats, separator, messagesTF);
 
         return infoView;

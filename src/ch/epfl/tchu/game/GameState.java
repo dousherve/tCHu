@@ -4,7 +4,9 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -37,24 +39,20 @@ public final class GameState extends PublicGameState {
      *          l'état initial d'une partie de tCHu
      */
     public static GameState initial(SortedBag<Ticket> tickets, Random rng) {
-        final Deck<Card> allCards = Deck.of(Constants.ALL_CARDS, rng); 
-        final Deck<Card> deckCards = allCards.withoutTopCards(PlayerId.COUNT * Constants.INITIAL_CARDS_COUNT);
+        Preconditions.checkArgument(tickets != null);
         
-        final PlayerId firstPlayerId = PlayerId.ALL.get(rng.nextInt(PlayerId.COUNT));
-        final PlayerId secondPlayerId = firstPlayerId.next();
+        Deck<Card> allCards = Deck.of(Constants.ALL_CARDS, rng); 
+        Deck<Card> deckCards = allCards.withoutTopCards(PlayerId.COUNT * Constants.INITIAL_CARDS_COUNT);
         
-        final PlayerState firstPlayerState = PlayerState.initial(
-                allCards.topCards(Constants.INITIAL_CARDS_COUNT)
-        );
-        final PlayerState secondPlayerState = PlayerState.initial(
-                allCards
-                        .withoutTopCards(Constants.INITIAL_CARDS_COUNT)
-                        .topCards(Constants.INITIAL_CARDS_COUNT)
-        );
+        PlayerId firstPlayerId = PlayerId.ALL.get(rng.nextInt(PlayerId.COUNT));
+        Map<PlayerId, PlayerState> playerState = new EnumMap<>(PlayerId.class);
         
-        final Map<PlayerId, PlayerState> playerState = new EnumMap<>(PlayerId.class);
-        playerState.put(firstPlayerId, firstPlayerState);
-        playerState.put(secondPlayerId, secondPlayerState);
+        for (PlayerId id : List.of(firstPlayerId, firstPlayerId.next())) {
+            playerState.put(id, PlayerState.initial(
+                    allCards.topCards(Constants.INITIAL_CARDS_COUNT)
+            ));
+            allCards = allCards.withoutTopCards(Constants.INITIAL_CARDS_COUNT);
+        }
         
         return new GameState(
                 Deck.of(tickets, rng),
@@ -68,8 +66,8 @@ public final class GameState extends PublicGameState {
     private GameState(Deck<Ticket> tickets, CardState cardState, PlayerId currentPlayerId, Map<PlayerId, PlayerState> playerState, PlayerId lastPlayer) {
         super(tickets.size(), cardState, currentPlayerId, Map.copyOf(playerState), lastPlayer);
         
-        this.tickets = tickets;
-        this.cardState = cardState;
+        this.tickets = Objects.requireNonNull(tickets);
+        this.cardState = Objects.requireNonNull(cardState);
         this.playerState = Map.copyOf(playerState);
     }
     
@@ -142,6 +140,7 @@ public final class GameState extends PublicGameState {
      *          la carte au sommet de la pioche
      */
     public Card topCard() {
+        Preconditions.checkArgument(! cardState.isDeckEmpty());
         return cardState.topDeckCard();
     }
     
@@ -154,6 +153,7 @@ public final class GameState extends PublicGameState {
      *          un état identique au récepteur mais sans la carte au sommet de la pioche
      */
     public GameState withoutTopCard() {
+        Preconditions.checkArgument(! cardState.isDeckEmpty());
         return new GameState(
                 tickets,
                 cardState.withoutTopDeckCard(),

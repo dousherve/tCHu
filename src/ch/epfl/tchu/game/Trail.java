@@ -12,6 +12,8 @@ import java.util.List;
  */
 public final class Trail {
     
+    private static final Trail EMPTY_TRAIL = new Trail(null, null, List.of());
+    
     private final int length;
     private final Station station1, station2;
     private final List<Route> routes;
@@ -26,22 +28,20 @@ public final class Trail {
      *
      * @return
      *          le plus long chemin du réseau constitué des routes données ;
-     *          si la liste est vide, retourne un chemin de longueur zéro dont les gares sont égales à null
+     *          si la liste est vide, retourne un chemin de longueur zéro
+     *          dont les gares valent <code>null</code>
      */
     public static Trail longest(List<Route> routes) {
-        if (routes.isEmpty())
-            return new Trail(null, null, List.of());
-            
         List<Trail> trails = new ArrayList<>();
         // On ajoute tous les chemins constitués d'une seule route
         for (Route r : routes) {
             trails.add(new Trail(r.station1(), r.station2(), List.of(r)));
             trails.add(new Trail(r.station2(), r.station1(), List.of(r)));
         }
-    
-        // On sait que trails n'est pas vide, il contient à ce stade
-        // au minimum deux chemins, s'il n'y a qu'une route
-        Trail longestTrail = trails.get(0);
+        
+        // Par défaut, on initialise le chemin vide
+        // au chemin le plus long
+        Trail longestTrail = EMPTY_TRAIL;
         
         while (! trails.isEmpty()) {
             List<Trail> tempTrails = new ArrayList<>();
@@ -77,7 +77,7 @@ public final class Trail {
     private Trail(Station station1, Station station2, List<Route> routes) {
         this.station1 = station1;
         this.station2 = station2;
-        this.routes = List.copyOf(routes);
+        this.routes = routes;
         
         this.length = routes.stream()
                 .mapToInt(Route::length)
@@ -128,21 +128,20 @@ public final class Trail {
         if (length == 0)
             return "Chemin vide";
         
-        List<String> stationNames = new ArrayList<>();
+        StringBuilder sB = new StringBuilder();
         // On ajoute le nom de la gare de départ du chemin
-        stationNames.add(station1.name());
+        sB.append(station1.name());
         
         Station previousStation = station1;
         for (Route r : routes) {
             final Station newStation = r.stationOpposite(previousStation);
-            stationNames.add(newStation.name());
+            sB.append(" - ").append(newStation.name());
             previousStation = newStation;
         }
         
-        return String.format(
-                "%s (%d)",
-                String.join(" - ", stationNames), length
-        );
+        sB.append(" (").append(length).append(")");
+        
+        return sB.toString();
     }
     
 }

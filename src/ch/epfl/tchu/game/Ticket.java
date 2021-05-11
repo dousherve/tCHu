@@ -30,19 +30,6 @@ public final class Ticket implements Comparable<Ticket> {
         final Trip firstTrip = trips.get(0);
         final String fromStationName = firstTrip.from().name();
         
-        if (trips.size() == 1) {
-            // Billet ville à ville, car il contient un seul trajet
-            final String toStationName = firstTrip.to().name();
-            
-            return String.format(
-                    "%s - %s (%d)",
-                    fromStationName,
-                    toStationName,
-                    firstTrip.points()
-            );
-        }
-        
-        // Billet ville à pays ou bien pays à pays
         Set<String> destinationsDescriptions = new TreeSet<>();
         for (Trip trip : trips) {
             destinationsDescriptions.add(
@@ -50,7 +37,7 @@ public final class Ticket implements Comparable<Ticket> {
         }
         
         return String.format(
-                "%s - {%s}",
+                "%s - " + (trips.size() == 1 ? "%s" : "{%s}"),
                 fromStationName,
                 String.join(", ", destinationsDescriptions)
         );
@@ -115,12 +102,7 @@ public final class Ticket implements Comparable<Ticket> {
      *          la connectivité du joueur qui le possède
      */
     public int points(StationConnectivity connectivity) {
-        // Billet ville à ville : trajet unique
-        if (trips.size() == 1)
-            return trips.get(0).points(connectivity);
-    
         /* 
-           Billet ville à pays ou bien pays à pays :
            On cherche le score maximum parmi tous les trajets.
            Ainsi, le comportement min/max imposé sera automatiquement
            pris en compte grâce au signe des valeurs retournées par le trajet en question.

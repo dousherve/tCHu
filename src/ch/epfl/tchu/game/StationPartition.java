@@ -16,8 +16,7 @@ public final class StationPartition implements StationConnectivity {
     private final int[] links;
     
     private StationPartition(int[] links) {
-        this.links = new int[links.length];
-        System.arraycopy(links, 0, this.links, 0, links.length);
+        this.links = links.clone();
     }
     
     /**
@@ -49,13 +48,6 @@ public final class StationPartition implements StationConnectivity {
     public static final class Builder {
         
         private final int[] links;
-
-        private int representative(int id) {
-            while (links[id] != id)
-                id = links[id];
-            
-            return id;
-        }
 
         /**
          * Construit un bâtisseur de partition d'un ensemble de gares dont l'identité est comprise entre
@@ -103,6 +95,13 @@ public final class StationPartition implements StationConnectivity {
                 links[i] = representative(i);
             
             return new StationPartition(links);
+        }
+    
+        private int representative(int id) {
+            while (links[id] != id)
+                id = links[id];
+        
+            return id;
         }
         
     }

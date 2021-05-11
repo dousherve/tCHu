@@ -59,10 +59,8 @@ public final class Game {
         
         players.forEach((playerId, player) -> player.initPlayers(playerId, playerNames));
     
-        final Map<PlayerId, Info> infos = Map.of(
-                state.currentPlayerId(), new Info(playerNames.get(state.currentPlayerId())),
-                state.currentPlayerId().next(), new Info(playerNames.get(state.currentPlayerId().next()))
-        );
+        final Map<PlayerId, Info> infos = new EnumMap<>(PlayerId.class);
+        players.forEach((id, player) -> infos.put(id, new Info(playerNames.get(id))));
         
         // Annonce du joueur qui jouera en premier
         broadcastInfo(infos.get(state.currentPlayerId()).willPlayFirst(), players);
@@ -142,7 +140,7 @@ public final class Game {
                         state = state.withClaimedRoute(route, initialCards);
                         // Annonce de la prise de possession de la route convoitée
                         broadcastInfo(currentPlayerInfo.claimedRoute(route, initialCards), players);
-                    } else if (route.level() == Route.Level.UNDERGROUND) { // Route en tunnel
+                    } else { // Route en tunnel
                         // Annonce de la tentative de prise de possession d'un tunnel
                         broadcastInfo(currentPlayerInfo.attemptsTunnelClaim(route, initialCards), players);
                         
@@ -168,7 +166,11 @@ public final class Game {
                                     .currentPlayerState()
                                     .possibleAdditionalCards(addtitionalCardsCount, initialCards, drawnCards);
     
-                            if (addtitionalCardsCount > 0 && ! options.isEmpty()) {
+                            if (options.isEmpty()) {
+                                // Annonce de l'échec de prise de possession du tunnel
+                                // TODO: enlever la duplication de la ligne
+                                broadcastInfo(currentPlayerInfo.didNotClaimRoute(route), players);
+                            } else if (addtitionalCardsCount > 0) {
                                 final SortedBag<Card> chosenAdditional = currentPlayer.chooseAdditionalCards(options);
                                 if (! chosenAdditional.isEmpty()) {
                                     final SortedBag<Card> totalCards = initialCards.union(chosenAdditional);
@@ -198,11 +200,11 @@ public final class Game {
         }
         
         /* == Fin d'une partie de tCHu == */
-        final GameState finalState = state;
-        broadcastStateChange(finalState, players);
+        broadcastStateChange(state, players);
         
-        final Trail fstPlayerLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_1).routes());
-        final Trail sndPlayerLongest = Trail.longest(finalState.playerState(PlayerId.PLAYER_2).routes());
+        // TODO: génériser le calcul du bonus
+        final Trail fstPlayerLongest = Trail.longest(state.playerState(PlayerId.PLAYER_1).routes());
+        final Trail sndPlayerLongest = Trail.longest(state.playerState(PlayerId.PLAYER_2).routes());
         Trail longest;
         PlayerId bonusWinnerId;
         
@@ -218,7 +220,8 @@ public final class Game {
         }
         
         final Map<PlayerId, Integer> results = new EnumMap<>(PlayerId.class);
-        players.forEach((id, player) -> results.put(id, finalState.playerState(id).finalPoints()));
+        for (PlayerId id : PlayerId.ALL)
+            results.put(id, state.playerState(id).finalPoints());
         
         if (bonusWinnerId != null) {
             results.put(
