@@ -43,8 +43,7 @@ public final class GraphicalPlayerTest extends Application {
         Map<PlayerId, String> playerNames =
                 Map.of(PLAYER_1, "Ada", PLAYER_2, "Charles");
         GraphicalPlayer p = new GraphicalPlayer(PLAYER_1, playerNames);
-        primaryStage.setScene(p.mainWindow().getScene());
-        primaryStage.show();
+        p.mainWindow().show();
         setState(p);
         
         ActionHandlers.DrawTicketsHandler drawTicketsH =
