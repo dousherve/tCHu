@@ -14,7 +14,7 @@ import java.util.Map;
 
 final class InfoViewCreator {
 
-    private static final String INFO_STYLES = "infos.css";
+    private static final String INFO_STYLES = "info.css";
     private static final String COLORS_STYLES = "colors.css";
 
     private static final String PLAYER_STATS_ID = "player-stats";
@@ -24,7 +24,7 @@ final class InfoViewCreator {
 
     private static final int CIRCLE_STAT_RADIUS = 5;
 
-    public VBox createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infoTexts) {
+    public static VBox createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infoTexts) {
         VBox infoView = new VBox();
         infoView.getStylesheets().addAll(INFO_STYLES, COLORS_STYLES);
 
@@ -38,9 +38,9 @@ final class InfoViewCreator {
             Circle circle = new Circle(CIRCLE_STAT_RADIUS);
             circle.getStyleClass().add(FILLED_CLASS);
 
-            Text text = new Text();
+            Text statsText = new Text();
 
-            text.textProperty().bind(
+            statsText.textProperty().bind(
                     Bindings.format(StringsFr.PLAYER_STATS,
                         playerNames.get(id),
                         gameState.ticketCount(id),
@@ -49,9 +49,9 @@ final class InfoViewCreator {
                         gameState.claimPoints(id))
             );
 
-            TextFlow statsTF = new TextFlow(circle, text);
+            TextFlow statsTF = new TextFlow();
             statsTF.getStyleClass().add(id.name());
-            statsTF.getChildren().addAll(circle, text);
+            statsTF.getChildren().addAll(circle, statsText);
 
             playerStats.getChildren().add(statsTF);
         }

@@ -3,33 +3,60 @@ package ch.epfl.tchu.gui;
 import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
+import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.PlayerId;
 import ch.epfl.tchu.game.PlayerState;
 import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.Ticket;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.StringConverter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static ch.epfl.tchu.gui.ActionHandlers.*;
+import static javafx.application.Platform.isFxApplicationThread;
 
-// TODO: regarder la visibilité
+// TODO: regarder la visibilité 
 public final class GraphicalPlayer {
     
     private static final int MAX_INFOS_COUNT = 5;
-
+    private static final String WINDOW_TITLE = "tCHu \u2014 %s";
+    private static final String CHOOSER_CLASS = "chooser.css";
+    private static final CardBagStringConverter CARD_BAG_STRING_CONVERTER = new CardBagStringConverter();
+    
+    private final PlayerId playerId;
+    private final Map<PlayerId, String> playerNames;
+    
     private final ObservableGameState gameState;
     private final ObservableList<Text> infosText;
 
     private final ObjectProperty<DrawTicketsHandler> drawTicketsHP;
     private final ObjectProperty<DrawCardHandler> drawCardHP;
     private final ObjectProperty<ClaimRouteHandler> claimRouteHP;
+    
+    private final Stage mainWindow;
 
     private static <T> SimpleObjectProperty<T> createObjectProperty() {
         return new SimpleObjectProperty<>(null);
@@ -43,21 +70,125 @@ public final class GraphicalPlayer {
 
         return list;
     }
+    
+    private static class CardBagStringConverter extends StringConverter<SortedBag<Card>> {
+    
+        @Override
+        public String toString(SortedBag<Card> cards) {
+            return Info.cardsDescription(cards);
+        }
+    
+        @Override
+        public SortedBag<Card> fromString(String string) {
+            throw new UnsupportedOperationException();
+        }
+    
+    }
+    
+    private <T> void showModalWindow(String title, String introText, List<T> options, int minSelected, Consumer<MultipleSelectionModel<T>> btnHandler, SelectionMode selectionMode, StringConverter<T> converter) {
+        // Stage de la fenêtre modale
+        Stage stage = new Stage(StageStyle.UTILITY);
+        stage.setTitle(title);
+        stage.initOwner(mainWindow);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setOnCloseRequest(Event::consume);
+        
+        // Conteneur du texte d'introduction
+        TextFlow tf = new TextFlow(new Text(introText));
+    
+        // ListView des choix possibles
+        ListView<T> listView = new ListView<>(FXCollections.observableArrayList(options));
+        var selectionModel = listView.getSelectionModel();
+        selectionModel.setSelectionMode(selectionMode);
+        if (converter != null)
+            listView.setCellFactory(v -> new TextFieldListCell<>(converter));
+    
+        // Bouton "Choisir"
+        Button chooseBtn = new Button(StringsFr.CHOOSE);
+        chooseBtn.disableProperty().bind(
+                Bindings.size(selectionModel.getSelectedItems()).lessThan(minSelected));
+        chooseBtn.setOnAction(e -> {
+            stage.hide();
+            btnHandler.accept(selectionModel);
+        });
+        
+        // Conteneur vertical principal de la fenêtre modale
+        VBox vbox = new VBox(tf, listView, chooseBtn);
+        
+        Scene scene = new Scene(vbox);
+        scene.getStylesheets().add(CHOOSER_CLASS);
+        
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    private void chooseCards(String introText, int minSelected, List<SortedBag<Card>> options, ChooseCardsHandler chooseCardsH) {
+        showModalWindow(
+                StringsFr.CARDS_CHOICE,
+                introText,
+                options,
+                minSelected,
+                model -> chooseCardsH.onChooseCards(model.getSelectedItem()),
+                SelectionMode.SINGLE,
+                CARD_BAG_STRING_CONVERTER
+        );
+    }
+    
+    private void resetHandlers() {
+        drawTicketsHP.set(null);
+        drawCardHP.set(null);
+        claimRouteHP.set(null);
+    }
+    
+    private Stage createMainWindow() {
+        Stage stage = new Stage();
+        stage.setTitle(String.format(WINDOW_TITLE, playerNames.get(playerId)));
+    
+        Node mapView = MapViewCreator
+                .createMapView(gameState, claimRouteHP, this::chooseClaimCards);
+        Node cardsView = DecksViewCreator
+                .createCardsView(gameState, drawTicketsHP, drawCardHP);
+        Node handView = DecksViewCreator
+                .createHandView(gameState);
+        Node infoView = InfoViewCreator
+                .createInfoView(playerId, playerNames, gameState, infosText);
+    
+        BorderPane mainPane =
+                new BorderPane(mapView, null, cardsView, handView, infoView);
+        stage.setScene(new Scene(mainPane));
+        
+        return stage;
+    }
 
     public GraphicalPlayer(PlayerId playerId, Map<PlayerId, String> playerNames) {
+        assert isFxApplicationThread();
+        
+        this.playerId = playerId;
+        this.playerNames = Map.copyOf(playerNames);
+        
         this.gameState = new ObservableGameState(playerId);
         
         this.infosText = createInfosTexts();
         this.drawTicketsHP = createObjectProperty();
         this.drawCardHP = createObjectProperty();
         this.claimRouteHP = createObjectProperty();
+        
+        this.mainWindow = createMainWindow();
+    }
+    
+    public Stage mainWindow() {
+        assert isFxApplicationThread();
+        return mainWindow;
     }
 
     public void setState(PublicGameState newGameState, PlayerState newPlayerState) {
+        assert isFxApplicationThread();
         gameState.setState(newGameState, newPlayerState);
     }
 
     public void receiveInfo(String info) {
+        assert isFxApplicationThread();
+        
         List<String> messages = infosText.stream()
                 .map(Text::getText)
                 .filter(t -> ! t.isBlank())
@@ -75,26 +206,69 @@ public final class GraphicalPlayer {
     }
 
     public void startTurn(DrawTicketsHandler drawTicketsH, DrawCardHandler drawCardH, ClaimRouteHandler claimRouteH) {
-        drawTicketsHP.set(gameState.canDrawTickets() ? drawTicketsH : null);
-        drawCardHP.set(gameState.canDrawCards() ? drawCardH : null);
-        claimRouteHP.set(claimRouteH);
+        assert isFxApplicationThread();
+        
+        drawTicketsHP.set(
+                gameState.canDrawTickets()
+                ? () -> {
+                    drawTicketsH.onDrawTickets();
+                    resetHandlers();
+                }
+                : null
+        );
+        drawCardHP.set(
+                gameState.canDrawCards()
+                ? slot -> {
+                    drawCardH.onDrawCard(slot);
+                    resetHandlers();
+                }
+                : null
+        );
+        claimRouteHP.set((route, initialCards) -> {
+            claimRouteH.onClaimRoute(route, initialCards);
+            resetHandlers();
+        });
     }
 
-    public void chooseTickets(SortedBag<Ticket> drawnTickets, DrawTicketsHandler drawTicketsH) {
+    public void chooseTickets(SortedBag<Ticket> drawnTickets, ChooseTicketsHandler chooseTicketsH) {
+        assert isFxApplicationThread();
         Preconditions.checkArgument(drawnTickets.size() == 3 || drawnTickets.size() == 5);
-
+        
+        int minSelected = drawnTickets.size() - Constants.DISCARDABLE_TICKETS_COUNT;
+        
+        showModalWindow(
+                StringsFr.TICKETS_CHOICE,
+                String.format(StringsFr.CHOOSE_TICKETS, minSelected, StringsFr.plural(minSelected)),
+                drawnTickets.toList(),
+                minSelected,
+                model -> {
+                    SortedBag<Ticket> chosenTickets = 
+                            minSelected == 1
+                            ? SortedBag.of(model.getSelectedItem())
+                            : SortedBag.of(model.getSelectedItems());
+                    chooseTicketsH.onChooseTickets(chosenTickets);
+                },
+                SelectionMode.MULTIPLE,
+                null
+        );
     }
 
     public void drawCard(DrawCardHandler drawCardH) {
-
+        assert isFxApplicationThread();
+        drawCardHP.set(slot -> {
+            drawCardH.onDrawCard(slot);
+            resetHandlers();
+        });
     }
 
-    public void chooseClaimCards(SortedBag<Card> initialCards, ChooseCardsHandler chooseCardsH) {
-
+    public void chooseClaimCards(List<SortedBag<Card>> initialCards, ChooseCardsHandler chooseCardsH) {
+        assert isFxApplicationThread();
+        chooseCards(StringsFr.CHOOSE_CARDS, 1, initialCards, chooseCardsH);
     }
 
     public void chooseAdditionalCards(List<SortedBag<Card>> options, ChooseCardsHandler chooseCardsH) {
-
+        assert isFxApplicationThread();
+        chooseCards(StringsFr.CHOOSE_ADDITIONAL_CARDS, 0, options, chooseCardsH);
     }
 
 }
