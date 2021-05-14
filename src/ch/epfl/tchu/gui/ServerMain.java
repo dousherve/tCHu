@@ -36,11 +36,10 @@ public final class ServerMain extends Application {
         for (PlayerId id : PlayerId.ALL)
             playerNames.put(id, names.get(id.ordinal()));
     
-        try (
+        try {
             ServerSocket serverSocket = new ServerSocket(5108);
-            Socket socket = serverSocket.accept()
-        ) {
-            System.out.println(socket.getInetAddress());
+            Socket socket = serverSocket.accept();
+            
             GraphicalPlayerAdapter graphicalPlayer = new GraphicalPlayerAdapter();
             Player playerProxy = new RemotePlayerProxy(socket);
             
