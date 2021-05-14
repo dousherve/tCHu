@@ -11,6 +11,7 @@ import ch.epfl.tchu.game.PublicPlayerState;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.util.Map;
 
 import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
@@ -57,5 +58,14 @@ public final class GraphicalPlayerTest extends Application {
                 };
         
         p.startTurn(drawTicketsH, drawCardH, claimRouteH);
+    
+        for (int i = 1; i <= 12; ++i) {
+            p.receiveInfo(String.format("Info %d\n", i));
+        }
+        
+        p.drawCard(s -> System.out.printf("Je tire une carte de %s !\n", s));
+        p.chooseTickets(SortedBag.of(ChMap.tickets().subList(0, 5)), System.out::println);
+        p.chooseClaimCards(List.of(SortedBag.of(3, Card.RED, 1, Card.LOCOMOTIVE), SortedBag.of(4, Card.LOCOMOTIVE)), System.out::println);
+        p.chooseAdditionalCards(List.of(SortedBag.of(1, Card.RED), SortedBag.of(3, Card.YELLOW)), System.out::println);
     }
 }

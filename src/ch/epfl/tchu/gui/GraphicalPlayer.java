@@ -85,7 +85,7 @@ public final class GraphicalPlayer {
     
     }
     
-    private <T> void showModalWindow(String title, String introText, List<T> options, int minSelected, Consumer<MultipleSelectionModel<T>> btnHandler, SelectionMode selectionMode, StringConverter<T> converter) {
+    private <T> void showModalWindow(String title, String intro, List<T> options, int minSelected, Consumer<MultipleSelectionModel<T>> btnHandler, SelectionMode selectionMode, StringConverter<T> converter) {
         // Stage de la fenêtre modale
         Stage stage = new Stage(StageStyle.UTILITY);
         stage.setTitle(title);
@@ -94,7 +94,7 @@ public final class GraphicalPlayer {
         stage.setOnCloseRequest(Event::consume);
         
         // Conteneur du texte d'introduction
-        TextFlow tf = new TextFlow(new Text(introText));
+        TextFlow tf = new TextFlow(new Text(intro));
     
         // ListView des choix possibles
         ListView<T> listView = new ListView<>(FXCollections.observableArrayList(options));
@@ -191,7 +191,7 @@ public final class GraphicalPlayer {
         
         List<String> messages = infosText.stream()
                 .map(Text::getText)
-                .filter(t -> ! t.isBlank())
+                // .filter(t -> ! t.isEmpty())
                 .collect(Collectors.toList());
         
         messages.add(info);
