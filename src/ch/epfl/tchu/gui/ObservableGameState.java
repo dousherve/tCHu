@@ -161,13 +161,11 @@ final class ObservableGameState {
                     .set(newPlayerState.cards().countOf(card));
         }
         
-        final List<Route> unclaimedRoutes = new ArrayList<>(ChMap.routes());
-        unclaimedRoutes.removeAll(newGameState.claimedRoutes());
-        
-        for (Route r : unclaimedRoutes) {
+        for (Route r : ChMap.routes()) {
             boolean isClaimable;
             isClaimable = (playerId == newGameState.currentPlayerId());
             isClaimable &= newPlayerState.canClaimRoute(r);
+            isClaimable &= ! newGameState.claimedRoutes().contains(r);
             
             /*
                 Si à ce stade le joueur peut s'emparer de la route
@@ -177,7 +175,7 @@ final class ObservableGameState {
             if (isClaimable && DOUBLE_ROUTES_STATIONS.contains(r.stations())) {
                 isClaimable = newGameState.claimedRoutes()
                         .stream()
-                        .noneMatch(cR -> cR.stations().containsAll(r.stations()));
+                        .noneMatch(claimed -> claimed.stations().containsAll(r.stations()));
             }
             
             routesClaimability.get(r).set(isClaimable);

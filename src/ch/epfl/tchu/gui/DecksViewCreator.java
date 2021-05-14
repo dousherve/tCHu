@@ -105,12 +105,10 @@ final class DecksViewCreator {
         return stackPane;
     }
     
-    private static void addCardStyleClass(Node node, Card card) {
-        node.getStyleClass().add(
-                card.color() == null
+    private static String getCardStyleClass(Card card) {
+        return card.color() == null
                 ? NEUTRAL_CLASS
-                : card.color().name()
-        );
+                : card.color().name();
     }
 
     static Node createHandView(ObservableGameState gameState) {
@@ -125,7 +123,7 @@ final class DecksViewCreator {
 
         for (Card card : Card.ALL) {
             StackPane currentCardsPane = createCardViewPane();
-            addCardStyleClass(currentCardsPane, card);
+            currentCardsPane.getStyleClass().add(getCardStyleClass(card));
     
             ReadOnlyIntegerProperty countP = gameState.cardCountOf(card);
             currentCardsPane.visibleProperty().bind(Bindings.greaterThan(countP, 0));
@@ -166,7 +164,11 @@ final class DecksViewCreator {
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             StackPane faceUpPane = createCardViewPane();
             
-            gameState.faceUpCard(slot).addListener((o, oV, card) -> addCardStyleClass(faceUpPane, card));
+            gameState.faceUpCard(slot).addListener((o, oV, card) -> {
+                faceUpPane.getStyleClass().clear();
+                faceUpPane.getStyleClass().addAll(CARD_CLASS, getCardStyleClass(card));
+            });
+            
             faceUpPane.setOnMouseClicked(e -> drawCardHP.get().onDrawCard(slot));
     
             cardPane.getChildren().add(faceUpPane);

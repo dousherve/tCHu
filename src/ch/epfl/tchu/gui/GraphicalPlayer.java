@@ -100,6 +100,8 @@ public final class GraphicalPlayer {
         ListView<T> listView = new ListView<>(FXCollections.observableArrayList(options));
         var selectionModel = listView.getSelectionModel();
         selectionModel.setSelectionMode(selectionMode);
+        selectionModel.selectFirst();
+        // TODO: amélioration : ne pas avoir besoin de presser Cmd ? (ou Ctrl)
         if (converter != null)
             listView.setCellFactory(v -> new TextFieldListCell<>(converter));
     
@@ -156,6 +158,7 @@ public final class GraphicalPlayer {
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
         stage.setScene(new Scene(mainPane));
+        stage.show();
         
         return stage;
     }
@@ -191,7 +194,7 @@ public final class GraphicalPlayer {
         
         List<String> messages = infosText.stream()
                 .map(Text::getText)
-                // .filter(t -> ! t.isEmpty())
+                .filter(t -> ! t.isBlank())
                 .collect(Collectors.toList());
         
         messages.add(info);
