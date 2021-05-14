@@ -5,7 +5,6 @@ package ch.epfl.sigcheck;
 // possible, que les noms et les types des différentes entités à définir
 // pour cette étape du projet sont corrects.
 
-@SuppressWarnings("ALL")
 final class SignatureChecks_6 {
     private SignatureChecks_6() {}
 
