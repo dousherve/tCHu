@@ -244,13 +244,7 @@ public final class GraphicalPlayer {
                 String.format(StringsFr.CHOOSE_TICKETS, minSelected, StringsFr.plural(minSelected)),
                 drawnTickets.toList(),
                 minSelected,
-                model -> {
-                    SortedBag<Ticket> chosenTickets = 
-                            minSelected == 1
-                            ? SortedBag.of(model.getSelectedItem())
-                            : SortedBag.of(model.getSelectedItems());
-                    chooseTicketsH.onChooseTickets(chosenTickets);
-                },
+                model -> chooseTicketsH.onChooseTickets(SortedBag.of(model.getSelectedItems())),
                 SelectionMode.MULTIPLE,
                 null
         );
