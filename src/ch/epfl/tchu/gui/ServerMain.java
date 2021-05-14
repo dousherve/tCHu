@@ -22,6 +22,8 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 
 public final class ServerMain extends Application {
     
+    private static final List<String> DEFAULT_PLAYERS = List.of("Ada", "Charles");
+    
     public static void main(String[] args) {
         launch(args);
     }
@@ -29,8 +31,8 @@ public final class ServerMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         List<String> names = getParameters().getRaw();
-        if (names.isEmpty())
-            names = List.of("Ada", "Charles");
+        if (names.size() < 2)
+            names = DEFAULT_PLAYERS;
         
         Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
         for (PlayerId id : PlayerId.ALL)
