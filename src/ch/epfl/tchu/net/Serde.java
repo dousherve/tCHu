@@ -98,9 +98,7 @@ public interface Serde<T> {
 
             @Override
             public T deserialize(String serialized) {
-                return ! serialized.isEmpty()
-                        ? deserializer.apply(serialized)
-                        : null;
+                return deserializer.apply(serialized);
             }
         };
     }
@@ -122,7 +120,9 @@ public interface Serde<T> {
     static <T> Serde<T> oneOf(List<T> elements) {
         return Serde.of(
                 raw -> String.valueOf(elements.indexOf(raw)),
-                serialized -> elements.get(Integer.parseInt(serialized))
+                serialized -> serialized.isEmpty()
+                        ? null
+                        : elements.get(Integer.parseInt(serialized))
         );
     }
     
@@ -150,7 +150,9 @@ public interface Serde<T> {
                         .map(serde::serialize)
                         .collect(Collectors.joining(separator)),
         
-                serialized -> Arrays.stream(split(serialized, separator))
+                serialized -> serialized.isEmpty()
+                        ? List.of()
+                        : Arrays.stream(split(serialized, separator))
                         .map(serde::deserialize)
                         .collect(Collectors.toUnmodifiableList())
         );

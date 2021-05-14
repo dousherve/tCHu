@@ -28,7 +28,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
  */
-public final class RemotePlayerClient {
+public final class RemotePlayerClient implements Runnable {
     
     private static final String SPACE = " ";
     
