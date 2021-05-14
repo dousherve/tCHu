@@ -140,10 +140,6 @@ class CardStateTest {
                 newState.deckSize()
         );
         assertEquals(
-                cardStateWithDeck.totalSize() - 1,
-                newState.totalSize()
-        );
-        assertEquals(
                 Card.GREEN,
                 newState.topDeckCard()
         );
@@ -162,18 +158,10 @@ class CardStateTest {
                 3,
                 cardStateWithDeck.withMoreDiscardedCards(additional).discardsSize()
         );
-        assertEquals(
-                cardStateWithDeck.totalSize() + 3,
-                cardStateWithDeck.withMoreDiscardedCards(additional).totalSize()
-        );
         
         assertEquals(
                 cardStateWithDeck.discardsSize(),
                 cardStateWithDeck.withMoreDiscardedCards(SortedBag.of()).discardsSize()
-        );
-        assertEquals(
-                cardStateWithDeck.totalSize(),
-                cardStateWithDeck.withMoreDiscardedCards(SortedBag.of()).totalSize()
         );
     }
 

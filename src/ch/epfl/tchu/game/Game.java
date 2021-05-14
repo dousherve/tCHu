@@ -164,7 +164,7 @@ public final class Game {
                             // Les cartes tirées impliquent au moins une carte additionnelle
                             final List<SortedBag<Card>> options = state
                                     .currentPlayerState()
-                                    .possibleAdditionalCards(addtitionalCardsCount, initialCards, drawnCards);
+                                    .possibleAdditionalCards(addtitionalCardsCount, initialCards);
     
                             if (options.isEmpty()) {
                                 // Annonce de l'échec de prise de possession du tunnel

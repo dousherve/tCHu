@@ -277,8 +277,6 @@ public final class GameState extends PublicGameState {
      *          dans la main du joueur courant
      */
     public GameState withDrawnFaceUpCard(int slot) {
-        Preconditions.checkArgument(canDrawCards());
-
         final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
@@ -305,8 +303,6 @@ public final class GameState extends PublicGameState {
      *          a été placée dans la main du joueur courant
      */
     public GameState withBlindlyDrawnCard() {
-        Preconditions.checkArgument(canDrawCards());
-
         final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),

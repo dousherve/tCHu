@@ -84,23 +84,6 @@ class PlayerStateTest {
     }
 
     @Test
-    void withAddedCards() {
-        SortedBag<Card> newCards = SortedBag.of(2, Card.BLACK, 1, Card.YELLOW);
-        PlayerState newState = STATE.withAddedCards(newCards);
-        
-        assertEquals(
-                CARDS.union(newCards),
-                newState.cards()
-        );
-        assertEquals(
-                CARDS.size() + newCards.size(),
-                newState.cards().size()
-        );
-        
-        assertEquals(CARDS, STATE.cards());
-    }
-
-    @Test
     void canClaimRoute() {
         final Route LONG_ROUTE = ChMap.routes().get(22);
         List<Route> routes = Collections.nCopies(6, LONG_ROUTE);
@@ -171,22 +154,18 @@ class PlayerStateTest {
     void possibleAdditionalCardsFails() {
         PlayerState state = new PlayerState(TICKETS, CARDS, ROUTES);
         assertThrows(IllegalArgumentException.class, () -> {
-            state.possibleAdditionalCards(0, SortedBag.of(Card.RED), SortedBag.of(3, Card.RED));
+            state.possibleAdditionalCards(0, SortedBag.of(Card.RED));
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            state.possibleAdditionalCards(4, SortedBag.of(Card.RED), SortedBag.of(3, Card.RED));
+            state.possibleAdditionalCards(4, SortedBag.of(Card.RED));
         });
     
         assertThrows(IllegalArgumentException.class, () -> {
-            state.possibleAdditionalCards(2, SortedBag.of(), SortedBag.of(3, Card.RED));
+            state.possibleAdditionalCards(2, SortedBag.of());
         });
         
         assertThrows(IllegalArgumentException.class, () -> {
-            state.possibleAdditionalCards(2, CARDS.union(SortedBag.of(Card.GREEN)), SortedBag.of(3, Card.RED));
-        });
-    
-        assertThrows(IllegalArgumentException.class, () -> {
-            state.possibleAdditionalCards(2, SortedBag.of(Card.RED), SortedBag.of());
+            state.possibleAdditionalCards(2, CARDS.union(SortedBag.of(Card.GREEN)));
         });
     }
     
@@ -204,7 +183,7 @@ class PlayerStateTest {
                         SortedBag.of(1, Card.GREEN, 1, Card.LOCOMOTIVE),
                         SortedBag.of(2, Card.LOCOMOTIVE)
                 ),
-                STATE1.possibleAdditionalCards(2, SortedBag.of(Card.GREEN), SortedBag.of(3, Card.BLACK))
+                STATE1.possibleAdditionalCards(2, SortedBag.of(Card.GREEN))
         );
         
         SortedBag<Card> exampleCards2 = SortedBag.of(3, Card.YELLOW, 2, Card.WHITE);
@@ -215,7 +194,7 @@ class PlayerStateTest {
                 List.of(
                         SortedBag.of(Card.YELLOW)
                 ),
-                STATE2.possibleAdditionalCards(1, SortedBag.of(Card.YELLOW), SortedBag.of(1, Card.WHITE, 2, Card.GREEN))
+                STATE2.possibleAdditionalCards(1, SortedBag.of(Card.YELLOW))
         );
     
         SortedBag<Card> exampleCards3 = SortedBag.of(5, Card.ORANGE, 1, Card.LOCOMOTIVE);
@@ -227,7 +206,7 @@ class PlayerStateTest {
                         SortedBag.of(3, Card.ORANGE),
                         SortedBag.of(2, Card.ORANGE, 1, Card.LOCOMOTIVE)
                 ),
-                STATE3.possibleAdditionalCards(3, SortedBag.of(2, Card.ORANGE), SortedBag.of(1, Card.ORANGE, 2, Card.LOCOMOTIVE))
+                STATE3.possibleAdditionalCards(3, SortedBag.of(2, Card.ORANGE))
         );
     
         SortedBag<Card> exampleCards4 = SortedBag.of(5, Card.GREEN);
@@ -236,7 +215,7 @@ class PlayerStateTest {
     
         assertEquals(
                 List.of(),
-                STATE4.possibleAdditionalCards(3, SortedBag.of(3, Card.GREEN), SortedBag.of(3, Card.GREEN))
+                STATE4.possibleAdditionalCards(3, SortedBag.of(3, Card.GREEN))
         );
     }
 

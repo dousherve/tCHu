@@ -51,16 +51,6 @@ public class PublicCardState {
     }
 
     /**
-     * Retoune le nombre total de cartes qui ne sont pas en main des joueurs,
-     * c'est à dire les cartes face visible, celles de la pioche et celles de la défausse.
-     *
-     * @return le nombre total de cartes qui ne sont pas en main des joueurs
-     */
-    public int totalSize() {
-        return faceUpCards.size() + deckSize + discardsSize;
-    }
-
-    /**
      * Retourne les 5 cartes face visible sous la forme d'une liste de 5 éléments.
      *
      * @return retourne une liste de 5 élements formée des cartes face visible

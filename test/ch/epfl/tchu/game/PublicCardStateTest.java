@@ -41,12 +41,6 @@ class PublicCardStateTest {
     }
 
     @Test
-    void totalSizeWorks() {
-        assertEquals(5 + 25 + 10, pcs.totalSize());
-        assertEquals(5 + 0 + 10, pcsWithEmptyDeck.totalSize());
-    }
-
-    @Test
     void faceUpCardsWorks() {
         assertEquals(faceUpCards, pcs.faceUpCards());
     }
