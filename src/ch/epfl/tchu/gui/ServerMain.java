@@ -40,6 +40,7 @@ public final class ServerMain extends Application {
             ServerSocket serverSocket = new ServerSocket(5108);
             Socket socket = serverSocket.accept()
         ) {
+            System.out.println(socket.getInetAddress());
             GraphicalPlayerAdapter graphicalPlayer = new GraphicalPlayerAdapter();
             Player playerProxy = new RemotePlayerProxy(socket);
             
@@ -48,7 +49,7 @@ public final class ServerMain extends Application {
                     playerNames,
                     SortedBag.of(ChMap.tickets()),
                     new Random()
-            ));
+            )).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
