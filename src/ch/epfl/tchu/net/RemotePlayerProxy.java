@@ -36,7 +36,6 @@ public final class RemotePlayerProxy implements Player {
     
     private static final String SPACE = " ";
     
-    // TODO: quand fermer le socket ?
     private Socket socket;
     
     private void sendMessage(MessageId messageId, String message) {
@@ -90,9 +89,9 @@ public final class RemotePlayerProxy implements Player {
     /*
         Pour chacune des méthodes de Player, on sérialise ses arguments
         et on envoie le message au serveur.
-        Si la méthode renvoie une valeur,
+        Si la méthode retroune une valeur,
         on la récupère depuis le réseau sous forme sérialisée,
-        puis on la désérialise avant de la renvoyer.
+        puis on la désérialise avant de la retourner.
      */
     
     @Override

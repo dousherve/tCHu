@@ -197,9 +197,9 @@ public interface Serde<T> {
      *          que le serde passé en argument est en mesure de sérialiser/désérialiser
      */
     static <T extends Comparable<T>> Serde<SortedBag<T>> bagOf(Serde<T> serde, String separator) {
-        final Serde<List<T>> listSerde = listOf(serde, separator);
+        Serde<List<T>> listSerde = listOf(serde, separator);
         return Serde.of(
-                raw -> listSerde.serialize(raw.toList()),
+                bag -> listSerde.serialize(bag.toList()),
                 serialized -> SortedBag.of(listSerde.deserialize(serialized))
         );
     }

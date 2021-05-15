@@ -108,10 +108,11 @@ public final class Serdes {
             ),
             serialized -> {
                 final String[] split = split(serialized);
+                int i = 0;
                 return new PublicCardState(
-                        CARD_LIST.deserialize(split[0]),
-                        INTEGER.deserialize(split[1]),
-                        INTEGER.deserialize(split[2])
+                        CARD_LIST.deserialize(split[i++]),
+                        INTEGER.deserialize(split[i++]),
+                        INTEGER.deserialize(split[i])
                 );
             }
     );
@@ -127,10 +128,11 @@ public final class Serdes {
             ),
             serialized -> {
                 final String[] split = split(serialized);
+                int i = 0;
                 return new PublicPlayerState(
-                        INTEGER.deserialize(split[0]),
-                        INTEGER.deserialize(split[1]),
-                        ROUTE_LIST.deserialize(split[2])
+                        INTEGER.deserialize(split[i++]),
+                        INTEGER.deserialize(split[i++]),
+                        ROUTE_LIST.deserialize(split[i])
                 );
             }
     );
@@ -146,10 +148,11 @@ public final class Serdes {
             ),
             serialized -> {
                 final String[] split = split(serialized);
+                int i = 0;
                 return new PlayerState(
-                        TICKET_BAG.deserialize(split[0]),
-                        CARD_BAG.deserialize(split[1]),
-                        ROUTE_LIST.deserialize(split[2])
+                        TICKET_BAG.deserialize(split[i++]),
+                        CARD_BAG.deserialize(split[i++]),
+                        ROUTE_LIST.deserialize(split[i])
                 );
             }
     );

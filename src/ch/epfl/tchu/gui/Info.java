@@ -31,9 +31,7 @@ public final class Info {
         );
     }
     
-    // TODO: documenter
-    public static String cardsDescription(SortedBag<Card> cards) {
-        // TODO: optimiser ?
+    static String cardsDescription(SortedBag<Card> cards) {
         List<String> cardsDescriptions = new ArrayList<>();
         StringBuilder descrB = new StringBuilder();
         

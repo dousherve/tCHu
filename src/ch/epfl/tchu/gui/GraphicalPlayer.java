@@ -97,11 +97,11 @@ public final class GraphicalPlayer {
         TextFlow tf = new TextFlow(new Text(intro));
     
         // ListView des choix possibles
+        // TODO: amélioration : ne pas avoir besoin de presser Cmd (ou Ctrl) pour les choix multiples ?
         ListView<T> listView = new ListView<>(FXCollections.observableArrayList(options));
         var selectionModel = listView.getSelectionModel();
         selectionModel.setSelectionMode(selectionMode);
-        selectionModel.selectFirst();
-        // TODO: amélioration : ne pas avoir besoin de presser Cmd ? (ou Ctrl)
+        if (minSelected > 0) selectionModel.selectFirst();
         if (converter != null)
             listView.setCellFactory(v -> new TextFieldListCell<>(converter));
     
@@ -124,13 +124,16 @@ public final class GraphicalPlayer {
         stage.show();
     }
     
-    private void chooseCards(String introText, int minSelected, List<SortedBag<Card>> options, ChooseCardsHandler chooseCardsH) {
+    private void chooseCards(String introText, List<SortedBag<Card>> options, int minSelected, ChooseCardsHandler chooseCardsH) {
         showModalWindow(
                 StringsFr.CARDS_CHOICE,
                 introText,
                 options,
                 minSelected,
-                model -> chooseCardsH.onChooseCards(model.getSelectedItem()),
+                model -> {
+                    SortedBag<Card> selected = model.getSelectedItem();
+                    chooseCardsH.onChooseCards(selected != null ? selected : SortedBag.of());
+                },
                 SelectionMode.SINGLE,
                 CARD_BAG_STRING_CONVERTER
         );
@@ -170,18 +173,13 @@ public final class GraphicalPlayer {
         this.playerNames = Map.copyOf(playerNames);
         
         this.gameState = new ObservableGameState(playerId);
-        
         this.infosText = createInfosTexts();
+        
         this.drawTicketsHP = createObjectProperty();
         this.drawCardHP = createObjectProperty();
         this.claimRouteHP = createObjectProperty();
         
         this.mainWindow = createMainWindow();
-    }
-    
-    public Stage mainWindow() {
-        assert isFxApplicationThread();
-        return mainWindow;
     }
 
     public void setState(PublicGameState newGameState, PlayerState newPlayerState) {
@@ -260,12 +258,12 @@ public final class GraphicalPlayer {
 
     public void chooseClaimCards(List<SortedBag<Card>> initialCards, ChooseCardsHandler chooseCardsH) {
         assert isFxApplicationThread();
-        chooseCards(StringsFr.CHOOSE_CARDS, 1, initialCards, chooseCardsH);
+        chooseCards(StringsFr.CHOOSE_CARDS, initialCards, 1, chooseCardsH);
     }
 
     public void chooseAdditionalCards(List<SortedBag<Card>> options, ChooseCardsHandler chooseCardsH) {
         assert isFxApplicationThread();
-        chooseCards(StringsFr.CHOOSE_ADDITIONAL_CARDS, 0, options, chooseCardsH);
+        chooseCards(StringsFr.CHOOSE_ADDITIONAL_CARDS, options, 0, chooseCardsH);
     }
 
 }

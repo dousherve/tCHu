@@ -76,6 +76,7 @@ public final class RemotePlayerClient implements Runnable {
      * Si cette méthode retourne un résultat,
      * elle le renvoie au mandataire en réponse.
      */
+    @Override
     public void run() {
         try (BufferedReader r =
                      new BufferedReader(
@@ -140,6 +141,10 @@ public final class RemotePlayerClient implements Runnable {
                     case CHOOSE_ADDITIONAL_CARDS:
                         final List<SortedBag<Card>> cardOptions = Serdes.CARD_BAG_LIST.deserialize(split[1]);
                         sendResponse(Serdes.CARD_BAG, player.chooseAdditionalCards(cardOptions));
+                        break;
+                        
+                    default:
+                        // TODO: lancer une exception
                         break;
                 }
             }

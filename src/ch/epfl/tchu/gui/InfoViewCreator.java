@@ -13,6 +13,8 @@ import javafx.scene.text.TextFlow;
 import java.util.Map;
 
 final class InfoViewCreator {
+    
+    private InfoViewCreator() {}
 
     private static final String INFO_STYLES = "info.css";
     private static final String COLORS_STYLES = "colors.css";
