@@ -233,9 +233,11 @@ public final class GraphicalPlayer {
 
     public void chooseTickets(SortedBag<Ticket> drawnTickets, ChooseTicketsHandler chooseTicketsH) {
         assert isFxApplicationThread();
-        Preconditions.checkArgument(drawnTickets.size() == 3 || drawnTickets.size() == 5);
         
-        int minSelected = drawnTickets.size() - Constants.DISCARDABLE_TICKETS_COUNT;
+        int ticketsCount = drawnTickets.size();
+        Preconditions.checkArgument(ticketsCount == 3 || ticketsCount == 5);
+        
+        int minSelected = ticketsCount - Constants.DISCARDABLE_TICKETS_COUNT;
         
         showModalWindow(
                 StringsFr.TICKETS_CHOICE,
