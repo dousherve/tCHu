@@ -53,7 +53,7 @@ final class DecksViewCreator {
         private final Button button;
         private final Rectangle gaugeRect;
         
-        GaugedButton(String label) {
+        private GaugedButton(String label) {
             Group gaugeGroup = new Group();
             
             Rectangle bgRect = new Rectangle(GAUGE_WIDTH, GAUGE_HEIGHT);
@@ -163,6 +163,7 @@ final class DecksViewCreator {
     
         for (int slot : Constants.FACE_UP_CARD_SLOTS) {
             StackPane faceUpPane = createCardViewPane();
+            faceUpPane.disableProperty().bind(drawCardHP.isNull());
             
             gameState.faceUpCard(slot).addListener((o, oV, card) -> {
                 faceUpPane.getStyleClass().clear();
