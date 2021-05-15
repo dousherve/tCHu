@@ -46,7 +46,7 @@ final class ObservableGameState {
     
     private final PlayerId playerId;
     
-    // MARK:- Propriétés de l'état de jeu observable
+    // Propriétés de l'état de jeu observable
 
     private final IntegerProperty ticketsPercentageProperty;
     private final IntegerProperty cardsPercentageProperty;
@@ -201,13 +201,11 @@ final class ObservableGameState {
         this.cardCountsPerType = Card.ALL.stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
-                        card -> createIntProperty())
-                );
+                        card -> createIntProperty()));
         this.routesClaimability = ChMap.routes().stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
-                        route -> createBoolProperty())
-                );
+                        route -> createBoolProperty()));
     }
 
     public void setState(PublicGameState newGameState, PlayerState newPlayerState) {
