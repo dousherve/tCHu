@@ -17,8 +17,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
-import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 import static ch.epfl.tchu.net.Serde.split;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
@@ -85,32 +83,35 @@ public final class RemotePlayerClient implements Runnable {
             String line;
             while ((line = r.readLine()) != null) {
                 String[] split = split(line, SPACE);
-                MessageId message = MessageId.valueOf(split[0]);
-    
+                int i = 0, j;
+                MessageId message = MessageId.valueOf(split[i++]);
+                
                 switch (message) {
                     case INIT_PLAYERS:
-                        PlayerId ownId = Serdes.PLAYER_ID.deserialize(split[1]);
-                        List<String> names = Serdes.STRING_LIST.deserialize(split[2]);
+                        j = i;
+                        PlayerId ownId = Serdes.PLAYER_ID.deserialize(split[j++]);
+                        List<String> names = Serdes.STRING_LIST.deserialize(split[j]);
                         // TODO: Optimiser 
                         final Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
-                        playerNames.put(PLAYER_1, names.get(0));
-                        playerNames.put(PLAYER_2, names.get(1));
+                        for (PlayerId id : PlayerId.ALL)
+                            playerNames.put(id, names.get(id.ordinal()));
                         player.initPlayers(ownId, playerNames);
                         break;
                         
                     case RECEIVE_INFO:
-                        player.receiveInfo(Serdes.STRING.deserialize(split[1]));
+                        player.receiveInfo(Serdes.STRING.deserialize(split[i]));
                         break;
                         
                     case UPDATE_STATE:
+                        j = i;
                         player.updateState(
-                                Serdes.PUBLIC_GAME_STATE.deserialize(split[1]),
-                                Serdes.PLAYER_STATE.deserialize(split[2])
+                                Serdes.PUBLIC_GAME_STATE.deserialize(split[j++]),
+                                Serdes.PLAYER_STATE.deserialize(split[j])
                         );
                         break;
                         
                     case SET_INITIAL_TICKETS:
-                        player.setInitialTicketChoice(Serdes.TICKET_BAG.deserialize(split[1]));
+                        player.setInitialTicketChoice(Serdes.TICKET_BAG.deserialize(split[i]));
                         break;
                         
                     case CHOOSE_INITIAL_TICKETS:
@@ -122,7 +123,7 @@ public final class RemotePlayerClient implements Runnable {
                         break;
                         
                     case CHOOSE_TICKETS:
-                        final SortedBag<Ticket> ticketOptions = Serdes.TICKET_BAG.deserialize(split[1]);
+                        final SortedBag<Ticket> ticketOptions = Serdes.TICKET_BAG.deserialize(split[i]);
                         sendResponse(Serdes.TICKET_BAG, player.chooseTickets(ticketOptions));
                         break;
                         
@@ -139,13 +140,12 @@ public final class RemotePlayerClient implements Runnable {
                         break;
                         
                     case CHOOSE_ADDITIONAL_CARDS:
-                        final List<SortedBag<Card>> cardOptions = Serdes.CARD_BAG_LIST.deserialize(split[1]);
+                        final List<SortedBag<Card>> cardOptions = Serdes.CARD_BAG_LIST.deserialize(split[i]);
                         sendResponse(Serdes.CARD_BAG, player.chooseAdditionalCards(cardOptions));
                         break;
                         
                     default:
-                        // TODO: lancer une exception
-                        break;
+                        throw new Error();
                 }
             }
         } catch (IOException e) {
