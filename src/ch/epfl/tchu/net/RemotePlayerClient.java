@@ -91,10 +91,11 @@ public final class RemotePlayerClient implements Runnable {
                         j = i;
                         PlayerId ownId = Serdes.PLAYER_ID.deserialize(split[j++]);
                         List<String> names = Serdes.STRING_LIST.deserialize(split[j]);
-                        // TODO: Optimiser 
+                        
                         final Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
                         for (PlayerId id : PlayerId.ALL)
                             playerNames.put(id, names.get(id.ordinal()));
+                        
                         player.initPlayers(ownId, playerNames);
                         break;
                         
