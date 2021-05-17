@@ -65,11 +65,11 @@ public final class ObservableGameState {
     
     // MARK:- Méthodes utilitaires privées et statiques
     
-    private static SimpleIntegerProperty createIntProperty() {
+    private static IntegerProperty createIntProperty() {
         return new SimpleIntegerProperty(0);
     }
     
-    private static <T> SimpleObjectProperty<T> createObjectProperty() {
+    private static <T> ObjectProperty<T> createObjectProperty() {
         return new SimpleObjectProperty<>(null);
     }
     
