@@ -18,24 +18,16 @@ import static javafx.application.Platform.runLater;
 
 public final class GraphicalPlayerAdapter implements Player {
     
-    private final BlockingQueue<SortedBag<Ticket>> ticketsQueue;
-    private final BlockingQueue<TurnKind> turnKindQueue;
-    private final BlockingQueue<SortedBag<Card>> cardsQueue;
-    private final BlockingQueue<Integer> slotQueue;
-    private final BlockingQueue<Route> claimedRouteQueue;
+    private final BlockingQueue<SortedBag<Ticket>> ticketsQueue = createQueue();
+    private final BlockingQueue<TurnKind> turnKindQueue = createQueue();
+    private final BlockingQueue<SortedBag<Card>> cardsQueue = createQueue();
+    private final BlockingQueue<Integer> slotQueue = createQueue();
+    private final BlockingQueue<Route> claimedRouteQueue = createQueue();
     
     private GraphicalPlayer graphicalPlayer;
     
-    private static <T> BlockingQueue<T> createBlockingQueue() {
+    private static <T> BlockingQueue<T> createQueue() {
         return new ArrayBlockingQueue<>(1);
-    }
-    
-    public GraphicalPlayerAdapter() {
-        this.ticketsQueue = createBlockingQueue();
-        this.turnKindQueue = createBlockingQueue();
-        this.cardsQueue = createBlockingQueue();
-        this.slotQueue = createBlockingQueue();
-        this.claimedRouteQueue = createBlockingQueue();
     }
     
     @Override
