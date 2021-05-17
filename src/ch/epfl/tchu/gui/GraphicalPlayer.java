@@ -46,9 +46,6 @@ public final class GraphicalPlayer {
     private static final String CHOOSER_CLASS = "chooser.css";
     private static final CardBagStringConverter CARD_BAG_STRING_CONVERTER = new CardBagStringConverter();
     
-    private final PlayerId playerId;
-    private final Map<PlayerId, String> playerNames;
-    
     private final ObservableGameState gameState;
     private final ObservableList<Text> infosText;
 
@@ -145,7 +142,7 @@ public final class GraphicalPlayer {
         claimRouteHP.set(null);
     }
     
-    private Stage createMainWindow() {
+    private Stage createMainWindow(PlayerId playerId, Map<PlayerId, String> playerNames) {
         Stage stage = new Stage();
         stage.setTitle(String.format(WINDOW_TITLE, playerNames.get(playerId)));
     
@@ -169,9 +166,6 @@ public final class GraphicalPlayer {
     public GraphicalPlayer(PlayerId playerId, Map<PlayerId, String> playerNames) {
         assert isFxApplicationThread();
         
-        this.playerId = playerId;
-        this.playerNames = Map.copyOf(playerNames);
-        
         this.gameState = new ObservableGameState(playerId);
         this.infosText = createInfosTexts();
         
@@ -179,7 +173,7 @@ public final class GraphicalPlayer {
         this.drawCardHP = createObjectProperty();
         this.claimRouteHP = createObjectProperty();
         
-        this.mainWindow = createMainWindow();
+        this.mainWindow = createMainWindow(playerId, playerNames);
     }
 
     public void setState(PublicGameState newGameState, PlayerState newPlayerState) {
