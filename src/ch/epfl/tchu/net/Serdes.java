@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import static ch.epfl.tchu.net.Serde.*;
 
@@ -22,6 +23,18 @@ import static ch.epfl.tchu.net.Serde.*;
 public final class Serdes {
 
     private Serdes() {}
+    
+    private static Map<PlayerId, PublicPlayerState> deserializePlayerState(String[] source, int offset) {
+        Map<PlayerId, PublicPlayerState> playerState = new EnumMap<>(PlayerId.class);
+        for (int i = 0; i < PlayerId.ALL.size(); i++) {
+            playerState.put(
+                    PlayerId.ALL.get(i),
+                    PUBLIC_PLAYER_STATE.deserialize(source[offset + i])
+            );
+        }
+        
+        return playerState;
+    }
 
     // MARK:- Serdes de types simples
     
@@ -101,18 +114,18 @@ public final class Serdes {
      * Serde capable de sérialiser/désérialiser des états publics de cartes.
      */
     public static final Serde<PublicCardState> PUBLIC_CARD_STATE = Serde.of(
-            raw -> String.join(SEMI_COLON,
-                    CARD_LIST.serialize(raw.faceUpCards()),
-                    INTEGER.serialize(raw.deckSize()),
-                    INTEGER.serialize(raw.discardsSize())
+            state -> String.join(SEMI_COLON,
+                    CARD_LIST.serialize(state.faceUpCards()),
+                    INTEGER.serialize(state.deckSize()),
+                    INTEGER.serialize(state.discardsSize())
             ),
             serialized -> {
-                final String[] split = split(serialized);
+                final String[] tokens = split(serialized);
                 int i = 0;
                 return new PublicCardState(
-                        CARD_LIST.deserialize(split[i++]),
-                        INTEGER.deserialize(split[i++]),
-                        INTEGER.deserialize(split[i])
+                        CARD_LIST.deserialize(tokens[i++]),
+                        INTEGER.deserialize(tokens[i++]),
+                        INTEGER.deserialize(tokens[i])
                 );
             }
     );
@@ -121,18 +134,18 @@ public final class Serdes {
      * Serde capable de sérialiser/désérialiser des états publics de joueur.
      */
     public static final Serde<PublicPlayerState> PUBLIC_PLAYER_STATE = Serde.of(
-            raw -> String.join(SEMI_COLON,
-                    INTEGER.serialize(raw.ticketCount()),
-                    INTEGER.serialize(raw.cardCount()),
-                    ROUTE_LIST.serialize(raw.routes())
+            state -> String.join(SEMI_COLON,
+                    INTEGER.serialize(state.ticketCount()),
+                    INTEGER.serialize(state.cardCount()),
+                    ROUTE_LIST.serialize(state.routes())
             ),
             serialized -> {
-                final String[] split = split(serialized);
+                final String[] tokens = split(serialized);
                 int i = 0;
                 return new PublicPlayerState(
-                        INTEGER.deserialize(split[i++]),
-                        INTEGER.deserialize(split[i++]),
-                        ROUTE_LIST.deserialize(split[i])
+                        INTEGER.deserialize(tokens[i++]),
+                        INTEGER.deserialize(tokens[i++]),
+                        ROUTE_LIST.deserialize(tokens[i])
                 );
             }
     );
@@ -141,18 +154,18 @@ public final class Serdes {
      * Serde capable de sérialiser/désérialiser des états complets de joueur.
      */
     public static final Serde<PlayerState> PLAYER_STATE = Serde.of(
-            raw -> String.join(SEMI_COLON,
-                    TICKET_BAG.serialize(raw.tickets()),
-                    CARD_BAG.serialize(raw.cards()),
-                    ROUTE_LIST.serialize(raw.routes())
+            state -> String.join(SEMI_COLON,
+                    TICKET_BAG.serialize(state.tickets()),
+                    CARD_BAG.serialize(state.cards()),
+                    ROUTE_LIST.serialize(state.routes())
             ),
             serialized -> {
-                final String[] split = split(serialized);
+                final String[] tokens = split(serialized);
                 int i = 0;
                 return new PlayerState(
-                        TICKET_BAG.deserialize(split[i++]),
-                        CARD_BAG.deserialize(split[i++]),
-                        ROUTE_LIST.deserialize(split[i])
+                        TICKET_BAG.deserialize(tokens[i++]),
+                        CARD_BAG.deserialize(tokens[i++]),
+                        ROUTE_LIST.deserialize(tokens[i])
                 );
             }
     );
@@ -161,27 +174,27 @@ public final class Serdes {
      * Serde capable de sérialiser/désérialiser des états publics de jeu.
      */
     public static final Serde<PublicGameState> PUBLIC_GAME_STATE = Serde.of(
-            raw -> String.join(COLON,
-                    INTEGER.serialize(raw.ticketsCount()),
-                    PUBLIC_CARD_STATE.serialize(raw.cardState()),
-                    PLAYER_ID.serialize(raw.currentPlayerId()),
-                    PUBLIC_PLAYER_STATE.serialize(raw.playerState(PlayerId.PLAYER_1)),
-                    PUBLIC_PLAYER_STATE.serialize(raw.playerState(PlayerId.PLAYER_2)),
-                    PLAYER_ID.serialize(raw.lastPlayer())
-            ),
+            state -> {
+                StringJoiner sj = new StringJoiner(COLON);
+                
+                sj.add(INTEGER.serialize(state.ticketsCount()));
+                sj.add(PUBLIC_CARD_STATE.serialize(state.cardState()));
+                sj.add(PLAYER_ID.serialize(state.currentPlayerId()));
+                for (PlayerId id : PlayerId.ALL)
+                    sj.add(PUBLIC_PLAYER_STATE.serialize(state.playerState(id)));
+                sj.add(PLAYER_ID.serialize(state.lastPlayer()));
+                
+                return sj.toString();
+            },
             serialized -> {
-                final String[] split = split(serialized, COLON);
-    
-                final Map<PlayerId, PublicPlayerState> playerState = new EnumMap<>(PlayerId.class);
-                playerState.put(PlayerId.PLAYER_1, PUBLIC_PLAYER_STATE.deserialize(split[3]));
-                playerState.put(PlayerId.PLAYER_2, PUBLIC_PLAYER_STATE.deserialize(split[4]));
-    
+                final String[] tokens = split(serialized, COLON);
+                int i = 0;
                 return new PublicGameState(
-                        INTEGER.deserialize(split[0]),
-                        PUBLIC_CARD_STATE.deserialize(split[1]),
-                        PLAYER_ID.deserialize(split[2]),
-                        playerState,
-                        PLAYER_ID.deserialize(split[5])
+                        INTEGER.deserialize(tokens[i++]),
+                        PUBLIC_CARD_STATE.deserialize(tokens[i++]),
+                        PLAYER_ID.deserialize(tokens[i++]),
+                        deserializePlayerState(tokens, i),
+                        PLAYER_ID.deserialize(tokens[i + PlayerId.ALL.size()])
                 );
             }
     );
