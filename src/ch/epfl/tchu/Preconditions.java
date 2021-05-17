@@ -31,6 +31,8 @@ public final class Preconditions {
      * 
      * @param values
      *          les valeurs dont on veut tester la non-nullité
+     * @throws NullPointerException
+     *          si l'une des valeurs passées en argument vaut <code>null</code>
      */
     public static void requireNonNull(Object... values) {
         for (Object t : values) {

@@ -17,14 +17,13 @@ import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -70,12 +69,28 @@ public final class ObservableGameState {
         return new SimpleIntegerProperty(0);
     }
     
-    private static SimpleBooleanProperty createBoolProperty() {
-        return new SimpleBooleanProperty(false);
-    }
-    
     private static <T> SimpleObjectProperty<T> createObjectProperty() {
         return new SimpleObjectProperty<>(null);
+    }
+    
+    private static List<ObjectProperty<Card>> createFaceUpCardsProperties() {
+        List<ObjectProperty<Card>> faceUpCards = new ArrayList<>();
+        for (int slot : Constants.FACE_UP_CARD_SLOTS)
+            faceUpCards.add(createObjectProperty());
+        
+        return faceUpCards;
+    }
+    
+    private static <T, P> Map<T, P> createMapProperties(List<T> keys, Supplier<P> propertySupplier) {
+        return keys.stream()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        t -> propertySupplier.get()
+                ));
+    }
+    
+    private static Map<PlayerId, IntegerProperty> createCountsProperties() {
+        return createMapProperties(PlayerId.ALL, ObservableGameState::createIntProperty);
     }
     
     private static Set<List<Station>> computeDoubleRoutesStations() {
@@ -87,30 +102,6 @@ public final class ObservableGameState {
         }
         
         return Collections.unmodifiableSet(doubleRoutesStations);
-    }
-
-    private static List<ObjectProperty<Card>> createFaceUpCardsProperties() {
-        List<ObjectProperty<Card>> faceUpCards = new ArrayList<>();
-        for (int slot : Constants.FACE_UP_CARD_SLOTS) 
-            faceUpCards.add(createObjectProperty());
-        
-        return faceUpCards;
-    }
-
-    private static Map<Route, ObjectProperty<PlayerId>> createRoutesOwnersProperties() {
-        Map<Route, ObjectProperty<PlayerId>> routesOwners = new HashMap<>();
-        for (Route r : ChMap.routes())
-            routesOwners.put(r, createObjectProperty());
-        
-        return routesOwners;
-    }
-    
-    private static Map<PlayerId, IntegerProperty> createCountsProperties() {
-        Map<PlayerId, IntegerProperty> defaultCounts = new EnumMap<>(PlayerId.class);
-        for (PlayerId id : PlayerId.ALL)
-            defaultCounts.put(id, createIntProperty());
-        
-        return defaultCounts;
     }
     
     // MARK:- Méthodes privées utilisées pour mettre à jour l'état
@@ -205,7 +196,7 @@ public final class ObservableGameState {
         this.ticketsPercentageProperty = createIntProperty();
         this.cardsPercentageProperty = createIntProperty();
         this.faceUpCards = createFaceUpCardsProperties();
-        this.routesOwners = createRoutesOwnersProperties();
+        this.routesOwners = createMapProperties(ChMap.routes(), ObservableGameState::createObjectProperty);
 
         this.ticketCounts = createCountsProperties();
         this.cardCounts = createCountsProperties();
@@ -213,14 +204,8 @@ public final class ObservableGameState {
         this.claimPoints = createCountsProperties();
 
         this.ticketsProperty = FXCollections.observableArrayList();
-        this.cardCountsPerType = Card.ALL.stream()
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        card -> createIntProperty()));
-        this.routesClaimability = ChMap.routes().stream()
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        route -> createBoolProperty()));
+        this.cardCountsPerType = createMapProperties(Card.ALL, ObservableGameState::createIntProperty);
+        this.routesClaimability = createMapProperties(ChMap.routes(), () -> new SimpleBooleanProperty(false));
     }
     
     /**
