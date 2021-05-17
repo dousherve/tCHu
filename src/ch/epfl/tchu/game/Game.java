@@ -187,6 +187,9 @@ public final class Game {
                         state = state.withMoreDiscardedCards(drawnCards);
                     }
                     break;
+                    
+                default:
+                    throw new Error();
             }
             
             if (state.lastTurnBegins())

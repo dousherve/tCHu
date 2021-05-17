@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 import static ch.epfl.tchu.gui.ActionHandlers.*;
 import static javafx.application.Platform.isFxApplicationThread;
 
-// TODO: regarder la visibilité 
 public final class GraphicalPlayer {
     
     private static final int MAX_INFOS_COUNT = 5;

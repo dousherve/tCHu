@@ -92,7 +92,7 @@ public final class RemotePlayerClient implements Runnable {
                         PlayerId ownId = Serdes.PLAYER_ID.deserialize(split[j++]);
                         List<String> names = Serdes.STRING_LIST.deserialize(split[j]);
                         
-                        final Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
+                        Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
                         for (PlayerId id : PlayerId.ALL)
                             playerNames.put(id, names.get(id.ordinal()));
                         
@@ -124,7 +124,7 @@ public final class RemotePlayerClient implements Runnable {
                         break;
                         
                     case CHOOSE_TICKETS:
-                        final SortedBag<Ticket> ticketOptions = Serdes.TICKET_BAG.deserialize(split[i]);
+                        SortedBag<Ticket> ticketOptions = Serdes.TICKET_BAG.deserialize(split[i]);
                         sendResponse(Serdes.TICKET_BAG, player.chooseTickets(ticketOptions));
                         break;
                         
@@ -141,7 +141,7 @@ public final class RemotePlayerClient implements Runnable {
                         break;
                         
                     case CHOOSE_ADDITIONAL_CARDS:
-                        final List<SortedBag<Card>> cardOptions = Serdes.CARD_BAG_LIST.deserialize(split[i]);
+                        List<SortedBag<Card>> cardOptions = Serdes.CARD_BAG_LIST.deserialize(split[i]);
                         sendResponse(Serdes.CARD_BAG, player.chooseAdditionalCards(cardOptions));
                         break;
                         

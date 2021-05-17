@@ -25,4 +25,18 @@ public final class Preconditions {
             throw new IllegalArgumentException();
     }
     
+    /**
+     * Vérifie que les arguments ne valent pas <code>null</code>,
+     * lance une {@link NullPointerException} sinon.
+     * 
+     * @param values
+     *          les valeurs dont on veut tester la non-nullité
+     */
+    public static void requireNonNull(Object... values) {
+        for (Object t : values) {
+            if (t == null)
+                throw new NullPointerException();
+        }
+    }
+    
 }

@@ -15,31 +15,91 @@ import java.util.List;
 
 import static ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
 import static ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
+import static ch.epfl.tchu.gui.ConstantsGui.*;
 
+/**
+ * Classe finale et non instanciable permettant de créer la vue de la carte.
+ *
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 final class MapViewCreator {
 
     private MapViewCreator() {}
     
-    private static final int RECT_WIDTH = 36;
-    private static final int RECT_HEIGHT = 12;
-    private static final int CIRCLE_RADIUS = 3;
-    private static final int CIRCLE_CENTER_X = 12;
-    private static final int CIRCLE_CENTER_Y = 6;
+    private static Group createRouteGroup(Route route) {
+        Group routeGroup = new Group();
+        routeGroup.setId(route.id());
+        routeGroup.getStyleClass().addAll(
+                ROUTE_CLASS,
+                route.level().name(),
+                route.color() == null
+                        ? NEUTRAL_CLASS
+                        : route.color().name()
+        );
+        
+        return routeGroup;
+    }
     
-    private static final String MAP_STYLES = "map.css";
-    private static final String COLORS_STYLES = "colors.css";
-    private static final String ROUTE_CLASS = "route";
-    private static final String NEUTRAL_CLASS = "NEUTRAL";
-    private static final String TRACK_CLASS = "track";
-    private static final String FILLED_CLASS = "filled";
-    private static final String CAR_CLASS = "car";
+    private static Group createCellGroup() {
+        Group cellGroup = new Group();
+        
+        // Rectangle de la voie
+        Rectangle trackRect = new Rectangle(TRACK_WIDTH, TRACK_HEIGHT);
+        trackRect.getStyleClass().addAll(TRACK_CLASS, FILLED_CLASS);
+        
+        // Groupe du wagon
+        Group carGroup = new Group();
+        carGroup.getStyleClass().add(CAR_CLASS);
+        
+        Rectangle carRect = new Rectangle(TRACK_WIDTH, TRACK_HEIGHT);
+        carRect.getStyleClass().add(FILLED_CLASS);
+        
+        Circle circle1 = new Circle(CLAIMED_CIRCLE_CX, CLAIMED_CIRCLE_CY, CLAIMED_CIRCLE_RADIUS);
+        Circle circle2 = new Circle(2 * CLAIMED_CIRCLE_CX, CLAIMED_CIRCLE_CY, CLAIMED_CIRCLE_RADIUS);
+        
+        // Ajout des enfants
+        carGroup.getChildren().addAll(carRect, circle1, circle2);
+        cellGroup.getChildren().addAll(trackRect, carGroup);
+        
+        return cellGroup;
+    }
     
+    /**
+     * Interface fonctionnelle décrivant un
+     * sélectionneur de cartes.
+     */
     @FunctionalInterface
     interface CardChooser {
+        /**
+         * Méthode appelée lorsque le joueur doit choisir les cartes
+         * qu'il désire utiliserpour s'emparer d'une route.
+         * Les possibilités qui s'offrent à lui sont données par l'argument <code>options</code>,
+         * tandis que le gestionnaire d'action <code>handler</code> est destiné
+         * à être utilisé lorsqu'il a fait son choix.
+         * 
+         * @param options
+         *          les possibilités parmi lesquelles le joueur peut choisir
+         * @param handler
+         *          le gestionnaire d'action à utiliser lorsque le joueur a fait son choix.
+         */
         void chooseCards(List<SortedBag<Card>> options, ChooseCardsHandler handler);
     }
-
-    static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
+    
+    /**
+     * Méthode permettant de créer la vue de la carte.
+     * 
+     * @param gameState
+     *          l'état du jeu observable
+     * @param claimRouteHP
+     *          la propriété contenant le gestionnaire d'action à utiliser
+     *          lorsque le joueur désire s'emparer d'une route
+     * @param cardChooser
+     *          le sélectionneur de cartes à utiliser
+     * @return
+     *          la vue de la carte de tCHu
+     */
+    public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
         Pane mapView = new Pane();
         mapView.getStylesheets().addAll(MAP_STYLES, COLORS_STYLES);
 
@@ -47,15 +107,7 @@ final class MapViewCreator {
         mapView.getChildren().add(mapImageView);
 
         for (Route route : ChMap.routes()) {
-            Group routeGroup = new Group();
-            routeGroup.setId(route.id());
-            routeGroup.getStyleClass().addAll(
-                    ROUTE_CLASS,
-                    route.level().name(),
-                    route.color() == null
-                            ? NEUTRAL_CLASS
-                            : route.color().name()
-            );
+            Group routeGroup = createRouteGroup(route);
             
             gameState.routeOwner(route)
                     .addListener((o, oV, id) -> routeGroup.getStyleClass().add(id.name()));
@@ -76,35 +128,17 @@ final class MapViewCreator {
                     );
                 }
             });
-            
+    
             for (int i = 1; i <= route.length(); ++i) {
-                Group cellGroup = new Group();
+                Group cellGroup = createCellGroup();
                 cellGroup.setId(route.id() + "_" + i);
-
-                // Rectangle de la voie
-                Rectangle trackRect = new Rectangle(RECT_WIDTH, RECT_HEIGHT);
-                trackRect.getStyleClass().addAll(TRACK_CLASS, FILLED_CLASS);
-
-                // Groupe du wagon
-                Group carGroup = new Group();
-                carGroup.getStyleClass().add(CAR_CLASS);
-    
-                Rectangle carRect = new Rectangle(RECT_WIDTH, RECT_HEIGHT);
-                carRect.getStyleClass().add(FILLED_CLASS);
-    
-                Circle circle1 = new Circle(CIRCLE_CENTER_X, CIRCLE_CENTER_Y, CIRCLE_RADIUS);
-                Circle circle2 = new Circle(2 * CIRCLE_CENTER_X, CIRCLE_CENTER_Y, CIRCLE_RADIUS);
-    
-                // Ajout des enfants
-                carGroup.getChildren().addAll(carRect, circle1, circle2);
-                cellGroup.getChildren().addAll(trackRect, carGroup);
                 routeGroup.getChildren().add(cellGroup);
             }
-
+            
             mapView.getChildren().add(routeGroup);
         }
 
         return mapView;
     }
-
+    
 }

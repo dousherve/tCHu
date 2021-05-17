@@ -1,7 +1,7 @@
 package ch.epfl.tchu.net;
 
 /**
- * Type énuméré publique décrivant les types de messages que le serveur
+ * Type énuméré public décrivant les types de messages que le serveur
  * peut envoyer aux clients.
  *
  * @author Mallory Henriet (311258)

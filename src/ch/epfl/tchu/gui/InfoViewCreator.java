@@ -12,19 +12,11 @@ import javafx.scene.text.TextFlow;
 
 import java.util.Map;
 
+import static ch.epfl.tchu.gui.ConstantsGui.*;
+
 final class InfoViewCreator {
     
     private InfoViewCreator() {}
-
-    private static final String INFO_STYLES = "info.css";
-    private static final String COLORS_STYLES = "colors.css";
-
-    private static final String PLAYER_STATS_ID = "player-stats";
-    private static final String GAME_INFO_ID = "game-info";
-
-    private static final String FILLED_CLASS = "filled";
-
-    private static final int CIRCLE_STAT_RADIUS = 5;
 
     public static VBox createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infoTexts) {
         VBox infoView = new VBox();
@@ -37,7 +29,7 @@ final class InfoViewCreator {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             final PlayerId id = (i == 0) ? playerId : playerId.next();
 
-            Circle circle = new Circle(CIRCLE_STAT_RADIUS);
+            Circle circle = new Circle(STATS_CIRCLE_RADIUS);
             circle.getStyleClass().add(FILLED_CLASS);
 
             Text statsText = new Text();

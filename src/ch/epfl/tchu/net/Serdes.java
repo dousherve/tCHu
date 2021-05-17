@@ -120,7 +120,7 @@ public final class Serdes {
                     INTEGER.serialize(state.discardsSize())
             ),
             serialized -> {
-                final String[] tokens = split(serialized);
+                String[] tokens = split(serialized);
                 int i = 0;
                 return new PublicCardState(
                         CARD_LIST.deserialize(tokens[i++]),
@@ -140,7 +140,7 @@ public final class Serdes {
                     ROUTE_LIST.serialize(state.routes())
             ),
             serialized -> {
-                final String[] tokens = split(serialized);
+                String[] tokens = split(serialized);
                 int i = 0;
                 return new PublicPlayerState(
                         INTEGER.deserialize(tokens[i++]),
@@ -160,7 +160,7 @@ public final class Serdes {
                     ROUTE_LIST.serialize(state.routes())
             ),
             serialized -> {
-                final String[] tokens = split(serialized);
+                String[] tokens = split(serialized);
                 int i = 0;
                 return new PlayerState(
                         TICKET_BAG.deserialize(tokens[i++]),
@@ -187,7 +187,7 @@ public final class Serdes {
                 return sj.toString();
             },
             serialized -> {
-                final String[] tokens = split(serialized, COLON);
+                String[] tokens = split(serialized, COLON);
                 int i = 0;
                 return new PublicGameState(
                         INTEGER.deserialize(tokens[i++]),

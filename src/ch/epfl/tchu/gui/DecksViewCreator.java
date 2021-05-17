@@ -20,33 +20,18 @@ import javafx.scene.text.Text;
 
 import static ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import static ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
+import static ch.epfl.tchu.gui.ConstantsGui.*;
 
+/**
+ * Classe finale et non instanciable permettant de créer
+ * la vue de la main du joueur ainsi que la vue des cartes.
+ *
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 final class DecksViewCreator {
 
     private DecksViewCreator() {}
-
-    private static final int OUTSIDE_RECT_WIDTH = 60;
-    private static final int OUTSIDE_RECT_HEIGHT = 90;
-    private static final int INSIDE_RECT_WIDTH = 40;
-    private static final int INSIDE_RECT_HEIGHT = 70;
-    private static final int GAUGE_WIDTH = 50;
-    private static final int GAUGE_HEIGHT = 5;
-
-    private static final String DECKS_STYLES = "decks.css";
-    private static final String COLORS_STYLES = "colors.css";
-    private static final String TICKETS_ID = "tickets";
-    private static final String HAND_PANE_ID = "hand-pane";
-    private static final String CARD_PANE_ID = "hand-pane";
-    private static final String CARD_CLASS = "card";
-    private static final String OUTSIDE_RECT_CLASS = "outside";
-    private static final String INSIDE_RECT_CLASS = "inside";
-    private static final String FILLED_CLASS = "filled";
-    private static final String TRAIN_IMAGE_CLASS = "train-image";
-    private static final String COUNT_CLASS = "count";
-    private static final String GAUGED_CLASS = "gauged";
-    private static final String BACKGROUND_CLASS = "background";
-    private static final String FOREGROUND_CLASS = "foreground";
-    private static final String NEUTRAL_CLASS = "NEUTRAL";
     
     private static final class GaugedButton {
         
@@ -91,13 +76,13 @@ final class DecksViewCreator {
         StackPane stackPane = new StackPane();
         stackPane.getStyleClass().add(CARD_CLASS);
     
-        Rectangle outsideRect = new Rectangle(OUTSIDE_RECT_WIDTH, OUTSIDE_RECT_HEIGHT);
-        outsideRect.getStyleClass().add(OUTSIDE_RECT_CLASS);
+        Rectangle outsideRect = new Rectangle(OUTSIDE_CARD_WIDTH, OUTSIDE_CARD_HEIGHT);
+        outsideRect.getStyleClass().add(OUTSIDE_CARD_CLASS);
     
-        Rectangle insideRect = new Rectangle(INSIDE_RECT_WIDTH, INSIDE_RECT_HEIGHT);
-        insideRect.getStyleClass().addAll(FILLED_CLASS, INSIDE_RECT_CLASS);
+        Rectangle insideRect = new Rectangle(INSIDE_CARD_WIDTH, INSIDE_CARD_HEIGHT);
+        insideRect.getStyleClass().addAll(FILLED_CLASS, INSIDE_CARD_CLASS);
     
-        Rectangle trainRect = new Rectangle(INSIDE_RECT_WIDTH, INSIDE_RECT_HEIGHT);
+        Rectangle trainRect = new Rectangle(INSIDE_CARD_WIDTH, INSIDE_CARD_HEIGHT);
         trainRect.getStyleClass().add(TRAIN_IMAGE_CLASS);
     
         stackPane.getChildren().addAll(outsideRect, insideRect, trainRect);
@@ -110,8 +95,16 @@ final class DecksViewCreator {
                 ? NEUTRAL_CLASS
                 : card.color().name();
     }
-
-    static Node createHandView(ObservableGameState gameState) {
+    
+    /**
+     * Méthode permettant de créer la vue de la main du joueur.
+     * 
+     * @param gameState
+     *          l'état du jeu observable
+     * @return
+     *          la vue de la main du joueur
+     */
+    public static Node createHandView(ObservableGameState gameState) {
         HBox handView = new HBox();
         handView.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);
 
@@ -119,7 +112,7 @@ final class DecksViewCreator {
         ticketsView.setId(TICKETS_ID);
 
         HBox handPane = new HBox();
-        handPane.setId(HAND_PANE_ID);
+        handPane.setId(ConstantsGui.CARD_PANE_ID);
 
         for (Card card : Card.ALL) {
             StackPane currentCardsPane = createCardViewPane();
@@ -143,8 +136,22 @@ final class DecksViewCreator {
 
         return handView;
     }
-
-    static Node createCardsView(ObservableGameState gameState, ObjectProperty<DrawTicketsHandler> drawTicketsHP, ObjectProperty<DrawCardHandler> drawCardHP) {
+    
+    /**
+     * Méthode permettant de créer la vue des pioches de cartes et de billets,
+     * ainsi que des cartes face visible.
+     * 
+     * @param gameState
+     *          l'état du jeu observable
+     * @param drawTicketsHP
+     *          une propriété contenant un gestionnaire de tirage de billets
+     * @param drawCardHP
+     *          une propriété contenant un gestionnaire de tirage de cartes
+     * @return
+     *          la vue des pioches de cartes et de billets,
+     *          ainsi que des cartes face visible
+     */
+    public static Node createCardsView(ObservableGameState gameState, ObjectProperty<DrawTicketsHandler> drawTicketsHP, ObjectProperty<DrawCardHandler> drawCardHP) {
         VBox cardPane = new VBox();
         cardPane.setId(CARD_PANE_ID);
         cardPane.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);

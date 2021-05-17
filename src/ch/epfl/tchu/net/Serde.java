@@ -9,10 +9,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Interface générique publique représentant un objet capable de sérialiser
+ * Interface générique publique décrivant un objet capable de sérialiser
  * et désérialiser des valeurs d'un type donné.
  * 
  * @param <T> le type d'objet à sérialiser/désérialiser
+ *           
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
  */
