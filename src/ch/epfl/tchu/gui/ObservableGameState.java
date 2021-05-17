@@ -81,7 +81,7 @@ public final class ObservableGameState {
         return faceUpCards;
     }
     
-    private static <T, P> Map<T, P> createMapProperties(List<T> keys, Supplier<P> propertySupplier) {
+    private static <T, P> Map<T, P> createPropertiesMap(List<T> keys, Supplier<P> propertySupplier) {
         return keys.stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
@@ -89,8 +89,8 @@ public final class ObservableGameState {
                 ));
     }
     
-    private static Map<PlayerId, IntegerProperty> createCountsProperties() {
-        return createMapProperties(PlayerId.ALL, ObservableGameState::createIntProperty);
+    private static Map<PlayerId, IntegerProperty> createCountProperties() {
+        return createPropertiesMap(PlayerId.ALL, ObservableGameState::createIntProperty);
     }
     
     private static Set<List<Station>> computeDoubleRoutesStations() {
@@ -196,16 +196,16 @@ public final class ObservableGameState {
         this.ticketsPercentageProperty = createIntProperty();
         this.cardsPercentageProperty = createIntProperty();
         this.faceUpCards = createFaceUpCardsProperties();
-        this.routesOwners = createMapProperties(ChMap.routes(), ObservableGameState::createObjectProperty);
+        this.routesOwners = createPropertiesMap(ChMap.routes(), ObservableGameState::createObjectProperty);
 
-        this.ticketCounts = createCountsProperties();
-        this.cardCounts = createCountsProperties();
-        this.carCounts = createCountsProperties();
-        this.claimPoints = createCountsProperties();
+        this.ticketCounts = createCountProperties();
+        this.cardCounts = createCountProperties();
+        this.carCounts = createCountProperties();
+        this.claimPoints = createCountProperties();
 
         this.ticketsProperty = FXCollections.observableArrayList();
-        this.cardCountsPerType = createMapProperties(Card.ALL, ObservableGameState::createIntProperty);
-        this.routesClaimability = createMapProperties(ChMap.routes(), () -> new SimpleBooleanProperty(false));
+        this.cardCountsPerType = createPropertiesMap(Card.ALL, ObservableGameState::createIntProperty);
+        this.routesClaimability = createPropertiesMap(ChMap.routes(), () -> new SimpleBooleanProperty(false));
     }
     
     /**
