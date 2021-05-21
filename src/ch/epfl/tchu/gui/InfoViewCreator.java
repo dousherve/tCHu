@@ -14,10 +14,34 @@ import java.util.Map;
 
 import static ch.epfl.tchu.gui.ConstantsGui.*;
 
+/**
+ * Classe finale et non instanciable permettant de créer
+ * la vue des informations, située dans la partie gauche
+ * de l'interface graphique d'un joueur de tCHu.
+ *
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 final class InfoViewCreator {
     
     private InfoViewCreator() {}
-
+    
+    /**
+     * Méthode permettant de créer la vue des informations.
+     * 
+     * @param playerId
+     *          l'identité du joueur auquel l'interface correspond
+     * @param playerNames
+     *          la table associative des noms des joueurs
+     * @param gameState
+     *          l'état de jeu observable
+     * @param infoTexts
+     *          une liste observable contenant les informations
+     *          sur le déroulement de la partie, sous la forme
+     *          d'instances de {@link Text}
+     * @return
+     *          la vue des informations
+     */
     public static VBox createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infoTexts) {
         VBox infoView = new VBox();
         infoView.getStylesheets().addAll(INFO_STYLES, COLORS_STYLES);

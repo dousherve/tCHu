@@ -11,7 +11,9 @@ final class ConstantsGui {
     
     private ConstantsGui() {}
     
-    // MARK:- Dimensions
+    static final String WINDOW_TITLE = "tCHu \u2014 %s";
+    
+    // MARK:- Dimensions, constantes numériques
     
     static final int TRACK_WIDTH = 36;
     static final int TRACK_HEIGHT = 12;
@@ -29,13 +31,15 @@ final class ConstantsGui {
     static final int GAUGE_HEIGHT = 5;
     
     static final int STATS_CIRCLE_RADIUS = 5;
+    static final int MAX_INFOS_COUNT = 5;
     
     // MARK:- URIs des feuilles de styles
     
-    static final String MAP_STYLES = "map.css";
+    static final String CHOOSER_STYLES = "chooser.css";
     static final String COLORS_STYLES = "colors.css";
     static final String DECKS_STYLES = "decks.css";
     static final String INFO_STYLES = "info.css";
+    static final String MAP_STYLES = "map.css";
     
     // MARK:- Classes CSS
     

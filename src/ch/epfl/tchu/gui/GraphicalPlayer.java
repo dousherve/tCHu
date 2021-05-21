@@ -36,13 +36,18 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static ch.epfl.tchu.gui.ActionHandlers.*;
+import static ch.epfl.tchu.gui.ConstantsGui.*;
 import static javafx.application.Platform.isFxApplicationThread;
 
+/**
+ * Classe publique, finale et instanciable représentant
+ * l'interface graphique d'un joueur de tCHu.
+ *
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 public final class GraphicalPlayer {
     
-    private static final int MAX_INFOS_COUNT = 5;
-    private static final String WINDOW_TITLE = "tCHu \u2014 %s";
-    private static final String CHOOSER_CLASS = "chooser.css";
     private static final CardBagStringConverter CARD_BAG_STRING_CONVERTER = new CardBagStringConverter();
     
     private final ObservableGameState gameState;
@@ -114,7 +119,7 @@ public final class GraphicalPlayer {
         VBox vbox = new VBox(tf, listView, chooseBtn);
         
         Scene scene = new Scene(vbox);
-        scene.getStylesheets().add(CHOOSER_CLASS);
+        scene.getStylesheets().add(CHOOSER_STYLES);
         
         stage.setScene(scene);
         stage.show();
@@ -161,9 +166,27 @@ public final class GraphicalPlayer {
         
         return stage;
     }
-
+    
+    /**
+     * Construit l'interface graphique d'un joueur de tCHu, constitué d'une fenêtre
+     * découpée en 4 zones : au centre, la carte du jeu ; à gauche, les informations
+     * concernant le déroulement de la partie ; à droite, les pioches de cartes
+     * et de billets ; et en bas, la vue de la main du joueur, billets et cartes.
+     * 
+     * @param playerId
+     *          l'identité du joueur auquel cette instance correspond
+     * @param playerNames
+     *          la table associative des noms des joueurs
+     * @throws NullPointerException
+     *          si l'identité du joueur ou bien la table associative vaut <code>null</code>
+     * @throws IllegalArgumentException
+     *          si la taille de la table associative n'est pas égale
+     *          au nombre de joueurs d'une partie de tCHu
+     */
     public GraphicalPlayer(PlayerId playerId, Map<PlayerId, String> playerNames) {
         assert isFxApplicationThread();
+        Preconditions.requireNonNull(playerId, playerNames);
+        Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
         
         this.gameState = new ObservableGameState(playerId);
         this.infosText = createInfosTexts();
@@ -174,12 +197,24 @@ public final class GraphicalPlayer {
         
         this.mainWindow = createMainWindow(playerId, playerNames);
     }
-
+    
+    /**
+     * Appelle la méthode correspondante sur l'état de jeu courant.
+     * 
+     * @param newGameState
+     *          le nouvel état public de jeu
+     * @param newPlayerState
+     *          le nouvel état public du joueur
+     */
     public void setState(PublicGameState newGameState, PlayerState newPlayerState) {
         assert isFxApplicationThread();
         gameState.setState(newGameState, newPlayerState);
     }
-
+    
+    /**
+     * Ajoute le message donné au bas des informations sur le déroulement
+     * @param info
+     */
     public void receiveInfo(String info) {
         assert isFxApplicationThread();
         
