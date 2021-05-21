@@ -213,7 +213,10 @@ public final class GraphicalPlayer {
     
     /**
      * Ajoute le message donné au bas des informations sur le déroulement
+     * de la partie, cette zone contient au maximum 5 informations.
+     *
      * @param info
+     *          l'information à ajouter
      */
     public void receiveInfo(String info) {
         assert isFxApplicationThread();
@@ -234,6 +237,16 @@ public final class GraphicalPlayer {
             infosText.get(i).setText(messages.get(i));
     }
 
+    /**
+     * Permet au joueur d'effectuer une action.
+     *
+     * @param drawTicketsH
+     *          gestionnaire d'action de tirage de billet
+     * @param drawCardH
+     *          gestionnaire d'action de tirage de carte
+     * @param claimRouteH
+     *          gestionnaire d'action de prise de route
+     */
     public void startTurn(DrawTicketsHandler drawTicketsH, DrawCardHandler drawCardH, ClaimRouteHandler claimRouteH) {
         assert isFxApplicationThread();
         
@@ -259,6 +272,16 @@ public final class GraphicalPlayer {
         });
     }
 
+    /**
+     * Permet au joueur de faire son choix de billet.
+     * Une fois celui-ci confirmé, le gestionnaire de choix
+     * est appelé avec ce choix en argument.
+     *
+     * @param drawnTickets
+     *          multiensemble de billets que le joueur peut choisir
+     * @param chooseTicketsH
+     *          gestionnaire d'action de choix de billets
+     */
     public void chooseTickets(SortedBag<Ticket> drawnTickets, ChooseTicketsHandler chooseTicketsH) {
         assert isFxApplicationThread();
         
@@ -278,6 +301,19 @@ public final class GraphicalPlayer {
         );
     }
 
+    /**
+     * Autorise le joueur a choisir une carte wagon/locomotive :
+     *          soit l'une des cinq dont la face est visible,
+     *          soit celle du sommet de la pioche.
+     *
+     * Une fois que le joueur a cliqué sur l'une de ces cartes, le gestionnaire
+     * est appelé avec le choix du joueur et cette méthode est destinée
+     * à être appelée lorsque le joueur a déjà tiré une première carte et doit
+     * maintenant tirer la seconde.
+     *
+     * @param drawCardH
+     *          gestionnaire d'action de tirage de carte
+     */
     public void drawCard(DrawCardHandler drawCardH) {
         assert isFxApplicationThread();
         drawCardHP.set(slot -> {
@@ -286,11 +322,36 @@ public final class GraphicalPlayer {
         });
     }
 
+    /**
+     * Ouvre une fenêtre permettant au joueur de faire son choix de cartes initiales
+     * pour s'emparer d'une route. Une fois que celui-ci a été fait et confirmé,
+     * le gestionnaire de choix est appelé avec le choix du joueur en argument.
+     *
+     * Cette méthode n'est destinée qu'à être passée en argument à createMapView
+     * en tant que valeur de type CardChooser.
+     *
+     * @param initialCards
+     *          liste de multiensembles de cartes, qui sont les cartes initiales
+     *          que le joueur peut utiliser pour s'emparer d'une route
+     * @param chooseCardsH
+     *          gestionnaire de choix de cartes
+     */
     public void chooseClaimCards(List<SortedBag<Card>> initialCards, ChooseCardsHandler chooseCardsH) {
         assert isFxApplicationThread();
         chooseCards(StringsFr.CHOOSE_CARDS, initialCards, 1, chooseCardsH);
     }
 
+    /**
+     * Ouvre une fenêtre permettant au joueur de faire son choix de cartes additionnelles
+     * pour s'emparer d'un tunnel. Une fois que celui-ci a été fait et confirmé,
+     * le gestionnaire de choix est appelé avec le choix du joueur en argument.
+     *
+     * @param options
+     *          liste de multiensembles de cartes, qui sont les cartes additionnelles
+     *          que le joueur peut utiliser pour s'emparer d'un tunnel
+     * @param chooseCardsH
+     *          gestionnaire de choix de cartes
+     */
     public void chooseAdditionalCards(List<SortedBag<Card>> options, ChooseCardsHandler chooseCardsH) {
         assert isFxApplicationThread();
         chooseCards(StringsFr.CHOOSE_ADDITIONAL_CARDS, options, 0, chooseCardsH);
