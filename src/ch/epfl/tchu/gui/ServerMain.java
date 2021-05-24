@@ -61,12 +61,14 @@ public final class ServerMain extends Application {
             GraphicalPlayerAdapter graphicalPlayer = new GraphicalPlayerAdapter();
             Player playerProxy = new RemotePlayerProxy(socket);
             
-            new Thread(() -> Game.play(
+            Thread gameThread = new Thread(() -> Game.play(
                     Map.of(PLAYER_1, graphicalPlayer, PLAYER_2, playerProxy),
                     playerNames,
                     SortedBag.of(ChMap.tickets()),
                     new Random()
-            )).start();
+            ));
+            gameThread.setDaemon(true);
+            gameThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -36,6 +36,7 @@ public interface ActionHandlers {
         /**
          * Méthode appellée lorsque le joueur
          * désire tirer une carte à l'emplacement donné.
+         * 
          * @param slot
          *          l'emplacement auquel le joueur
          *          désire tirer une carte : de 0 à 4 pour les cartes face visible,

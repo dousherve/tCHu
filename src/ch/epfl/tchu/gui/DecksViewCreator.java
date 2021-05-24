@@ -1,5 +1,6 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
@@ -57,6 +58,12 @@ final class DecksViewCreator {
             return button;
         }
         
+        private <T> void bindPropertiesAndEvent(ObjectProperty<T> handlerP, ReadOnlyIntegerProperty percentageP, EventHandler<? super MouseEvent> handler) {
+            bindDisable(handlerP);
+            bindPercentage(percentageP);
+            button.setOnMouseClicked(handler);
+        }
+        
         void bindPercentage(ReadOnlyIntegerProperty percentageProperty) {
             gaugeRect.widthProperty().bind(
                     percentageProperty.multiply(GAUGE_WIDTH).divide(100));
@@ -65,17 +72,9 @@ final class DecksViewCreator {
         <T> void bindDisable(ObjectProperty<T> handlerProperty) {
             button.disableProperty().bind(handlerProperty.isNull());
         }
-        
-        void setOnMouseClicked(EventHandler<? super MouseEvent> handler) {
-            button.setOnMouseClicked(handler);
-        }
-        
     }
     
     private static StackPane createCardViewPane() {
-        StackPane stackPane = new StackPane();
-        stackPane.getStyleClass().add(CARD_CLASS);
-    
         Rectangle outsideRect = new Rectangle(OUTSIDE_CARD_WIDTH, OUTSIDE_CARD_HEIGHT);
         outsideRect.getStyleClass().add(OUTSIDE_CARD_CLASS);
     
@@ -85,7 +84,8 @@ final class DecksViewCreator {
         Rectangle trainRect = new Rectangle(INSIDE_CARD_WIDTH, INSIDE_CARD_HEIGHT);
         trainRect.getStyleClass().add(TRAIN_IMAGE_CLASS);
     
-        stackPane.getChildren().addAll(outsideRect, insideRect, trainRect);
+        StackPane stackPane = new StackPane(outsideRect, insideRect, trainRect);
+        stackPane.getStyleClass().add(CARD_CLASS);
         
         return stackPane;
     }
@@ -101,10 +101,14 @@ final class DecksViewCreator {
      * 
      * @param gameState
      *          l'état du jeu observable
+     * @throws NullPointerException
+     *          si <code>gameState</code> vaut <code>null</code>
      * @return
      *          la vue de la main du joueur
      */
     public static Node createHandView(ObservableGameState gameState) {
+        Preconditions.requireNonNull(gameState);
+        
         HBox handView = new HBox();
         handView.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);
 
@@ -147,24 +151,32 @@ final class DecksViewCreator {
      *          une propriété contenant un gestionnaire de tirage de billets
      * @param drawCardHP
      *          une propriété contenant un gestionnaire de tirage de cartes
+     * @throws NullPointerException
+     *          si un des arguments vaut <code>null</code>
      * @return
      *          la vue des pioches de cartes et de billets,
      *          ainsi que des cartes face visible
      */
     public static Node createCardsView(ObservableGameState gameState, ObjectProperty<DrawTicketsHandler> drawTicketsHP, ObjectProperty<DrawCardHandler> drawCardHP) {
+        Preconditions.requireNonNull(gameState, drawTicketsHP, drawCardHP);
+        
         VBox cardPane = new VBox();
         cardPane.setId(CARD_PANE_ID);
         cardPane.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);
 
         GaugedButton ticketsBtn = new GaugedButton(StringsFr.TICKETS);
-        ticketsBtn.bindDisable(drawTicketsHP);
-        ticketsBtn.bindPercentage(gameState.ticketsPercentage());
-        ticketsBtn.setOnMouseClicked(e -> drawTicketsHP.get().onDrawTickets());
+        ticketsBtn.bindPropertiesAndEvent(
+                drawTicketsHP,
+                gameState.ticketsPercentage(),
+                e -> drawTicketsHP.get().onDrawTickets()
+        );
         
         GaugedButton cardsBtn = new GaugedButton(StringsFr.CARDS);
-        cardsBtn.bindDisable(drawCardHP);
-        cardsBtn.bindPercentage(gameState.cardsPercentage());
-        cardsBtn.setOnMouseClicked(e -> drawCardHP.get().onDrawCard(Constants.DECK_SLOT));
+        cardsBtn.bindPropertiesAndEvent(
+                drawCardHP,
+                gameState.cardsPercentage(),
+                e -> drawCardHP.get().onDrawCard(Constants.DECK_SLOT)
+        );
     
         cardPane.getChildren().add(ticketsBtn.get());
     

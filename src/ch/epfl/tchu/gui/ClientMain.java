@@ -38,7 +38,10 @@ public final class ClientMain extends Application {
         int port = Integer.parseInt(parameters.get(1));
         
         RemotePlayerClient client = new RemotePlayerClient(new GraphicalPlayerAdapter(), host, port);
-        new Thread(client).start();
+        
+        Thread gameThread = new Thread(client);
+        gameThread.setDaemon(true);
+        gameThread.start();
     }
     
 }

@@ -1,5 +1,6 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.game.PlayerId;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -39,10 +40,15 @@ final class InfoViewCreator {
      *          une liste observable contenant les informations
      *          sur le déroulement de la partie, sous la forme
      *          d'instances de {@link Text}
+     * @throws IllegalArgumentException
+     *          si la taille de <code>playerNames</code> n'est pas égale à
+     *          <code>PlayerId.COUNT</code>
      * @return
      *          la vue des informations
      */
     public static VBox createInfoView(PlayerId playerId, Map<PlayerId, String> playerNames, ObservableGameState gameState, ObservableList<Text> infoTexts) {
+        Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
+        
         VBox infoView = new VBox();
         infoView.getStylesheets().addAll(INFO_STYLES, COLORS_STYLES);
 
@@ -51,7 +57,7 @@ final class InfoViewCreator {
         playerStats.setId(PLAYER_STATS_ID);
 
         for (int i = 0; i < PlayerId.COUNT; ++i) {
-            final PlayerId id = (i == 0) ? playerId : playerId.next();
+            PlayerId id = (i == 0) ? playerId : playerId.next();
 
             Circle circle = new Circle(STATS_CIRCLE_RADIUS);
             circle.getStyleClass().add(FILLED_CLASS);
