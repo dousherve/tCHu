@@ -213,7 +213,7 @@ public final class GraphicalPlayer {
     
     /**
      * Ajoute le message donné au bas des informations sur le déroulement
-     * de la partie, cette zone contient au maximum 5 informations.
+     * de la partie, cette zone contient au maximum 5 informations (<code>ConstantsGui.MAX_INFOS_COUNT</code>).
      *
      * @param info
      *          l'information à ajouter
@@ -241,9 +241,9 @@ public final class GraphicalPlayer {
      * Permet au joueur d'effectuer une action.
      *
      * @param drawTicketsH
-     *          gestionnaire d'action de tirage de billet
+     *          gestionnaire d'action de tirage de billets
      * @param drawCardH
-     *          gestionnaire d'action de tirage de carte
+     *          gestionnaire d'action de tirage de cartes
      * @param claimRouteH
      *          gestionnaire d'action de prise de route
      */
@@ -273,7 +273,7 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Permet au joueur de faire son choix de billet.
+     * Permet au joueur de faire son choix de billets.
      * Une fois celui-ci confirmé, le gestionnaire de choix
      * est appelé avec ce choix en argument.
      *
@@ -302,7 +302,7 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Autorise le joueur a choisir une carte wagon/locomotive :
+     * Autorise le joueur à choisir une carte wagon/locomotive :
      *          soit l'une des cinq dont la face est visible,
      *          soit celle du sommet de la pioche.
      *
@@ -312,7 +312,7 @@ public final class GraphicalPlayer {
      * maintenant tirer la seconde.
      *
      * @param drawCardH
-     *          gestionnaire d'action de tirage de carte
+     *          gestionnaire d'action de tirage de cartes
      */
     public void drawCard(DrawCardHandler drawCardH) {
         assert isFxApplicationThread();

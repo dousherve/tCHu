@@ -16,6 +16,13 @@ import java.util.concurrent.BlockingQueue;
 
 import static javafx.application.Platform.runLater;
 
+/**
+ * Classe publique, finale, instanciable qui a pour but d'adapter
+ * une instance de {@link GraphicalPlayer} en une valeur de type {@link Player}.
+ * 
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 public final class GraphicalPlayerAdapter implements Player {
     
     private final BlockingQueue<SortedBag<Ticket>> ticketsQueue = createQueue();
@@ -29,6 +36,8 @@ public final class GraphicalPlayerAdapter implements Player {
     private static <T> BlockingQueue<T> createQueue() {
         return new ArrayBlockingQueue<>(1);
     }
+    
+    // MARK:- Méthodes de Player
     
     @Override
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
