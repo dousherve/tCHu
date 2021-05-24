@@ -31,6 +31,7 @@ import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
 public final class ServerMain extends Application {
     
     private static final List<String> DEFAULT_PLAYERS = List.of("Ada", "Charles");
+    private static final int DEFAULT_PORT = 5108;
     
     /**
      * Démarre l'application JavaFX.
@@ -47,7 +48,7 @@ public final class ServerMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         List<String> names = getParameters().getRaw();
-        if (names.size() < 2)
+        if (names.size() < PlayerId.COUNT)
             names = DEFAULT_PLAYERS;
         
         Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
@@ -55,7 +56,7 @@ public final class ServerMain extends Application {
             playerNames.put(id, names.get(id.ordinal()));
     
         try {
-            ServerSocket serverSocket = new ServerSocket(5108);
+            ServerSocket serverSocket = new ServerSocket(DEFAULT_PORT);
             Socket socket = serverSocket.accept();
             
             GraphicalPlayerAdapter graphicalPlayer = new GraphicalPlayerAdapter();

@@ -19,8 +19,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static ch.epfl.tchu.net.MessageId.*;
+import static ch.epfl.tchu.net.Serde.SPACE;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
 /**
@@ -32,8 +34,6 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  * @author Louis Hervé (312937)
  */
 public final class RemotePlayerProxy implements Player {
-    
-    private static final String SPACE = " ";
     
     private Socket socket;
     
@@ -59,13 +59,13 @@ public final class RemotePlayerProxy implements Player {
         sendMessage(messageId, null);
     }
     
-    private String receiveMessage() {
+    private <T> T receiveResponse(Serde<T> serde) {
         try {
             BufferedReader r =
                     new BufferedReader(
                             new InputStreamReader(socket.getInputStream(), US_ASCII));
-                    
-            return r.readLine();
+        
+            return serde.deserialize(r.readLine());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -78,9 +78,12 @@ public final class RemotePlayerProxy implements Player {
      * @param socket
      *          le socket utilisé pour communiquer à travers le réseau
      *          avec le client par échange de messages textuels
+     * @throws NullPointerException
+     *          si l'instance de {@link Socket} donnée
+     *          vaut <code>null</code>
      */
     public RemotePlayerProxy(Socket socket) {
-        this.socket = socket;
+        this.socket = Objects.requireNonNull(socket);
     }
     
     // MARK:- Méthodes de Player
@@ -122,43 +125,43 @@ public final class RemotePlayerProxy implements Player {
     @Override
     public SortedBag<Ticket> chooseInitialTickets() {
         sendMessage(CHOOSE_INITIAL_TICKETS);
-        return Serdes.TICKET_BAG.deserialize(receiveMessage());
+        return receiveResponse(Serdes.TICKET_BAG);
     }
     
     @Override
     public TurnKind nextTurn() {
         sendMessage(NEXT_TURN);
-        return Serdes.TURN_KIND.deserialize(receiveMessage());
+        return receiveResponse(Serdes.TURN_KIND);
     }
     
     @Override
     public SortedBag<Ticket> chooseTickets(SortedBag<Ticket> options) {
         sendMessage(CHOOSE_TICKETS, Serdes.TICKET_BAG.serialize(options));
-        return Serdes.TICKET_BAG.deserialize(receiveMessage());
+        return receiveResponse(Serdes.TICKET_BAG);
     }
     
     @Override
     public int drawSlot() {
         sendMessage(DRAW_SLOT);
-        return Serdes.INTEGER.deserialize(receiveMessage());
+        return receiveResponse(Serdes.INTEGER);
     }
     
     @Override
     public Route claimedRoute() {
         sendMessage(ROUTE);
-        return Serdes.ROUTE.deserialize(receiveMessage());
+        return receiveResponse(Serdes.ROUTE);
     }
     
     @Override
     public SortedBag<Card> initialClaimCards() {
         sendMessage(CARDS);
-        return Serdes.CARD_BAG.deserialize(receiveMessage());
+        return receiveResponse(Serdes.CARD_BAG);
     }
     
     @Override
     public SortedBag<Card> chooseAdditionalCards(List<SortedBag<Card>> options) {
         sendMessage(CHOOSE_ADDITIONAL_CARDS, Serdes.CARD_BAG_LIST.serialize(options));
-        return Serdes.CARD_BAG.deserialize(receiveMessage());
+        return receiveResponse(Serdes.CARD_BAG);
     }
     
 }

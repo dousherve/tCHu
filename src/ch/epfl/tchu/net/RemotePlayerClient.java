@@ -1,5 +1,6 @@
 package ch.epfl.tchu.net;
 
+import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Player;
@@ -16,7 +17,9 @@ import java.net.Socket;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import static ch.epfl.tchu.net.Serde.SPACE;
 import static ch.epfl.tchu.net.Serde.split;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
@@ -27,8 +30,6 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  * @author Louis Hervé (312937)
  */
 public final class RemotePlayerClient implements Runnable {
-    
-    private static final String SPACE = " ";
     
     private final Player player;
     private final Socket socket;
@@ -56,9 +57,16 @@ public final class RemotePlayerClient implements Runnable {
      *          le nom d'hôte à utiliser pour se connecter au mandataire
      * @param port
      *          le port à utiliser pour se connecter au mandataire
+     * @throws IllegalArgumentException
+     *          si le nom d'hôte donné est vide ou contient
+     *          uniquement des caractères d'espacement
+     * @throws NullPointerException
+     *          si le joueur donné vaut <code>null</code>
      */
     public RemotePlayerClient(Player player, String host, int port) {
-        this.player = player;
+        Preconditions.checkArgument(! host.isBlank());
+        
+        this.player = Objects.requireNonNull(player);
         try {
             this.socket = new Socket(host, port);
         } catch (IOException e) {
