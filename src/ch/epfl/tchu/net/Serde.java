@@ -26,16 +26,24 @@ public interface Serde<T> {
      * une virgule, utilisée comme séparateur.
      */
     String COMMA = ",";
+    
     /**
      * Une chaîne contenant uniquement un point-virgule,
      * utilisé comme séparateur.
      */
     String SEMI_COLON = ";";
+    
     /**
      * Une chaîne contenant uniquement le caractère "deux points" (:),
      * utilisé comme séparateur.
      */
     String COLON = ":";
+    
+    /**
+     * Une chaîne contenant uniquement le caractère "espace",
+     * utilisé comme séparateur.
+     */
+    String SPACE = " ";
     
     // MARK:- Méthodes statiques de découpage de String
     

@@ -58,7 +58,21 @@ public final class GraphicalPlayer {
     private final ObjectProperty<ClaimRouteHandler> claimRouteHP;
     
     private final Stage mainWindow;
-
+    
+    private static class CardBagStringConverter extends StringConverter<SortedBag<Card>> {
+        
+        @Override
+        public String toString(SortedBag<Card> cards) {
+            return Info.cardsDescription(cards);
+        }
+        
+        @Override
+        public SortedBag<Card> fromString(String string) {
+            throw new UnsupportedOperationException();
+        }
+        
+    }
+    
     private static <T> SimpleObjectProperty<T> createObjectProperty() {
         return new SimpleObjectProperty<>(null);
     }
@@ -70,20 +84,6 @@ public final class GraphicalPlayer {
             list.add(new Text());
 
         return list;
-    }
-    
-    private static class CardBagStringConverter extends StringConverter<SortedBag<Card>> {
-    
-        @Override
-        public String toString(SortedBag<Card> cards) {
-            return Info.cardsDescription(cards);
-        }
-    
-        @Override
-        public SortedBag<Card> fromString(String string) {
-            throw new UnsupportedOperationException();
-        }
-    
     }
     
     private <T> void showModalWindow(String title, String intro, List<T> options, int minSelected, Consumer<MultipleSelectionModel<T>> btnHandler, SelectionMode selectionMode, StringConverter<T> converter) {
@@ -147,6 +147,8 @@ public final class GraphicalPlayer {
     }
     
     private Stage createMainWindow(PlayerId playerId, Map<PlayerId, String> playerNames) {
+        Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
+        
         Stage stage = new Stage();
         stage.setTitle(String.format(WINDOW_TITLE, playerNames.get(playerId)));
     
@@ -213,7 +215,7 @@ public final class GraphicalPlayer {
     
     /**
      * Ajoute le message donné au bas des informations sur le déroulement
-     * de la partie, cette zone contient au maximum 5 informations.
+     * de la partie, cette zone contient au maximum 5 informations (<code>ConstantsGui.MAX_INFOS_COUNT</code>).
      *
      * @param info
      *          l'information à ajouter
@@ -241,9 +243,9 @@ public final class GraphicalPlayer {
      * Permet au joueur d'effectuer une action.
      *
      * @param drawTicketsH
-     *          gestionnaire d'action de tirage de billet
+     *          gestionnaire d'action de tirage de billets
      * @param drawCardH
-     *          gestionnaire d'action de tirage de carte
+     *          gestionnaire d'action de tirage de cartes
      * @param claimRouteH
      *          gestionnaire d'action de prise de route
      */
@@ -273,7 +275,7 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Permet au joueur de faire son choix de billet.
+     * Permet au joueur de faire son choix de billets.
      * Une fois celui-ci confirmé, le gestionnaire de choix
      * est appelé avec ce choix en argument.
      *
@@ -281,12 +283,19 @@ public final class GraphicalPlayer {
      *          multiensemble de billets que le joueur peut choisir
      * @param chooseTicketsH
      *          gestionnaire d'action de choix de billets
+     * @throws IllegalArgumentException
+     *          si le nombre de billets donnés n'est pas égal à
+     *          <code>Constants.IN_GAME_TICKETS_COUNT</code> ou à
+     *          <code>Constants.INITIAL_TICKETS_COUNT</code>
      */
     public void chooseTickets(SortedBag<Ticket> drawnTickets, ChooseTicketsHandler chooseTicketsH) {
         assert isFxApplicationThread();
         
         int ticketsCount = drawnTickets.size();
-        Preconditions.checkArgument(ticketsCount == 3 || ticketsCount == 5);
+        Preconditions.checkArgument(
+                ticketsCount == Constants.IN_GAME_TICKETS_COUNT ||
+                        ticketsCount == Constants.INITIAL_TICKETS_COUNT
+        );
         
         int minSelected = ticketsCount - Constants.DISCARDABLE_TICKETS_COUNT;
         
@@ -302,7 +311,7 @@ public final class GraphicalPlayer {
     }
 
     /**
-     * Autorise le joueur a choisir une carte wagon/locomotive :
+     * Autorise le joueur à choisir une carte wagon/locomotive :
      *          soit l'une des cinq dont la face est visible,
      *          soit celle du sommet de la pioche.
      *
@@ -312,7 +321,7 @@ public final class GraphicalPlayer {
      * maintenant tirer la seconde.
      *
      * @param drawCardH
-     *          gestionnaire d'action de tirage de carte
+     *          gestionnaire d'action de tirage de cartes
      */
     public void drawCard(DrawCardHandler drawCardH) {
         assert isFxApplicationThread();

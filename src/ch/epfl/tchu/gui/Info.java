@@ -31,6 +31,23 @@ public final class Info {
         );
     }
     
+    /**
+     * Retourne une description en français du multiensemble de cartes donné.
+     * Par exemple :
+     * 
+     * <blockquote><pre>
+     *     var cards = SortedBag.of(2, Card.RED, 1, Card.LOCOMOTIVE);
+     *     
+     *     // Renvoie "2 rouges et une locomotive"
+     *     Info.cardsDescription(cards)
+     * </pre></blockquote>
+     * 
+     * @param cards
+     *          le multiensemble de cartes dont on veut la decription
+     *          en français
+     * @return
+     *          la description en français du multiensemble donné
+     */
     static String cardsDescription(SortedBag<Card> cards) {
         List<String> cardsDescriptions = new ArrayList<>();
         StringBuilder descrB = new StringBuilder();

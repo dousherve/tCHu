@@ -42,10 +42,10 @@ public final class ObservableGameState {
     
     // MARK:- Attributs
     
+    private final PlayerId playerId;
+    
     private PublicGameState gameState;
     private PlayerState playerState;
-    
-    private final PlayerId playerId;
     
     // Propriétés de l'état de jeu observable
 
