@@ -1,12 +1,6 @@
 package ch.epfl.tchu.gui;
 
-import ch.epfl.tchu.Preconditions;
-import ch.epfl.tchu.SortedBag;
-import ch.epfl.tchu.game.ChMap;
-import ch.epfl.tchu.game.Game;
-import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.PlayerId;
-import ch.epfl.tchu.net.RemotePlayerProxy;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
@@ -17,12 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 public final class ServerMain extends Application {
     
@@ -32,31 +21,6 @@ public final class ServerMain extends Application {
     
     public static void main(String[] args) {
         launch(args);
-    }
-    
-    private void runServer(List<String> names) {
-        Preconditions.checkArgument(names.size() == PlayerId.COUNT);
-        
-        Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
-        for (PlayerId id : PlayerId.ALL)
-            playerNames.put(id, names.get(id.ordinal()));
-    
-        try {
-            ServerSocket serverSocket = new ServerSocket(5108);
-        
-            Map<PlayerId, Player> players = new EnumMap<>(PlayerId.class);
-            for (PlayerId id : PlayerId.ALL)
-                players.put(id, new RemotePlayerProxy(serverSocket.accept()));
-        
-            Game.play(
-                    players,
-                    playerNames,
-                    SortedBag.of(ChMap.tickets()),
-                    new Random()
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     
     private void showGui(Stage primaryStage) {
@@ -72,7 +36,7 @@ public final class ServerMain extends Application {
                         name2TF.textProperty().isEmpty()));
     
         launchBtn.setOnAction(e -> {
-            gameThread = new Thread(() -> runServer(List.of(name1TF.getText(), name2TF.getText())));
+            gameThread = new Thread(() -> Server.runServer(List.of(name1TF.getText(), name2TF.getText())));
             gameThread.start();
             launchBtn.disableProperty().unbind();
             launchBtn.disableProperty().set(true);
@@ -105,9 +69,9 @@ public final class ServerMain extends Application {
         if (names.isEmpty())
             showGui(primaryStage);
         else if (names.size() < PlayerId.COUNT)
-            runServer(DEFAULT_PLAYERS);
+            Server.runServer(DEFAULT_PLAYERS);
         else
-            runServer(names);
+            Server.runServer(names.subList(0, PlayerId.COUNT));
     }
     
 }
