@@ -222,7 +222,7 @@ public final class GameState extends PublicGameState {
     public GameState withInitiallyChosenTickets(PlayerId playerId, SortedBag<Ticket> chosenTickets) {
         Preconditions.checkArgument(playerState(playerId).ticketCount() <= 0);
 
-        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 playerId,
                 playerState(playerId).withAddedTickets(chosenTickets)
@@ -249,7 +249,7 @@ public final class GameState extends PublicGameState {
     public GameState withChosenAdditionalTickets(SortedBag<Ticket> drawnTickets, SortedBag<Ticket> chosenTickets) {
         Preconditions.checkArgument(drawnTickets.contains(chosenTickets));
 
-        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
                 currentPlayerState().withAddedTickets(chosenTickets)
@@ -277,7 +277,7 @@ public final class GameState extends PublicGameState {
      *          dans la main du joueur courant
      */
     public GameState withDrawnFaceUpCard(int slot) {
-        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
                 currentPlayerState().withAddedCard(cardState.faceUpCard(slot))
@@ -303,7 +303,7 @@ public final class GameState extends PublicGameState {
      *          a été placée dans la main du joueur courant
      */
     public GameState withBlindlyDrawnCard() {
-        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
                 currentPlayerState().withAddedCard(cardState.topDeckCard())
@@ -332,7 +332,7 @@ public final class GameState extends PublicGameState {
      *          s'est emparé de la route donnée au moyen des cartes données
      */
     public GameState withClaimedRoute(Route route, SortedBag<Card> cards) {
-        final Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
+        Map<PlayerId, PlayerState> newPlayerState = new EnumMap<>(playerState);
         newPlayerState.put(
                 currentPlayerId(),
                 currentPlayerState().withClaimedRoute(route, cards)

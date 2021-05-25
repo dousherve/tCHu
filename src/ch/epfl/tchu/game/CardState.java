@@ -47,7 +47,7 @@ public final class CardState extends PublicCardState {
     public static CardState of(Deck<Card> deck) {
         Preconditions.checkArgument(deck.size() >= Constants.FACE_UP_CARDS_COUNT);
         
-        final List<Card> topCards = new ArrayList<>();
+        List<Card> topCards = new ArrayList<>();
         for (int slot : Constants.FACE_UP_CARD_SLOTS)
             topCards.add(deck.withoutTopCards(slot).topCard());
 
@@ -80,7 +80,7 @@ public final class CardState extends PublicCardState {
         // topDeckCard() afin d'éviter une copie éventuellement inutile de faceUpCards().
         Preconditions.checkArgument(! deck.isEmpty());
         
-        final List<Card> newFaceUpCards = new ArrayList<>(faceUpCards());
+        List<Card> newFaceUpCards = new ArrayList<>(faceUpCards());
         newFaceUpCards.set(slot, deck.topCard());
 
         return new CardState(newFaceUpCards, deck.withoutTopCard(), discards);

@@ -82,7 +82,7 @@ public final class Info {
      *          le nom accordé en genre et en nombre de la carte <code>card</code> donnée
      */
     public static String cardName(Card card, int count) {
-        final String cardDescription;
+        String cardDescription;
         
         switch (card) {
             case BLACK:
@@ -341,7 +341,7 @@ public final class Info {
      *          grâce au chemin donné
      */
     public String getsLongestTrailBonus(Trail longestTrail) {
-        final String longestTrailDescr = 
+        String longestTrailDescr = 
                 longestTrail.station1().name()
                 + StringsFr.EN_DASH_SEPARATOR
                 + longestTrail.station2().name();

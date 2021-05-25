@@ -218,7 +218,7 @@ public final class Route {
         Preconditions.checkArgument(level == Level.UNDERGROUND);
         Preconditions.checkArgument(drawnCards.size() == Constants.ADDITIONAL_TUNNEL_CARDS);
         
-        final int commonCardsCount = (int) drawnCards.stream()
+        int commonCardsCount = (int) drawnCards.stream()
                 .filter(c -> claimCards.contains(c) && c != Card.LOCOMOTIVE)
                 .count();
         

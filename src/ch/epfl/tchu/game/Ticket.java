@@ -27,8 +27,8 @@ public final class Ticket implements Comparable<Ticket> {
      *          la représentation textuelle du billet
      */
     private static String computeText(List<Trip> trips) {
-        final Trip firstTrip = trips.get(0);
-        final String fromStationName = firstTrip.from().name();
+        Trip firstTrip = trips.get(0);
+        String fromStationName = firstTrip.from().name();
         
         Set<String> destinationsDescriptions = new TreeSet<>();
         for (Trip trip : trips) {
@@ -55,7 +55,7 @@ public final class Ticket implements Comparable<Ticket> {
     public Ticket(List<Trip> trips) {
         Preconditions.checkArgument(! trips.isEmpty());
         
-        final String firstStationName = trips.get(0).from().name();
+        String firstStationName = trips.get(0).from().name();
         for (Trip trip : trips) {
             Preconditions.checkArgument(
                     trip.from().name().equals(firstStationName)

@@ -61,7 +61,7 @@ public final class Game {
         
         players.forEach((playerId, player) -> player.initPlayers(playerId, playerNames));
     
-        final Map<PlayerId, Info> infos = new EnumMap<>(PlayerId.class);
+        Map<PlayerId, Info> infos = new EnumMap<>(PlayerId.class);
         players.forEach((id, player) -> infos.put(id, new Info(playerNames.get(id))));
         
         // Annonce du joueur qui jouera en premier
@@ -74,15 +74,15 @@ public final class Game {
         }
         
         for (Map.Entry<PlayerId, Player> entry : players.entrySet()) {
-            final PlayerId id = entry.getKey();
-            final Player player = entry.getValue();
+            PlayerId id = entry.getKey();
+            Player player = entry.getValue();
             
             broadcastStateChange(state, players);
             state = state.withInitiallyChosenTickets(id, player.chooseInitialTickets());
         }
         
         // Annonce des billets gardés par chaque joueur
-        final GameState tempState = state;
+        GameState tempState = state;
         infos.forEach((playerId, info) -> broadcastInfo(
                 info.keptTickets(tempState.playerState(playerId).ticketCount()),
                 players
@@ -92,9 +92,9 @@ public final class Game {
         boolean isPlaying = true;
         
         while (isPlaying) {
-            final PlayerId currentPlayerId = state.currentPlayerId();
-            final Player currentPlayer = players.get(currentPlayerId);
-            final Info currentPlayerInfo = infos.get(currentPlayerId);
+            PlayerId currentPlayerId = state.currentPlayerId();
+            Player currentPlayer = players.get(currentPlayerId);
+            Info currentPlayerInfo = infos.get(currentPlayerId);
             
             broadcastStateChange(state, players);
             // Annonce du joueur qui joue ce tour
@@ -102,8 +102,8 @@ public final class Game {
             
             switch (currentPlayer.nextTurn()) {
                 case DRAW_TICKETS:
-                    final SortedBag<Ticket> drawnTickets = state.topTickets(Constants.IN_GAME_TICKETS_COUNT);
-                    final SortedBag<Ticket> chosenTickets = currentPlayer.chooseTickets(drawnTickets);
+                    SortedBag<Ticket> drawnTickets = state.topTickets(Constants.IN_GAME_TICKETS_COUNT);
+                    SortedBag<Ticket> chosenTickets = currentPlayer.chooseTickets(drawnTickets);
                     // Annonce des billets tirés par le joueur
                     broadcastInfo(currentPlayerInfo.drewTickets(Constants.IN_GAME_TICKETS_COUNT), players);
                     state = state.withChosenAdditionalTickets(drawnTickets, chosenTickets);
@@ -114,7 +114,7 @@ public final class Game {
                 case DRAW_CARDS:
                     for (int i = 0; i < IN_GAME_DRAW_CARDS_COUNT; ++i) {
                         state = state.withCardsDeckRecreatedIfNeeded(rng);
-                        final int slot = currentPlayer.drawSlot();
+                        int slot = currentPlayer.drawSlot();
                         
                         if (slot == Constants.DECK_SLOT) {
                             state = state.withBlindlyDrawnCard();
@@ -135,8 +135,8 @@ public final class Game {
                     break;
                     
                 case CLAIM_ROUTE:
-                    final Route route = currentPlayer.claimedRoute();
-                    final SortedBag<Card> initialCards = currentPlayer.initialClaimCards();
+                    Route route = currentPlayer.claimedRoute();
+                    SortedBag<Card> initialCards = currentPlayer.initialClaimCards();
                     
                     if (route.level() == Route.Level.OVERGROUND) { // Route en surface
                         state = state.withClaimedRoute(route, initialCards);
@@ -146,15 +146,15 @@ public final class Game {
                         // Annonce de la tentative de prise de possession d'un tunnel
                         broadcastInfo(currentPlayerInfo.attemptsTunnelClaim(route, initialCards), players);
                         
-                        final SortedBag.Builder<Card> drawnB = new SortedBag.Builder<>();
+                        SortedBag.Builder<Card> drawnB = new SortedBag.Builder<>();
                         for (int i = 0; i < Constants.ADDITIONAL_TUNNEL_CARDS; ++i) {
                             state = state.withCardsDeckRecreatedIfNeeded(rng);
                             drawnB.add(state.topCard());
                             state = state.withoutTopCard();
                         }
-                        final SortedBag<Card> drawnCards = drawnB.build();
+                        SortedBag<Card> drawnCards = drawnB.build();
     
-                        final int addtitionalCardsCount = route.additionalClaimCardsCount(initialCards, drawnCards);
+                        int addtitionalCardsCount = route.additionalClaimCardsCount(initialCards, drawnCards);
                         // Annonce de la pioche de cartes additionnelles
                         broadcastInfo(currentPlayerInfo.drewAdditionalCards(drawnCards, addtitionalCardsCount), players);
     
@@ -164,7 +164,7 @@ public final class Game {
                             broadcastInfo(currentPlayerInfo.claimedRoute(route, initialCards), players);
                         } else {
                             // Les cartes tirées impliquent au moins une carte additionnelle
-                            final List<SortedBag<Card>> options = state
+                            List<SortedBag<Card>> options = state
                                     .currentPlayerState()
                                     .possibleAdditionalCards(addtitionalCardsCount, initialCards);
     
@@ -173,9 +173,9 @@ public final class Game {
                                 // TODO: enlever la duplication de la ligne
                                 broadcastInfo(currentPlayerInfo.didNotClaimRoute(route), players);
                             } else if (addtitionalCardsCount > 0) {
-                                final SortedBag<Card> chosenAdditional = currentPlayer.chooseAdditionalCards(options);
+                                SortedBag<Card> chosenAdditional = currentPlayer.chooseAdditionalCards(options);
                                 if (! chosenAdditional.isEmpty()) {
-                                    final SortedBag<Card> totalCards = initialCards.union(chosenAdditional);
+                                    SortedBag<Card> totalCards = initialCards.union(chosenAdditional);
                                     state = state.withClaimedRoute(route, totalCards);
                                     // Annonce de la prise de possession du tunnel convoité
                                     broadcastInfo(currentPlayerInfo.claimedRoute(route, totalCards), players);
