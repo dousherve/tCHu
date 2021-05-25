@@ -77,7 +77,7 @@ public enum Card {
             case WHITE:
                 return Card.WHITE;
             default:
-                throw new IllegalArgumentException("Il n'existe aucune carte de la couleur donnée.");
+                throw new Error("Il n'existe aucune carte de la couleur donnée.");
         }
         
     }

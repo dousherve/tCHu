@@ -4,10 +4,12 @@ import ch.epfl.tchu.Preconditions;
 import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.gui.Info;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Classe publique, finale et non instanciable qui représente une partie de tCHu.
@@ -189,12 +191,17 @@ public final class Game {
                     break;
                     
                 default:
-                    throw new Error();
+                    throw new Error("Type de tour inconnu.");
             }
             
-            if (state.lastTurnBegins())
+            if (state.lastTurnBegins()) {
                 // Annonce du début du dernier tour
-                broadcastInfo(currentPlayerInfo.lastTurnBegins(state.currentPlayerState().carCount()), players);
+                broadcastInfo(
+                        currentPlayerInfo.lastTurnBegins(
+                                state.currentPlayerState().carCount()
+                        ), players
+                );
+            }
             
             if (currentPlayerId == state.lastPlayer())
                 isPlaying = false;
@@ -204,52 +211,61 @@ public final class Game {
         
         /* == Fin d'une partie de tCHu == */
         broadcastStateChange(state, players);
+    
+        Map<PlayerId, Integer> results = new EnumMap<>(PlayerId.class);
+        List<PlayerId> winners = new ArrayList<>();
+        int winnerPoints = Integer.MIN_VALUE;
+    
+        Map<PlayerId, Trail> longestTrails = new EnumMap<>(PlayerId.class);
+        List<PlayerId> bonusWinners = new ArrayList<>();
+        int longestLength = Integer.MIN_VALUE;
         
-        // TODO: génériser le calcul du bonus
-        final Trail fstPlayerLongest = Trail.longest(state.playerState(PlayerId.PLAYER_1).routes());
-        final Trail sndPlayerLongest = Trail.longest(state.playerState(PlayerId.PLAYER_2).routes());
-        Trail longest;
-        PlayerId bonusWinnerId;
-        
-        if (fstPlayerLongest.length() > sndPlayerLongest.length()) {
-            longest = fstPlayerLongest;
-            bonusWinnerId = PlayerId.PLAYER_1;
-        } else if (sndPlayerLongest.length() > fstPlayerLongest.length()) {
-            longest = sndPlayerLongest;
-            bonusWinnerId = PlayerId.PLAYER_2;
-        } else {
-            bonusWinnerId = null;
-            longest = null;
+        // On recherche les chemins les plus longs de chaque joueur,
+        // ainsi que la taille du plus long parmi ceux-ci
+        for (PlayerId id : PlayerId.ALL) {
+            Trail longest = Trail.longest(state.playerState(id).routes());
+            longestTrails.put(id, longest);
+            longestLength = Math.max(longestLength, longest.length());
         }
         
-        final Map<PlayerId, Integer> results = new EnumMap<>(PlayerId.class);
-        for (PlayerId id : PlayerId.ALL)
-            results.put(id, state.playerState(id).finalPoints());
+        // On calcule les résultats finaux des joueurs
+        // en tenant compte du potentiel bonus obtenu
+        for (PlayerId id : PlayerId.ALL) {
+            int finalPoints = state.playerState(id).finalPoints();
+            if (longestTrails.get(id).length() == longestLength) {
+                bonusWinners.add(id);
+                finalPoints += Constants.LONGEST_TRAIL_BONUS_POINTS;
+            }
+            results.put(id, finalPoints);
+            winnerPoints = Math.max(winnerPoints, finalPoints);
+        }
         
-        if (bonusWinnerId != null) {
-            results.put(
-                    bonusWinnerId,
-                    results.get(bonusWinnerId) + Constants.LONGEST_TRAIL_BONUS_POINTS
+        // On recherche le (les) vainqueur(s) de la partie
+        for (PlayerId id : PlayerId.ALL) {
+            if (results.get(id) == winnerPoints)
+                winners.add(id);
+        }
+    
+        // Annonce du (des) vainqueur(s) du bonus
+        for (PlayerId bWinner : bonusWinners) {
+            broadcastInfo(
+                    infos.get(bWinner).getsLongestTrailBonus(longestTrails.get(bWinner)),
+                    players
             );
-            // Annonce du vainqueur du bonus pour possession du plus long chemin
-            broadcastInfo(infos.get(bonusWinnerId).getsLongestTrailBonus(longest), players);
-        } else {
-            // Égalité des plus longs chemins
-            results.forEach((id, points) -> {
-                results.put(id, points + Constants.LONGEST_TRAIL_BONUS_POINTS);
-            });
-            // Annonce des vainqueurs du bonus pour possession du plus long chemin (ex æqo)
-            broadcastInfo(infos.get(PlayerId.PLAYER_1).getsLongestTrailBonus(fstPlayerLongest), players);
-            broadcastInfo(infos.get(PlayerId.PLAYER_2).getsLongestTrailBonus(sndPlayerLongest), players);
         }
-
-        final int offset = results.get(PlayerId.PLAYER_1).compareTo(results.get(PlayerId.PLAYER_2));
-        if (offset == 0) {
-            // Égalité
-            broadcastInfo(Info.draw(List.copyOf(playerNames.values()), results.get(PlayerId.PLAYER_1)), players);
+        
+        // Annonce du (des) vainqueur(s)
+        if (winners.size() > 1) {
+            // Égalité !
+            List<String> winnerNames = playerNames.keySet().stream()
+                    .filter(winners::contains)
+                    .map(playerNames::get)
+                    .collect(Collectors.toUnmodifiableList());
+            
+            broadcastInfo(Info.draw(winnerNames, winnerPoints), players);
         } else {
-            PlayerId winnerId = (offset < 0) ? PlayerId.PLAYER_2 : PlayerId.PLAYER_1;
-            broadcastInfo(infos.get(winnerId).won(results.get(winnerId), results.get(winnerId.next())), players);
+            PlayerId winner = winners.get(0);
+            broadcastInfo(infos.get(winner).won(winnerPoints, results.get(winner.next())), players);
         }
     }
         

@@ -113,7 +113,7 @@ public final class Info {
                 cardDescription = StringsFr.LOCOMOTIVE_CARD;
                 break;
             default:
-                throw new IllegalArgumentException("Carte inconnue");
+                throw new Error("Carte inconnue");
         }
         
         return cardDescription + StringsFr.plural(count);
