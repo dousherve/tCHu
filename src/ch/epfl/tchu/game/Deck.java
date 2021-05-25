@@ -38,7 +38,7 @@ public final class Deck<C extends Comparable<C>> {
      *          un tas de cartes ayant les mêmes cartes que le multiensemble, mais mélangées
      */
     public static <C extends Comparable<C>> Deck<C> of(SortedBag<C> cards, Random rng) {
-        final List<C> toBeShuffled = cards.toList();
+        List<C> toBeShuffled = cards.toList();
         Collections.shuffle(toBeShuffled, rng);
 
         return new Deck<>(toBeShuffled);

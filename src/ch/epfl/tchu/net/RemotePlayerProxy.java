@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -100,7 +99,7 @@ public final class RemotePlayerProxy implements Player {
     public void initPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
         sendMessage(INIT_PLAYERS, String.join(SPACE,
                 Serdes.PLAYER_ID.serialize(ownId),
-                Serdes.STRING_LIST.serialize(new ArrayList<>(playerNames.values()))
+                Serdes.STRING_LIST.serialize(List.copyOf(playerNames.values()))
         ));
     }
     

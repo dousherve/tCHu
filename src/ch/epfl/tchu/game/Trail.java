@@ -134,7 +134,7 @@ public final class Trail {
         
         Station previousStation = station1;
         for (Route r : routes) {
-            final Station newStation = r.stationOpposite(previousStation);
+            Station newStation = r.stationOpposite(previousStation);
             sB.append(" - ").append(newStation.name());
             previousStation = newStation;
         }

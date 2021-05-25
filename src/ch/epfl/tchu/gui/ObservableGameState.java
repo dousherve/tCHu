@@ -115,7 +115,7 @@ public final class ObservableGameState {
             faceUpCards.get(slot).set(newCard);
         }
         
-        final List<Route> newClaimedRoutes = new ArrayList<>(newGameState.claimedRoutes());
+        List<Route> newClaimedRoutes = new ArrayList<>(newGameState.claimedRoutes());
         if (gameState != null)
             newClaimedRoutes.removeAll(gameState.claimedRoutes());
         

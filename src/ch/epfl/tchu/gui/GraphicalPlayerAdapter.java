@@ -65,9 +65,8 @@ public final class GraphicalPlayerAdapter implements Player {
             return ticketsQueue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw new Error();
         }
-        
-        throw new Error();
     }
     
     @Override
@@ -89,9 +88,8 @@ public final class GraphicalPlayerAdapter implements Player {
             return turnKindQueue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw new Error();
         }
-        
-        throw new Error();
     }
     
     @Override
@@ -109,9 +107,8 @@ public final class GraphicalPlayerAdapter implements Player {
             return slotQueue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw new Error();
         }
-        
-        throw new Error();
     }
     
     @Override
@@ -120,9 +117,8 @@ public final class GraphicalPlayerAdapter implements Player {
             return claimedRouteQueue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw new Error();
         }
-        
-        throw new Error();
     }
     
     @Override
@@ -131,9 +127,8 @@ public final class GraphicalPlayerAdapter implements Player {
             return cardsQueue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw new Error();
         }
-    
-        throw new Error();
     }
     
     @Override
@@ -144,9 +139,8 @@ public final class GraphicalPlayerAdapter implements Player {
             return cardsQueue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            throw new Error();
         }
-    
-        throw new Error();
     }
     
 }

@@ -179,7 +179,7 @@ public final class PlayerState extends PublicPlayerState {
         if (usableCardsB.size() < additionalCardsCount)
             return List.of();
         
-        final List<SortedBag<Card>> possibilities = new ArrayList<>(
+        List<SortedBag<Card>> possibilities = new ArrayList<>(
                 usableCardsB
                         .build()
                         .subsetsOfSize(additionalCardsCount)
@@ -205,7 +205,7 @@ public final class PlayerState extends PublicPlayerState {
      *          dont il vient de s'emparer
      */
     public PlayerState withClaimedRoute(Route route, SortedBag<Card> claimCards) {
-        final List<Route> newRoutes = new ArrayList<>(routes());
+        List<Route> newRoutes = new ArrayList<>(routes());
         newRoutes.add(route);
         
         return new PlayerState(
@@ -221,16 +221,16 @@ public final class PlayerState extends PublicPlayerState {
      * @return le nombre de points obtenus par le joueur grâce à ses billets
      */
     public int ticketPoints() {
-        final int maxStationId = routes().stream()
+        int maxStationId = routes().stream()
                 .flatMap(r -> r.stations().stream())
                 .mapToInt(Station::id)
                 .max()
                 .orElse(0);
     
-        final StationPartition.Builder partitionB = new StationPartition.Builder(maxStationId + 1);
+        StationPartition.Builder partitionB = new StationPartition.Builder(maxStationId + 1);
         routes().forEach(r -> partitionB.connect(r.station1(), r.station2()));
         
-        final StationPartition partition = partitionB.build();
+        StationPartition partition = partitionB.build();
         return tickets.stream()
                 .mapToInt(t -> t.points(partition))
                 .sum();
