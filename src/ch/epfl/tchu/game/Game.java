@@ -102,11 +102,13 @@ public final class Game {
             
             switch (currentPlayer.nextTurn()) {
                 case DRAW_TICKETS:
+                    // Annonce du tirage de billets
+                    broadcastInfo(currentPlayerInfo.drewTickets(Constants.IN_GAME_TICKETS_COUNT), players);
+                    
                     SortedBag<Ticket> drawnTickets = state.topTickets(Constants.IN_GAME_TICKETS_COUNT);
                     SortedBag<Ticket> chosenTickets = currentPlayer.chooseTickets(drawnTickets);
-                    // Annonce des billets tirés par le joueur
-                    broadcastInfo(currentPlayerInfo.drewTickets(Constants.IN_GAME_TICKETS_COUNT), players);
                     state = state.withChosenAdditionalTickets(drawnTickets, chosenTickets);
+                    
                     // Annonce des billets gardés par le joueur
                     broadcastInfo(currentPlayerInfo.keptTickets(chosenTickets.size()), players);
                     break;
