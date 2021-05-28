@@ -59,7 +59,7 @@ public final class GraphicalPlayer {
     
     private final Stage mainWindow;
     
-    private static class CardBagStringConverter extends StringConverter<SortedBag<Card>> {
+    private static final class CardBagStringConverter extends StringConverter<SortedBag<Card>> {
         
         @Override
         public String toString(SortedBag<Card> cards) {
