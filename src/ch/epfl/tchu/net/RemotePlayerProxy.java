@@ -34,7 +34,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  */
 public final class RemotePlayerProxy implements Player {
     
-    private Socket socket;
+    private final Socket socket;
     
     private void sendMessage(MessageId messageId, String message) {
         try {
@@ -75,8 +75,8 @@ public final class RemotePlayerProxy implements Player {
      * le <code>{@link Socket}</code> donné.
      * 
      * @param socket
-     *          le socket utilisé pour communiquer à travers le réseau
-     *          avec le client par échange de messages textuels
+     *          la "prise" {@link Socket} utilisée pour communiquer à travers le réseau
+     *          avec le client, par échange de messages textuels
      * @throws NullPointerException
      *          si l'instance de {@link Socket} donnée
      *          vaut <code>null</code>

@@ -215,7 +215,7 @@ public final class GraphicalPlayer {
     
     /**
      * Ajoute le message donné au bas des informations sur le déroulement
-     * de la partie, cette zone contient au maximum 5 informations (<code>ConstantsGui.MAX_INFOS_COUNT</code>).
+     * de la partie. Cette zone contient au maximum 5 informations (<code>ConstantsGui.MAX_INFOS_COUNT</code>).
      *
      * @param info
      *          l'information à ajouter

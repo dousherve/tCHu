@@ -155,7 +155,7 @@ public interface Serde<T> {
      */
     static <T> Serde<List<T>> listOf(Serde<T> serde, String separator) {
         return Serde.of(
-                raw -> raw.stream()
+                list -> list.stream()
                         .map(serde::serialize)
                         .collect(Collectors.joining(separator)),
         
