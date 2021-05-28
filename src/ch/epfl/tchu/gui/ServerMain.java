@@ -45,6 +45,11 @@ public final class ServerMain extends Application {
         launch(args);
     }
     
+    /**
+     * Démarre l'application JavaFX, côté Serveur.
+     * @param primaryStage
+     *          la Stage principale de l'application
+     */
     @Override
     public void start(Stage primaryStage) {
         List<String> names = getParameters().getRaw();

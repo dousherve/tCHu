@@ -28,6 +28,11 @@ public final class ClientMain extends Application {
         launch(args);
     }
     
+    /**
+     * Démarre l'application JavaFX, côté Client.
+     * @param primaryStage
+     *          la Stage principale de l'application
+     */
     @Override
     public void start(Stage primaryStage) {
         List<String> parameters = getParameters().getRaw();
