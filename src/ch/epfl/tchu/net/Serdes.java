@@ -24,9 +24,9 @@ public final class Serdes {
 
     private Serdes() {}
     
-    private static Map<PlayerId, PublicPlayerState> deserializePlayerState(String[] source, int offset) {
+    private static Map<PlayerId, PublicPlayerState> deserializePublicPlayerState(String[] source, int offset) {
         Map<PlayerId, PublicPlayerState> playerState = new EnumMap<>(PlayerId.class);
-        for (int i = 0; i < PlayerId.ALL.size(); ++i) {
+        for (int i = 0; i < PlayerId.COUNT; ++i) {
             playerState.put(
                     PlayerId.ALL.get(i),
                     PUBLIC_PLAYER_STATE.deserialize(source[offset + i])
@@ -193,7 +193,7 @@ public final class Serdes {
                         INTEGER.deserialize(tokens[i++]),
                         PUBLIC_CARD_STATE.deserialize(tokens[i++]),
                         PLAYER_ID.deserialize(tokens[i++]),
-                        deserializePlayerState(tokens, i),
+                        deserializePublicPlayerState(tokens, i),
                         PLAYER_ID.deserialize(tokens[i + PlayerId.COUNT])
                 );
             }

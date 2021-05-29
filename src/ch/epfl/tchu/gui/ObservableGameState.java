@@ -104,7 +104,7 @@ public final class ObservableGameState {
         return Collections.unmodifiableSet(doubleRoutesStations);
     }
     
-    // MARK:- Méthodes privées utilisées pour mettre à jour l'état
+    // MARK:- Méthodes privées utilisées pour mettre à jour les états courants
     
     private void setPublicGameStateProperties(PublicGameState newGameState) {
         ticketsPercentageProperty.set(100 * newGameState.ticketsCount() / ChMap.tickets().size());

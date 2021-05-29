@@ -25,6 +25,9 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 /**
  * Classe publique, finale et immuable représentant un client de joueur distant.
+ * Elle implémente l'interface {@link Runnable}, son but étant que ses instances
+ * soient passées en argument à un nouveau {@link Thread} destiné à
+ * gérer la partie logique du jeu en réseau.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
