@@ -4,6 +4,7 @@ import ch.epfl.tchu.game.PlayerId;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -22,6 +23,17 @@ public final class ServerMain extends Application {
         launch(args);
     }
     
+    private void terminate(Event event) {
+        try {
+            if (gameThread != null && gameThread.isAlive())
+                // Deprecated
+                gameThread.stop();
+            Platform.exit();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+    
     private void showGui(Stage primaryStage) {
         Platform.setImplicitExit(false);
         
@@ -38,27 +50,20 @@ public final class ServerMain extends Application {
     
         launchBtn.setOnAction(e -> {
             gameThread = new Thread(new Server(name1TF.getText(), name2TF.getText()));
+            gameThread.setDaemon(true);
             gameThread.start();
             launchBtn.disableProperty().unbind();
             launchBtn.disableProperty().set(true);
         });
     
         Button exitBtn = new Button("Quitter");
-        exitBtn.setOnAction(e -> {
-            try {
-                if (gameThread != null && gameThread.isAlive())
-                    gameThread.join();
-                primaryStage.close();
-                Platform.exit();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        });
+        exitBtn.setOnAction(this::terminate);
     
         VBox vbox = new VBox(10d, name1TF, name2TF, new HBox(10d, launchBtn, exitBtn));
         vbox.setAlignment(Pos.CENTER);
         vbox.requestFocus();
     
+        primaryStage.setOnCloseRequest(this::terminate);
         primaryStage.setScene(new Scene(vbox));
         primaryStage.setTitle("tCHu \u2014 Serveur");
         primaryStage.show();
