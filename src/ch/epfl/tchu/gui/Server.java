@@ -15,13 +15,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public final class Server {
+public final class Server implements Runnable {
     
-    private Server() {}
+    public static final int DEFAULT_PORT = 5108;
+    public static final List<String> DEFAULT_NAMES = List.of("Ada", "Charles");
     
-    static void runServer(List<String> names) {
+    private final List<String> names;
+    private final int port;
+    
+    public Server(int port, List<String> names) {
         Preconditions.checkArgument(names.size() == PlayerId.COUNT);
+        this.names = names;
+        this.port = port;
+    }
     
+    public Server(List<String> names) {
+        this(DEFAULT_PORT, names);
+    }
+    
+    public Server(String... names) {
+        this(DEFAULT_PORT, List.of(names));
+    }
+    
+    public Server() {
+        this(DEFAULT_PORT, DEFAULT_NAMES);
+    }
+    
+    @Override
+    public void run() {
         Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
         for (PlayerId id : PlayerId.ALL)
             playerNames.put(id, names.get(id.ordinal()));

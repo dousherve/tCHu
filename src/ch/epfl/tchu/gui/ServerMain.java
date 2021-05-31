@@ -2,6 +2,7 @@ package ch.epfl.tchu.gui;
 
 import ch.epfl.tchu.game.PlayerId;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,8 +16,6 @@ import java.util.List;
 
 public final class ServerMain extends Application {
     
-    private static final List<String> DEFAULT_PLAYERS = List.of("Ada", "Charles");
-    
     private Thread gameThread;
     
     public static void main(String[] args) {
@@ -24,6 +23,8 @@ public final class ServerMain extends Application {
     }
     
     private void showGui(Stage primaryStage) {
+        Platform.setImplicitExit(false);
+        
         TextField name1TF = new TextField();
         name1TF.setPromptText("Nom du joueur 1");
         TextField name2TF = new TextField();
@@ -36,7 +37,7 @@ public final class ServerMain extends Application {
                         name2TF.textProperty().isEmpty()));
     
         launchBtn.setOnAction(e -> {
-            gameThread = new Thread(() -> Server.runServer(List.of(name1TF.getText(), name2TF.getText())));
+            gameThread = new Thread(new Server(name1TF.getText(), name2TF.getText()));
             gameThread.start();
             launchBtn.disableProperty().unbind();
             launchBtn.disableProperty().set(true);
@@ -48,6 +49,7 @@ public final class ServerMain extends Application {
                 if (gameThread != null && gameThread.isAlive())
                     gameThread.join();
                 primaryStage.close();
+                Platform.exit();
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -66,12 +68,12 @@ public final class ServerMain extends Application {
     public void start(Stage primaryStage) {
         List<String> names = getParameters().getRaw();
         
-        if (names.isEmpty())
+        if (names.isEmpty() || names.get(0).equalsIgnoreCase("gui"))
             showGui(primaryStage);
         else if (names.size() < PlayerId.COUNT)
-            Server.runServer(DEFAULT_PLAYERS);
+            new Server().run();
         else
-            Server.runServer(names.subList(0, PlayerId.COUNT));
+            new Server(names.subList(0, PlayerId.COUNT)).run();
     }
     
 }
