@@ -193,11 +193,13 @@ final class DecksViewCreator {
                 faceUpPane.getStyleClass().addAll(CARD_CLASS, getCardStyleClass(card));
             });
     
-            
+    
+    
             faceUpPane.setOnMouseClicked(e -> {
                 drawCardHP.get().onDrawCard(slot);
-                MediaPlayer mp = new MediaPlayer(new Media(new File("resources/card.wav").toURI().toString()));
-                mp.play();
+                new MediaPlayer(new Media(
+                        new File("resources/card.wav").toURI().toString())
+                ).play();
             });
     
             cardPane.getChildren().add(faceUpPane);
