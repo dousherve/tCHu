@@ -172,7 +172,6 @@ public final class Game {
     
                             if (options.isEmpty()) {
                                 // Annonce de l'échec de prise de possession du tunnel
-                                // TODO: enlever la duplication de la ligne
                                 broadcastInfo(currentPlayerInfo.didNotClaimRoute(route), players);
                             } else if (addtitionalCardsCount > 0) {
                                 SortedBag<Card> chosenAdditional = currentPlayer.chooseAdditionalCards(options);
