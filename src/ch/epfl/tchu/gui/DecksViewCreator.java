@@ -16,8 +16,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+
+import java.io.File;
 
 import static ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import static ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
@@ -189,7 +193,11 @@ final class DecksViewCreator {
                 faceUpPane.getStyleClass().addAll(CARD_CLASS, getCardStyleClass(card));
             });
             
-            faceUpPane.setOnMouseClicked(e -> drawCardHP.get().onDrawCard(slot));
+            faceUpPane.setOnMouseClicked(e -> {
+                drawCardHP.get().onDrawCard(slot);
+                MediaPlayer mp = new MediaPlayer(new Media(new File("card.wav").toURI().toString()));
+                mp.play();
+            });
     
             cardPane.getChildren().add(faceUpPane);
         }
