@@ -23,6 +23,8 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
@@ -30,6 +32,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -112,6 +115,10 @@ public final class GraphicalPlayer {
         chooseBtn.setOnAction(e -> {
             stage.hide();
             btnHandler.accept(selectionModel);
+            //TODO: Check amélioration de Mallo qu'il a pas fait de la merde
+            new MediaPlayer(new Media(
+                    new File("resources/card.wav").toURI().toString())
+            ).play();
         });
         
         // Conteneur vertical principal de la fenêtre modale

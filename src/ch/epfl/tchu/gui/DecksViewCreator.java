@@ -7,6 +7,7 @@ import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -18,6 +19,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -71,6 +74,16 @@ final class DecksViewCreator {
         void bindPercentage(ReadOnlyIntegerProperty percentageProperty) {
             gaugeRect.widthProperty().bind(
                     percentageProperty.multiply(GAUGE_WIDTH).divide(100));
+            // TODO: Finir ça (une gauge de couleur en fonction du pourcentage
+            /*gaugeRect.fillProperty().bind(getColor(percentageProperty.get()));*/
+        }
+
+        ObjectProperty<Paint> getColor(int percentage) {
+            String myColor = (percentage >= 25) ? "green" : "red";
+            ObjectProperty<Paint> color = new SimpleObjectProperty<>(null);
+            color.set(Color.valueOf(myColor));
+
+            return color;
         }
         
         <T> void bindDisable(ObjectProperty<T> handlerProperty) {
@@ -179,7 +192,13 @@ final class DecksViewCreator {
         cardsBtn.bindPropertiesAndEvent(
                 drawCardHP,
                 gameState.cardsPercentage(),
-                e -> drawCardHP.get().onDrawCard(Constants.DECK_SLOT)
+                e -> {
+                    drawCardHP.get().onDrawCard(Constants.DECK_SLOT);
+                    //TODO: Check amélioration de Mallo qu'il a pas fait de la merde
+                    new MediaPlayer(new Media(
+                            new File("resources/card.wav").toURI().toString())
+                    ).play();
+                }
         );
     
         cardPane.getChildren().add(ticketsBtn.get());

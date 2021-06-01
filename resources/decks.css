@@ -48,7 +48,11 @@ Button.gauged .background {
     -fx-fill: white;
 }
 Button.gauged .foreground {
-    -fx-fill: darkgray;
+    -fx-fill: "#92db98";
+}
+
+Button.gauged .foreground .is-low{
+    -fx-fill: "#e9787d";
 }
 
 /* Hand pane (tickets and cards held) */
