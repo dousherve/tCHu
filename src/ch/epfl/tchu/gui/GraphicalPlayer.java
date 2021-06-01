@@ -98,7 +98,6 @@ public final class GraphicalPlayer {
         TextFlow tf = new TextFlow(new Text(intro));
     
         // ListView des choix possibles
-        // TODO: amélioration : ne pas avoir besoin de presser Cmd (ou Ctrl) pour les choix multiples ?
         ListView<T> listView = new ListView<>(FXCollections.observableArrayList(options));
         var selectionModel = listView.getSelectionModel();
         selectionModel.setSelectionMode(selectionMode);

@@ -58,6 +58,8 @@ public final class ObservableGameState {
     private final Map<PlayerId, IntegerProperty> cardCounts;
     private final Map<PlayerId, IntegerProperty> carCounts;
     private final Map<PlayerId, IntegerProperty> claimPoints;
+    
+    private final BooleanProperty isHisTurn;
 
     private final ObservableList<Ticket> ticketsProperty;
     private final Map<Card, IntegerProperty> cardCountsPerType;
@@ -71,6 +73,10 @@ public final class ObservableGameState {
     
     private static <T> ObjectProperty<T> createObjectProperty() {
         return new SimpleObjectProperty<>(null);
+    }
+    
+    private static <T> BooleanProperty createBooleanProperty() {
+        return new SimpleBooleanProperty(false);
     }
     
     private static List<ObjectProperty<Card>> createFaceUpCardsProperties() {
@@ -129,6 +135,8 @@ public final class ObservableGameState {
                             ? newGameState.currentPlayerId()
                             : newGameState.currentPlayerId().next());
         }
+        
+        isHisTurn.set(newGameState.currentPlayerId() == playerId);
     }
     
     private void setPublicPlayerStatesProperties(PublicGameState newGameState) {
@@ -202,10 +210,12 @@ public final class ObservableGameState {
         this.cardCounts = createCountProperties();
         this.carCounts = createCountProperties();
         this.claimPoints = createCountProperties();
+        
+        this.isHisTurn = createBooleanProperty();
 
         this.ticketsProperty = FXCollections.observableArrayList();
         this.cardCountsPerType = createPropertiesMap(Card.ALL, ObservableGameState::createIntProperty);
-        this.routesClaimability = createPropertiesMap(ChMap.routes(), () -> new SimpleBooleanProperty(false));
+        this.routesClaimability = createPropertiesMap(ChMap.routes(), ObservableGameState::createBooleanProperty);
     }
     
     /**
@@ -263,6 +273,20 @@ public final class ObservableGameState {
     }
     
     // MARK:- Méthodes d'accès en lecture seule aux propriétés
+    
+    /**
+     * Retourne une propriété en lecture-seule contenant
+     * un booléen indiquant si c'est au tour du joueur
+     * auquel cette instance est rattachée.
+     *
+     * @return
+     *          une propriété en lecture-seule contenant
+     *          un booléen indiquant si c'est au tour du joueur
+     *          auquel cette instance est rattachée
+     */
+    public ReadOnlyBooleanProperty isHisTurn() {
+        return isHisTurn;
+    }
     
     /**
      * Retourne une propriété en lecture-seule contenant

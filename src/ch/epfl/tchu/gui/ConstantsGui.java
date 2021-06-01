@@ -207,4 +207,20 @@ final class ConstantsGui {
      */
     static final String GAME_INFO_ID = "game-info";
     
+    /**
+     * Une chaîne de caractère prête à être formattée
+     * contenant la propriété CSS de la couleur de fond.
+     */
+    static final String BG_COLOR_PROP = "-fx-background-color: %s";
+    
+    /**
+     * La couleur CSS du joueur 1.
+     */
+    static final String P1_COLOR = "lightblue";
+    
+    /**
+     * La couleur CSS du joueur 2.
+     */
+    static final String P2_COLOR = "lightpink";
+    
 }

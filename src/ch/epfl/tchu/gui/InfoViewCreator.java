@@ -82,7 +82,7 @@ final class InfoViewCreator {
 
         Separator separator = new Separator(Orientation.HORIZONTAL);
 
-        // Messages
+        // Messages d'information
         TextFlow messagesTF = new TextFlow();
         messagesTF.setId(GAME_INFO_ID);
         Bindings.bindContent(messagesTF.getChildren(), infoTexts);
