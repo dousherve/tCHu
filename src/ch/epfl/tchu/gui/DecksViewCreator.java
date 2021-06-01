@@ -197,6 +197,7 @@ final class DecksViewCreator {
             
             faceUpPane.setOnMouseClicked(e -> {
                 drawCardHP.get().onDrawCard(slot);
+                mp.stop();
                 mp.play();
             });
     
