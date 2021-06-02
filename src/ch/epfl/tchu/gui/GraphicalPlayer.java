@@ -53,6 +53,7 @@ public final class GraphicalPlayer {
     private static final CardBagStringConverter CARD_BAG_STRING_CONVERTER = new CardBagStringConverter();
     private static final double DEFAULT_SCALE = 1.0d;
     private static final double SPACING = 10.0d;
+    private static final int ICON_SIZE = 15;
     
     private final ObservableGameState gameState;
     private final PlayerId playerId;
@@ -181,12 +182,15 @@ public final class GraphicalPlayer {
         MenuBar bar = new MenuBar();
     
         ImageView iconView = new ImageView(GuiUtils.TRAIN_ICON);
-        iconView.setFitWidth(15);
-        iconView.setFitHeight(15);
+        iconView.setFitWidth(ICON_SIZE);
+        iconView.setFitHeight(ICON_SIZE);
         
         Menu tchuMenu = new Menu(StringsFr.TCHU, iconView);
         MenuItem rulesItem = new MenuItem(StringsFr.RULES);
+        
         MenuItem whistleItem = new MenuItem(StringsFr.WHISTLE);
+        whistleItem.setOnAction(e -> playSound(TRAIN_SOUND));
+        
         MenuItem quitItem = new MenuItem(StringsFr.QUIT);
         quitItem.setOnAction(e -> scene.getWindow().hide());
         
@@ -214,7 +218,8 @@ public final class GraphicalPlayer {
         ToggleGroup layoutGroup = new ToggleGroup();
         layoutGroup.getToggles().addAll(normalLayoutItem, reversedLayoutItem);
     
-        Slider scaleSlider = new Slider(0.0, 2 * DEFAULT_SCALE, DEFAULT_SCALE);
+        double delta = 0.25d;
+        Slider scaleSlider = new Slider(DEFAULT_SCALE - delta, DEFAULT_SCALE + delta, DEFAULT_SCALE);
         
         Scale scale = new Scale(DEFAULT_SCALE, DEFAULT_SCALE);
         scale.xProperty().bind(scaleSlider.valueProperty());
