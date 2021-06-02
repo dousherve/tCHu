@@ -181,18 +181,17 @@ public final class GraphicalPlayer {
     
         RadioMenuItem normalLayoutItem = new RadioMenuItem(StringsFr.NORMAL_LAYOUT_ITEM);
         normalLayoutItem.selectedProperty().addListener((o, oV, selected) -> {
+            mainPane.setLeft(null);
+            mainPane.setRight(null);
+            
             mainPane.setLeft(selected ? infoView : cardsView);
             mainPane.setRight(selected ? cardsView : infoView);
         });
         
         RadioMenuItem reversedLayoutItem = new RadioMenuItem(StringsFr.REVERSED_LAYOUT_ITEM);
-        reversedLayoutItem.selectedProperty().addListener((o, oV, selected) -> {
-            mainPane.setLeft(selected ? cardsView : infoView);
-            mainPane.setRight(selected ? infoView : cardsView);
-        });
         
         ToggleGroup layoutGroup = new ToggleGroup();
-        layoutGroup.getToggles().addAll(normalLayoutItem,reversedLayoutItem);
+        layoutGroup.getToggles().addAll(normalLayoutItem, reversedLayoutItem);
         
         viewMenu.getItems().add(darkModeItem);
         viewMenu.getItems().add(new SeparatorMenuItem());
@@ -203,6 +202,7 @@ public final class GraphicalPlayer {
         mainPane.setTop(mb);
         
         darkModeItem.setSelected(true);
+        normalLayoutItem.setSelected(true);
         
         stage.setScene(scene);
         stage.show();
