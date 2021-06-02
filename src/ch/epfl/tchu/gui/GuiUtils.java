@@ -1,15 +1,48 @@
 package ch.epfl.tchu.gui;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.io.File;
+
 /**
  * Classe finale et non instanciable contenant toutes les constantes
+ * et méthodes utilitaires statiques
  * utilisées pour l'interface graphique de tCHu.
  *
  * @author Mallory Henriet (311258)
  * @author Louis Hervé (312937)
  */
-final class ConstantsGui {
+final class GuiUtils {
     
-    private ConstantsGui() {}
+    private GuiUtils() {}
+    
+    /**
+     * Joue le son dont le nom du fichier audio
+     * correspondant est passé en argument.
+     * 
+     * @param sound
+     *          le nom du fichier audio à jouer,
+     *          sans extension (.wav)
+     */
+    static void playSound(String sound) {
+        new MediaPlayer(new Media(
+                new File(String.format("resources/%s.wav", sound))
+                        .toURI().toString()
+        )).play();
+    }
+    
+    /**
+     * Le nom du fichier audio à lire lors de la pioche
+     * d'une carte.
+     */
+    static final String CARD_SOUND = "card";
+    
+    /**
+     * Le nom du fichier audio à lire lors de la prise
+     * d'une route
+     */
+    static final String HAMMER_SOUND = "hammer";
     
     /**
      * Le titre de la fenêtre de jeu, prêt à être formattée

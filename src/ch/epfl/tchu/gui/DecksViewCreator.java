@@ -17,18 +17,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import java.io.File;
-
 import static ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import static ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
-import static ch.epfl.tchu.gui.ConstantsGui.*;
+import static ch.epfl.tchu.gui.GuiUtils.*;
 
 /**
  * Classe finale et non instanciable permettant de créer
@@ -133,7 +129,7 @@ final class DecksViewCreator {
         ticketsView.setId(TICKETS_ID);
 
         HBox handPane = new HBox();
-        handPane.setId(ConstantsGui.CARD_PANE_ID);
+        handPane.setId(GuiUtils.CARD_PANE_ID);
 
         for (Card card : Card.ALL) {
             StackPane currentCardsPane = createCardViewPane();
@@ -192,13 +188,7 @@ final class DecksViewCreator {
         cardsBtn.bindPropertiesAndEvent(
                 drawCardHP,
                 gameState.cardsPercentage(),
-                e -> {
-                    drawCardHP.get().onDrawCard(Constants.DECK_SLOT);
-                    //TODO: Check amélioration de Mallo qu'il a pas fait de la merde
-                    new MediaPlayer(new Media(
-                            new File("resources/card.wav").toURI().toString())
-                    ).play();
-                }
+                e -> drawCardHP.get().onDrawCard(Constants.DECK_SLOT)
         );
     
         cardPane.getChildren().add(ticketsBtn.get());
@@ -211,15 +201,8 @@ final class DecksViewCreator {
                 faceUpPane.getStyleClass().clear();
                 faceUpPane.getStyleClass().addAll(CARD_CLASS, getCardStyleClass(card));
             });
-    
-    
-    
-            faceUpPane.setOnMouseClicked(e -> {
-                drawCardHP.get().onDrawCard(slot);
-                new MediaPlayer(new Media(
-                        new File("resources/card.wav").toURI().toString())
-                ).play();
-            });
+            
+            faceUpPane.setOnMouseClicked(e -> drawCardHP.get().onDrawCard(slot));
     
             cardPane.getChildren().add(faceUpPane);
         }

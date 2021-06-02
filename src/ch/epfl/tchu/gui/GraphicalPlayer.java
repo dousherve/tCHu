@@ -23,8 +23,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
@@ -32,14 +30,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static ch.epfl.tchu.gui.ActionHandlers.*;
-import static ch.epfl.tchu.gui.ConstantsGui.*;
+import static ch.epfl.tchu.gui.GuiUtils.*;
 import static javafx.application.Platform.isFxApplicationThread;
 
 /**
@@ -115,10 +112,6 @@ public final class GraphicalPlayer {
         chooseBtn.setOnAction(e -> {
             stage.hide();
             btnHandler.accept(selectionModel);
-            //TODO: Check amélioration de Mallo qu'il a pas fait de la merde
-            new MediaPlayer(new Media(
-                    new File("resources/card.wav").toURI().toString())
-            ).play();
         });
         
         // Conteneur vertical principal de la fenêtre modale
@@ -262,6 +255,7 @@ public final class GraphicalPlayer {
                 gameState.canDrawTickets()
                 ? () -> {
                     drawTicketsH.onDrawTickets();
+                    playSound(CARD_SOUND);
                     resetHandlers();
                 }
                 : null
@@ -270,12 +264,14 @@ public final class GraphicalPlayer {
                 gameState.canDrawCards()
                 ? slot -> {
                     drawCardH.onDrawCard(slot);
+                    playSound(CARD_SOUND);
                     resetHandlers();
                 }
                 : null
         );
         claimRouteHP.set((route, initialCards) -> {
             claimRouteH.onClaimRoute(route, initialCards);
+            playSound(HAMMER_SOUND);
             resetHandlers();
         });
     }
@@ -333,6 +329,7 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         drawCardHP.set(slot -> {
             drawCardH.onDrawCard(slot);
+            playSound(CARD_SOUND);
             resetHandlers();
         });
     }

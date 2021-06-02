@@ -13,7 +13,7 @@ import javafx.scene.text.TextFlow;
 
 import java.util.Map;
 
-import static ch.epfl.tchu.gui.ConstantsGui.*;
+import static ch.epfl.tchu.gui.GuiUtils.*;
 
 /**
  * Classe finale et non instanciable permettant de créer

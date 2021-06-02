@@ -8,17 +8,14 @@ import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-import java.io.File;
 import java.util.List;
 
 import static ch.epfl.tchu.gui.ActionHandlers.ChooseCardsHandler;
 import static ch.epfl.tchu.gui.ActionHandlers.ClaimRouteHandler;
-import static ch.epfl.tchu.gui.ConstantsGui.*;
+import static ch.epfl.tchu.gui.GuiUtils.*;
 
 /**
  * Classe finale et non instanciable permettant de créer la vue de la carte.
@@ -124,10 +121,6 @@ final class MapViewCreator {
                 
                 if (possibleClaimCards.size() == 1) {
                     claimRouteH.onClaimRoute(route, possibleClaimCards.get(0));
-                    //TODO: implémenter pour les routes de longueur plus grande
-                    new MediaPlayer(new Media(
-                            new File("resources/hammer.wav").toURI().toString())
-                    ).play();
                 } else if (possibleClaimCards.size() > 1) {
                     cardChooser.chooseCards(
                             possibleClaimCards,
