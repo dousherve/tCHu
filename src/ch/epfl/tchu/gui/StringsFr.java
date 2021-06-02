@@ -81,10 +81,13 @@ public final class StringsFr {
     // Menu "Affichage"
     public static final String VIEW_MENU = "Affichage";
     // Affichage normal
-    static final String NORMAL_LAYOUT_ITEM = "Affichage normal";
+    public static final String NORMAL_LAYOUT_ITEM = "Affichage normal";
     // Affichage inversé
-    static final String REVERSED_LAYOUT_ITEM = "Affichage inversé";
-
+    public static final String REVERSED_LAYOUT_ITEM = "Affichage inversé";
+    // Zoom de la carte
+    public static final String SCALE_SLIDER_LABEL = "Zoom de la carte :";
+    
+    
     /**
      * Retourne une chaîne marquant le pluriel, ou la chaîne vide.
      * @param value la valeur déterminant la chaîne retournée

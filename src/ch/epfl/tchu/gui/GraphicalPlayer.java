@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -193,14 +194,29 @@ public final class GraphicalPlayer {
         
         ToggleGroup layoutGroup = new ToggleGroup();
         layoutGroup.getToggles().addAll(normalLayoutItem, reversedLayoutItem);
+    
+        Slider scaleSlider = new Slider(0.0, 2.0, 1.0);
+        
+        Scale scale = new Scale(1.0d, 1.0d);
+        scale.xProperty().bind(scaleSlider.valueProperty());
+        scale.yProperty().bind(scaleSlider.valueProperty());
+        
+        Label scaleLbl = new Label(StringsFr.SCALE_SLIDER_LABEL);
+    
+        CustomMenuItem scaleSliderItem = new CustomMenuItem(
+                new HBox(5.0, scaleLbl, scaleSlider),
+                false
+        );
         
         viewMenu.getItems().add(darkModeItem);
         viewMenu.getItems().add(new SeparatorMenuItem());
         viewMenu.getItems().addAll(normalLayoutItem, reversedLayoutItem);
+        viewMenu.getItems().add(new SeparatorMenuItem());
+        viewMenu.getItems().add(scaleSliderItem);
     
         bar.getMenus().add(viewMenu);
-    
-        mapView.getTransforms().add(new Scale(0.8, 0.8));
+        
+        mapView.getTransforms().add(scale);
         
         mainPane.setTop(bar);
         
