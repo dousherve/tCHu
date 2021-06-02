@@ -274,8 +274,10 @@ public final class GraphicalPlayer {
         claimRouteHP.set((route, initialCards) -> {
             claimRouteH.onClaimRoute(route, initialCards);
             gameState.routeOwner(route).addListener((o, oV, owner) -> {
-                if (owner == playerId) playSound(HAMMER_SOUND);
-                if (gameState.carCount(owner).get() <= 2) playSound(TRAIN_SOUND);
+                if (gameState.carCount(owner).get() <= 2)
+                    playSound(TRAIN_SOUND);
+                else if (owner == playerId)
+                    playSound(HAMMER_SOUND);
             });
             resetHandlers();
         });
