@@ -33,6 +33,16 @@ final class GuiUtils {
     }
     
     /**
+     * Ressource de la carte en mode sombre.
+     */
+    static final String DARK_MAP_URL = "map-dark.png";
+    
+    /**
+     * Ressource de la carte normale.
+     */
+    static final String NORMAL_MAP_URL = "map.png";
+    
+    /**
      * Le nom du fichier audio à lire lors de la pioche
      * d'une carte.
      */

@@ -1,9 +1,5 @@
 /* Map */
 
-ImageView {
-    -fx-image: url("map.png");
-}
-
 .track {
     -fx-stroke: dimgray;
     -fx-stroke-width: 1;

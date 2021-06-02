@@ -9,7 +9,9 @@ import ch.epfl.tchu.game.PlayerState;
 import ch.epfl.tchu.game.PublicGameState;
 import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -154,8 +156,10 @@ public final class GraphicalPlayer {
         Stage stage = new Stage();
         stage.setTitle(String.format(WINDOW_TITLE, playerNames.get(playerId)));
     
+        BooleanProperty darkModeProp = new SimpleBooleanProperty(false);
+    
         Node mapView = MapViewCreator
-                .createMapView(gameState, claimRouteHP, this::chooseClaimCards);
+                .createMapView(gameState, claimRouteHP, this::chooseClaimCards, darkModeProp);
         Node cardsView = DecksViewCreator
                 .createCardsView(gameState, drawTicketsHP, drawCardHP);
         Node handView = DecksViewCreator
@@ -172,26 +176,19 @@ public final class GraphicalPlayer {
         
         Menu viewMenu = new Menu(StringsFr.VIEW_MENU);
         CheckMenuItem themeItem = new CheckMenuItem(StringsFr.DARK_MODE);
-        themeItem.setOnAction(e -> {
+        darkModeProp.bind(themeItem.selectedProperty());
+        themeItem.selectedProperty().addListener((o, oV, selected) -> {
             var stylesheets = scene.getStylesheets();
-            if (stylesheets.contains(GuiUtils.DARK_STYLES))
-                stylesheets.clear();
-            else
-                stylesheets.add(DARK_STYLES);
+            stylesheets.clear();
+            
+            if (selected) stylesheets.add(DARK_STYLES);
         });
         
         mb.getMenus().add(viewMenu);
-        
-        String os = System.getProperty("os.name");
-        if (os != null && os.startsWith("Mac")) {
-            mb.getMenus().add(new Menu("tCHu"));
-            mb.useSystemMenuBarProperty().set(true);
-        } else
-            mainPane.setTop(mb);
     
+        mainPane.setTop(mb);
         viewMenu.getItems().add(themeItem);
         
-        //scene.getStylesheets().add("dark.css");
         stage.setScene(scene);
         stage.show();
         

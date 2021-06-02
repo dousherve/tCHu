@@ -6,11 +6,6 @@
     -fx-control-inner-background-alt: -fx-control-inner-background ;
 }
 
-ImageView {
-    -fx-image: url("map-dark.png");
-}
-
-
 Text {
     -fx-fill: #e5e5e5;
 }

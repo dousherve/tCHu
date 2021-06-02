@@ -4,8 +4,10 @@ import ch.epfl.tchu.SortedBag;
 import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.ChMap;
 import ch.epfl.tchu.game.Route;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.Group;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -96,15 +98,26 @@ final class MapViewCreator {
      *          lorsque le joueur désire s'emparer d'une route
      * @param cardChooser
      *          le sélectionneur de cartes à utiliser
+     * @param darkModeProp
+     *          une propriété indiquant si le jeu
+     *          est actuellement en mode sombre
      * @return
      *          la vue de la carte de tCHu
      */
-    public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser) {
+    public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser, BooleanProperty darkModeProp) {
         Pane mapView = new Pane();
         mapView.getStylesheets().addAll(MAP_STYLES, COLORS_STYLES);
 
         ImageView mapImageView = new ImageView();
+        mapImageView.setImage(new Image(NORMAL_MAP_URL));
         mapView.getChildren().add(mapImageView);
+        
+        darkModeProp.addListener((o, oV, darkMode) -> {
+            mapImageView.setImage(new Image(darkMode
+                    ? DARK_MAP_URL 
+                    : NORMAL_MAP_URL
+            ));
+        });
 
         for (Route route : ChMap.routes()) {
             Group routeGroup = createRouteGroup(route);
