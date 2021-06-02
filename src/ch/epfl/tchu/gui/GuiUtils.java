@@ -20,16 +20,34 @@ final class GuiUtils {
     /**
      * Joue le son dont le nom du fichier audio
      * correspondant est passé en argument.
+     *
+     * @param sound
+     *          le nom du fichier audio à jouer,
+     *          sans extension (.wav)
+     * @param count 
+     *          le nombre de fois qu'il faut
+     *          jouer le son
+     */
+    static void playSound(String sound, int count) {
+        MediaPlayer mp = new MediaPlayer(new Media(
+                new File(String.format("resources/%s.wav", sound))
+                        .toURI().toString()
+        ));
+        
+        mp.setCycleCount(count);
+        mp.play();
+    }
+    
+    /**
+     * Joue le son dont le nom du fichier audio
+     * correspondant est passé en argument.
      * 
      * @param sound
      *          le nom du fichier audio à jouer,
      *          sans extension (.wav)
      */
     static void playSound(String sound) {
-        new MediaPlayer(new Media(
-                new File(String.format("resources/%s.wav", sound))
-                        .toURI().toString()
-        )).play();
+        playSound(sound, 1);
     }
     
     /**

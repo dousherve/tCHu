@@ -288,7 +288,7 @@ public final class GraphicalPlayer {
                 gameState.canDrawTickets()
                 ? () -> {
                     drawTicketsH.onDrawTickets();
-                    playSound(CARD_SOUND);
+                    playSound(CARD_SOUND, 3);
                     resetHandlers();
                 }
                 : null
@@ -341,7 +341,11 @@ public final class GraphicalPlayer {
                 String.format(StringsFr.CHOOSE_TICKETS, minSelected, StringsFr.plural(minSelected)),
                 drawnTickets.toList(),
                 minSelected,
-                model -> chooseTicketsH.onChooseTickets(SortedBag.of(model.getSelectedItems())),
+                model -> {
+                    var selected = SortedBag.of(model.getSelectedItems());
+                    chooseTicketsH.onChooseTickets(selected);
+                    playSound(CARD_SOUND, selected.size());
+                },
                 SelectionMode.MULTIPLE,
                 null
         );
