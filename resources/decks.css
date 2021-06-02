@@ -51,11 +51,11 @@ Button.gauged .foreground {
     -fx-fill: "#92db98";
 }
 
-Button.gauged .foreground .is-medium {
+Button.gauged .is-medium {
     -fx-fill: "#e1a84f";
 }
 
-Button.gauged .foreground .is-low {
+Button.gauged .is-low {
     -fx-fill: "#e9787d";
 }
 

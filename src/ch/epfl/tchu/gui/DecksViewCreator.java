@@ -68,13 +68,14 @@ final class DecksViewCreator {
             gaugeRect.widthProperty().bind(
                     percentageProperty.multiply(GAUGE_WIDTH).divide(100));
             percentageProperty.addListener((o, oV, percentage) -> {
+                gaugeRect.getStyleClass().removeAll(FOREGROUND_CLASS, IS_MEDIUM_CLASS, IS_LOW_CLASS);
                 int perc = percentage.intValue();
                 if (0 <= perc && perc <= 15) {
-                    gaugeRect.getStyleClass().removeAll(IS_MEDIUM_CLASS, IS_LOW_CLASS);
                     gaugeRect.getStyleClass().add(IS_LOW_CLASS);
                 } else if (15 < perc && perc <= 40) {
-                    gaugeRect.getStyleClass().removeAll(IS_MEDIUM_CLASS, IS_LOW_CLASS);
                     gaugeRect.getStyleClass().add(IS_MEDIUM_CLASS);
+                } else {
+                    gaugeRect.getStyleClass().add(FOREGROUND_CLASS);
                 }
             });
         }
