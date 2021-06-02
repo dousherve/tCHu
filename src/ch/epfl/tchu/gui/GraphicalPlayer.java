@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -50,6 +51,8 @@ import static javafx.application.Platform.isFxApplicationThread;
 public final class GraphicalPlayer {
     
     private static final CardBagStringConverter CARD_BAG_STRING_CONVERTER = new CardBagStringConverter();
+    private static final double DEFAULT_SCALE = 1.0d;
+    private static final double SPACING = 10.0d;
     
     private final ObservableGameState gameState;
     private final PlayerId playerId;
@@ -90,6 +93,11 @@ public final class GraphicalPlayer {
         return list;
     }
     
+    private static void resetSidePanes(BorderPane mainPane) {
+        mainPane.setLeft(null);
+        mainPane.setRight(null);
+    }
+    
     private <T> void showModalWindow(String title, String intro, List<T> options, int minSelected, Consumer<MultipleSelectionModel<T>> btnHandler, SelectionMode selectionMode, StringConverter<T> converter) {
         // Stage de la fenêtre modale
         Stage stage = new Stage(StageStyle.UTILITY);
@@ -123,6 +131,8 @@ public final class GraphicalPlayer {
         
         Scene scene = new Scene(vbox);
         scene.getStylesheets().add(CHOOSER_STYLES);
+        if (darkModeP.get())
+            scene.getStylesheets().add(DARK_STYLES);
         
         stage.setScene(scene);
         stage.show();
@@ -169,6 +179,16 @@ public final class GraphicalPlayer {
         Scene scene = new Scene(mainPane);
         
         MenuBar bar = new MenuBar();
+    
+        ImageView iconView = new ImageView(GuiUtils.TRAIN_ICON);
+        iconView.setFitWidth(15);
+        iconView.setFitHeight(15);
+        
+        Menu tchuMenu = new Menu(StringsFr.TCHU, iconView);
+        MenuItem rulesItem = new MenuItem(StringsFr.RULES);
+        MenuItem whistleItem = new MenuItem(StringsFr.WHISTLE);
+        MenuItem quitItem = new MenuItem(StringsFr.QUIT);
+        quitItem.setOnAction(e -> scene.getWindow().hide());
         
         Menu viewMenu = new Menu(StringsFr.VIEW_MENU);
         CheckMenuItem darkModeItem = new CheckMenuItem(StringsFr.DARK_MODE);
@@ -183,9 +203,8 @@ public final class GraphicalPlayer {
     
         RadioMenuItem normalLayoutItem = new RadioMenuItem(StringsFr.NORMAL_LAYOUT_ITEM);
         normalLayoutItem.selectedProperty().addListener((o, oV, selected) -> {
-            mainPane.setLeft(null);
-            mainPane.setRight(null);
-            
+            resetSidePanes(mainPane);
+    
             mainPane.setLeft(selected ? infoView : cardsView);
             mainPane.setRight(selected ? cardsView : infoView);
         });
@@ -195,30 +214,52 @@ public final class GraphicalPlayer {
         ToggleGroup layoutGroup = new ToggleGroup();
         layoutGroup.getToggles().addAll(normalLayoutItem, reversedLayoutItem);
     
-        Slider scaleSlider = new Slider(0.0, 2.0, 1.0);
+        Slider scaleSlider = new Slider(0.0, 2 * DEFAULT_SCALE, DEFAULT_SCALE);
         
-        Scale scale = new Scale(1.0d, 1.0d);
+        Scale scale = new Scale(DEFAULT_SCALE, DEFAULT_SCALE);
         scale.xProperty().bind(scaleSlider.valueProperty());
         scale.yProperty().bind(scaleSlider.valueProperty());
         
-        Label scaleLbl = new Label(StringsFr.SCALE_SLIDER_LABEL);
-    
+        Text scaleTxt = new Text(StringsFr.SCALE_SLIDER_LABEL);
         CustomMenuItem scaleSliderItem = new CustomMenuItem(
-                new HBox(5.0, scaleLbl, scaleSlider),
+                new HBox(SPACING, scaleTxt, scaleSlider),
                 false
         );
-        
-        viewMenu.getItems().add(darkModeItem);
-        viewMenu.getItems().add(new SeparatorMenuItem());
-        viewMenu.getItems().addAll(normalLayoutItem, reversedLayoutItem);
-        viewMenu.getItems().add(new SeparatorMenuItem());
-        viewMenu.getItems().add(scaleSliderItem);
+    
+        MenuItem resetLayoutItem = new MenuItem(StringsFr.RESET_LAYOUT);
+        resetLayoutItem.setOnAction(e -> {
+            resetSidePanes(mainPane);
+    
+            mainPane.setLeft(infoView);
+            mainPane.setRight(cardsView);
+            
+            scaleSlider.setValue(DEFAULT_SCALE);
+            darkModeItem.setSelected(true);
+        });
+    
+        bar.getMenus().add(tchuMenu);
+        tchuMenu.getItems().addAll(
+                rulesItem,
+                new SeparatorMenuItem(),
+                whistleItem,
+                new SeparatorMenuItem(),
+                quitItem
+        );
     
         bar.getMenus().add(viewMenu);
-        
-        mapView.getTransforms().add(scale);
+        viewMenu.getItems().addAll(
+                darkModeItem,
+                new SeparatorMenuItem(),
+                normalLayoutItem,
+                reversedLayoutItem,
+                new SeparatorMenuItem(),
+                scaleSliderItem,
+                new SeparatorMenuItem(),
+                resetLayoutItem
+        );
         
         mainPane.setTop(bar);
+        mapView.getTransforms().add(scale);
         
         darkModeItem.setSelected(true);
         normalLayoutItem.setSelected(true);

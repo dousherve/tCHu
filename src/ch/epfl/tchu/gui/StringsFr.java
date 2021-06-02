@@ -4,6 +4,9 @@ package ch.epfl.tchu.gui;
 public final class StringsFr {
     
     private StringsFr() {}
+    
+    // Nom du jeu
+    public static final String TCHU = "tCHu";
 
     // Nom des cartes
     public static final String BLACK_CARD = "noire";
@@ -78,15 +81,30 @@ public final class StringsFr {
     
     // Mode sombre
     public static final String DARK_MODE = "Mode sombre";
+    
     // Menu "Affichage"
     public static final String VIEW_MENU = "Affichage";
+    
     // Affichage normal
     public static final String NORMAL_LAYOUT_ITEM = "Affichage normal";
+    
     // Affichage inversé
     public static final String REVERSED_LAYOUT_ITEM = "Affichage inversé";
-    // Zoom de la carte
-    public static final String SCALE_SLIDER_LABEL = "Zoom de la carte :";
     
+    // Zoom de la carte
+    public static final String SCALE_SLIDER_LABEL = "Zoom de la carte";
+    
+    // Restaurer l'affichage par défaut
+    public static final String RESET_LAYOUT = "Restaurer l'affichage par défaut";
+    
+    // Règles du jeu
+    public static final String RULES = "Règles du jeu";
+    
+    // Siffler
+    public static final String WHISTLE = "Siffler";
+    
+    // Quitter le jeu
+    public static final String QUIT = "Quitter le jeu";
     
     /**
      * Retourne une chaîne marquant le pluriel, ou la chaîne vide.

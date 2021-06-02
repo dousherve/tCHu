@@ -156,6 +156,11 @@ final class GuiUtils {
      */
     static final int MAX_INFOS_COUNT = 5;
     
+    /**
+     * Nom du fichier contenant l'icône du train tCHu.
+     */
+    static final String TRAIN_ICON = "train-icon.png";
+    
     // MARK:- URIs des feuilles de styles
     
     /**
