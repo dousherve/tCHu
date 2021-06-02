@@ -40,9 +40,15 @@ final class GuiUtils {
     
     /**
      * Le nom du fichier audio à lire lors de la prise
-     * d'une route
+     * d'une route.
      */
     static final String HAMMER_SOUND = "hammer";
+    
+    /**
+     * Le nom du fichier audio à lire lors de la prise
+     * d'une route
+     */
+    static final String TRAIN_SOUND = "train_alarm";
     
     /**
      * Le titre de la fenêtre de jeu, prêt à être formattée
