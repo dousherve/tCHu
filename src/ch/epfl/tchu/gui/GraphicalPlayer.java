@@ -156,7 +156,7 @@ public final class GraphicalPlayer {
         Stage stage = new Stage();
         stage.setTitle(String.format(WINDOW_TITLE, playerNames.get(playerId)));
     
-        BooleanProperty darkModeProp = new SimpleBooleanProperty(false);
+        BooleanProperty darkModeProp = new SimpleBooleanProperty(true);
     
         Node mapView = MapViewCreator
                 .createMapView(gameState, claimRouteHP, this::chooseClaimCards, darkModeProp);

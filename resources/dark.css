@@ -11,9 +11,11 @@ Text {
 }
 
 Button {
+    -fx-background-color: derive(-fx-base, 5%);
     -fx-focus-traversable: false;
 }
 Button:hover {
+    -fx-background-color: derive(-fx-base, 40%);
     -fx-text-fill: white;
 }
 
