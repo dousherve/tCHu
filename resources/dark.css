@@ -1,0 +1,26 @@
+.root {
+    -fx-accent: #1e74c6;
+    -fx-focus-color: -fx-accent;
+    -fx-base: #373e43;
+    -fx-control-inner-background: derive(-fx-base, 35%);
+    -fx-control-inner-background-alt: -fx-control-inner-background ;
+}
+
+TextFlow {
+    -fx-text-fill: lightgray;
+}
+
+Button {
+    -fx-focus-traversable: false;
+}
+Button:hover {
+    -fx-text-fill: white;
+}
+
+ScrollBar {
+    -fx-background-color: derive(-fx-base,45%)
+}
+
+Button:default {
+    -fx-base: -fx-accent ;
+}
