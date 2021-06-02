@@ -6,8 +6,8 @@
     -fx-control-inner-background-alt: -fx-control-inner-background ;
 }
 
-TextFlow {
-    -fx-text-fill: lightgray;
+Text {
+    -fx-fill: #e5e5e5;
 }
 
 Button {
@@ -22,5 +22,5 @@ ScrollBar {
 }
 
 Button:default {
-    -fx-base: -fx-accent ;
+    -fx-base: -fx-accent;
 }

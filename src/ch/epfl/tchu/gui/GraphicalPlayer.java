@@ -164,7 +164,7 @@ public final class GraphicalPlayer {
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
         Scene scene = new Scene(mainPane);
-        scene.getStylesheets().add("dark.css");
+        //scene.getStylesheets().add("dark.css");
         stage.setScene(scene);
         stage.show();
         

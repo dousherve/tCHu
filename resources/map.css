@@ -1,7 +1,7 @@
 /* Map */
 
 ImageView {
-    -fx-image: url("map-dark.png");
+    -fx-image: url("map.png");
 }
 
 .track {

@@ -83,6 +83,7 @@ final class DecksViewCreator {
         <T> void bindDisable(ObjectProperty<T> handlerProperty) {
             button.disableProperty().bind(handlerProperty.isNull());
         }
+        
     }
     
     private static StackPane createCardViewPane() {
