@@ -180,7 +180,6 @@ public final class GraphicalPlayer {
         themeItem.selectedProperty().addListener((o, oV, selected) -> {
             var stylesheets = scene.getStylesheets();
             stylesheets.clear();
-            
             if (selected) stylesheets.add(DARK_STYLES);
         });
         
@@ -188,6 +187,8 @@ public final class GraphicalPlayer {
     
         mainPane.setTop(mb);
         viewMenu.getItems().add(themeItem);
+    
+        themeItem.setSelected(true);
         
         stage.setScene(scene);
         stage.show();
