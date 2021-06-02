@@ -24,6 +24,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -166,7 +167,7 @@ public final class GraphicalPlayer {
     
         Scene scene = new Scene(mainPane);
         
-        MenuBar mb = new MenuBar();
+        MenuBar bar = new MenuBar();
         
         Menu viewMenu = new Menu(StringsFr.VIEW_MENU);
         CheckMenuItem darkModeItem = new CheckMenuItem(StringsFr.DARK_MODE);
@@ -197,9 +198,11 @@ public final class GraphicalPlayer {
         viewMenu.getItems().add(new SeparatorMenuItem());
         viewMenu.getItems().addAll(normalLayoutItem, reversedLayoutItem);
     
-        mb.getMenus().add(viewMenu);
+        bar.getMenus().add(viewMenu);
     
-        mainPane.setTop(mb);
+        mapView.getTransforms().add(new Scale(0.8, 0.8));
+        
+        mainPane.setTop(bar);
         
         darkModeItem.setSelected(true);
         normalLayoutItem.setSelected(true);
