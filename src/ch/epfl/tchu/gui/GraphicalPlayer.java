@@ -51,6 +51,7 @@ public final class GraphicalPlayer {
     private static final CardBagStringConverter CARD_BAG_STRING_CONVERTER = new CardBagStringConverter();
     
     private final ObservableGameState gameState;
+    private final PlayerId playerId;
     private final ObservableList<Text> infosText;
 
     private final ObjectProperty<DrawTicketsHandler> drawTicketsHP;
@@ -190,6 +191,7 @@ public final class GraphicalPlayer {
         Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
         
         this.gameState = new ObservableGameState(playerId);
+        this.playerId = playerId;
         this.infosText = createInfosTexts();
         
         this.drawTicketsHP = createObjectProperty();
@@ -271,7 +273,9 @@ public final class GraphicalPlayer {
         );
         claimRouteHP.set((route, initialCards) -> {
             claimRouteH.onClaimRoute(route, initialCards);
-            playSound(HAMMER_SOUND);
+            gameState.routeOwner(route).addListener((o, oV, owner) -> {
+                if (owner == playerId) playSound(HAMMER_SOUND);
+            });
             resetHandlers();
         });
     }
