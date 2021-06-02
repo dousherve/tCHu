@@ -17,10 +17,10 @@ import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -171,7 +171,7 @@ public final class GraphicalPlayer {
         MenuBar mb = new MenuBar();
         
         Menu viewMenu = new Menu(StringsFr.VIEW_MENU);
-        MenuItem themeItem = new MenuItem(StringsFr.DARK_MODE);
+        CheckMenuItem themeItem = new CheckMenuItem(StringsFr.DARK_MODE);
         themeItem.setOnAction(e -> {
             var stylesheets = scene.getStylesheets();
             if (stylesheets.contains(GuiUtils.DARK_STYLES))
@@ -180,17 +180,15 @@ public final class GraphicalPlayer {
                 stylesheets.add(DARK_STYLES);
         });
         
-        viewMenu.getItems().add(themeItem);
-        
         mb.getMenus().add(viewMenu);
         
         String os = System.getProperty("os.name");
-        System.out.println(os);
-        if (os != null && os.startsWith("Mac"))
+        if (os != null && os.startsWith("Mac")) {
+            mb.getMenus().add(new Menu("tCHu"));
             mb.useSystemMenuBarProperty().set(true);
-        else
+        } else
             mainPane.setTop(mb);
-        
+    
         viewMenu.getItems().add(themeItem);
         
         //scene.getStylesheets().add("dark.css");
