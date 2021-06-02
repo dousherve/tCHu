@@ -156,6 +156,11 @@ final class GuiUtils {
      */
     static final String MAP_STYLES = "map.css";
     
+    /**
+     * Nom de la feuille de styles pour le mode sombre.
+     */
+    static final String DARK_STYLES = "dark.css";
+    
     // MARK:- Classes CSS
     
     /**

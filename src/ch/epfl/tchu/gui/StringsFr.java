@@ -2,6 +2,7 @@ package ch.epfl.tchu.gui;
 
 @SuppressWarnings("ALL")
 public final class StringsFr {
+    
     private StringsFr() {}
 
     // Nom des cartes
@@ -74,6 +75,11 @@ public final class StringsFr {
     // Séparateurs textuels
     public static final String AND_SEPARATOR = " et ";
     public static final String EN_DASH_SEPARATOR = " – ";
+    
+    // Mode sombre
+    public static final String DARK_MODE = "Mode sombre";
+    // Menu "Affichage"
+    public static final String VIEW_MENU = "Affichage";
 
     /**
      * Retourne une chaîne marquant le pluriel, ou la chaîne vide.

@@ -18,6 +18,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -148,7 +151,6 @@ public final class GraphicalPlayer {
     
     private Stage createMainWindow(PlayerId playerId, Map<PlayerId, String> playerNames) {
         Preconditions.checkArgument(playerNames.size() == PlayerId.COUNT);
-        
         Stage stage = new Stage();
         stage.setTitle(String.format(WINDOW_TITLE, playerNames.get(playerId)));
     
@@ -163,7 +165,34 @@ public final class GraphicalPlayer {
     
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
+    
         Scene scene = new Scene(mainPane);
+        
+        MenuBar mb = new MenuBar();
+        
+        Menu viewMenu = new Menu(StringsFr.VIEW_MENU);
+        MenuItem themeItem = new MenuItem(StringsFr.DARK_MODE);
+        themeItem.setOnAction(e -> {
+            var stylesheets = scene.getStylesheets();
+            if (stylesheets.contains(GuiUtils.DARK_STYLES))
+                stylesheets.clear();
+            else
+                stylesheets.add(DARK_STYLES);
+        });
+        
+        viewMenu.getItems().add(themeItem);
+        
+        mb.getMenus().add(viewMenu);
+        
+        String os = System.getProperty("os.name");
+        System.out.println(os);
+        if (os != null && os.startsWith("Mac"))
+            mb.useSystemMenuBarProperty().set(true);
+        else
+            mainPane.setTop(mb);
+        
+        viewMenu.getItems().add(themeItem);
+        
         //scene.getStylesheets().add("dark.css");
         stage.setScene(scene);
         stage.show();
