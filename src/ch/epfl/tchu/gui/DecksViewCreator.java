@@ -7,7 +7,6 @@ import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -17,8 +16,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -70,16 +67,16 @@ final class DecksViewCreator {
         void bindPercentage(ReadOnlyIntegerProperty percentageProperty) {
             gaugeRect.widthProperty().bind(
                     percentageProperty.multiply(GAUGE_WIDTH).divide(100));
-            // TODO: Finir ça (une gauge de couleur en fonction du pourcentage
-            /*gaugeRect.fillProperty().bind(getColor(percentageProperty.get()));*/
-        }
-
-        ObjectProperty<Paint> getColor(int percentage) {
-            String myColor = (percentage >= 25) ? "green" : "red";
-            ObjectProperty<Paint> color = new SimpleObjectProperty<>(null);
-            color.set(Color.valueOf(myColor));
-
-            return color;
+            percentageProperty.addListener((o, oV, percentage) -> {
+                gaugeRect.getStyleClass().removeAll(IS_MEDIUM_CLASS, IS_LOW_CLASS);
+                
+                int perc = percentage.intValue();
+                if (0 <= perc && perc <= 15) {
+                    gaugeRect.getStyleClass().add(IS_LOW_CLASS);
+                } else if (15 < perc && perc <= 40) {
+                    gaugeRect.getStyleClass().add(IS_MEDIUM_CLASS);
+                }
+            });
         }
         
         <T> void bindDisable(ObjectProperty<T> handlerProperty) {

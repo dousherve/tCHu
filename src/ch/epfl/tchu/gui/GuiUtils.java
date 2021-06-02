@@ -217,6 +217,16 @@ final class GuiUtils {
      */
     static final String GAUGED_CLASS = "gauged";
     
+    /**
+     * Classe CSS pour les jauges à moitié pleines. 
+     */
+    static final String IS_MEDIUM_CLASS = "is-medium";
+    
+    /**
+     * Classe CSS pour les jauges presque vides. 
+     */
+    static final String IS_LOW_CLASS = "is-low";
+    
     // MARK:- Identifiants CSS
     
     /**
