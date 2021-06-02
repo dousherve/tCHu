@@ -105,4 +105,11 @@ public final class Constants {
      * Nombre de points bonus obtenus par le(s) joueur(s) disposant du plus long chemin.
      */
     public static final int LONGEST_TRAIL_BONUS_POINTS = 10;
+    
+    /**
+     * Nombre de wagons limite à partir duquel la partie
+     * entame son dernier tour.
+     */
+    public static final int LAST_TURN_CAR_COUNT_THRESHOLD = 2;
+    
 }

@@ -199,6 +199,11 @@ public final class GraphicalPlayer {
         this.claimRouteHP = createObjectProperty();
         
         this.mainWindow = createMainWindow(playerId, playerNames);
+        
+        gameState.carCount(playerId).addListener((o, oV, count) -> {
+            if (count.intValue() <= Constants.LAST_TURN_CAR_COUNT_THRESHOLD)
+                playSound(TRAIN_SOUND);
+        });
     }
     
     /**
@@ -274,10 +279,7 @@ public final class GraphicalPlayer {
         claimRouteHP.set((route, initialCards) -> {
             claimRouteH.onClaimRoute(route, initialCards);
             gameState.routeOwner(route).addListener((o, oV, owner) -> {
-                if (gameState.carCount(owner).get() <= 2)
-                    playSound(TRAIN_SOUND);
-                else if (owner == playerId)
-                    playSound(HAMMER_SOUND);
+                if (owner == playerId) playSound(HAMMER_SOUND);
             });
             resetHandlers();
         });

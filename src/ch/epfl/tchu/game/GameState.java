@@ -22,8 +22,6 @@ public final class GameState extends PublicGameState {
     private final CardState cardState;
     private final Map<PlayerId, PlayerState> playerState;
     
-    private static final int LAST_TURN_CAR_COUNT_THRESHOLD = 2;
-    
     /**
      * Retourne l'état initial d'une partie de tCHu dans laquelle la pioche des billets
      * contient les billets donnés et la pioche des cartes contient les cartes de <code>Constants.ALL_CARDS</code>,
@@ -359,7 +357,7 @@ public final class GameState extends PublicGameState {
      */
     public boolean lastTurnBegins() {
         return lastPlayer() == null 
-                && (currentPlayerState().carCount() <= LAST_TURN_CAR_COUNT_THRESHOLD);
+                && (currentPlayerState().carCount() <= Constants.LAST_TURN_CAR_COUNT_THRESHOLD);
     }
     
     /**
