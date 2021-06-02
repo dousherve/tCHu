@@ -152,6 +152,11 @@ final class GuiUtils {
     static final String COLORS_STYLES = "colors.css";
     
     /**
+     * Nom de la feuille de styles pour les couleurs du mode sombre. 
+     */
+    static final String COLORS_DARK_STYLES = "colors-dark.css";
+    
+    /**
      * Nom de la feuille de styles pour les pioches. 
      */
     static final String DECKS_STYLES = "decks.css";

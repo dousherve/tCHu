@@ -113,6 +113,14 @@ final class MapViewCreator {
         mapView.getChildren().add(mapImageView);
         
         darkModeProp.addListener((o, oV, darkMode) -> {
+            var stylesheets = mapView.getStylesheets();
+            stylesheets.clear();
+            
+            mapView.getStylesheets().addAll(MAP_STYLES, darkMode
+                    ? COLORS_DARK_STYLES
+                    : COLORS_STYLES
+            );
+            
             mapImageView.setImage(new Image(darkMode
                     ? DARK_MAP_URL 
                     : NORMAL_MAP_URL

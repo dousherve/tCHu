@@ -1,6 +1,6 @@
-/* Colors (for cards, tracks, cars, color patches, etc.) */
+/* Colors for dark mode (for cards, tracks, cars, color patches, etc.) */
 
-.BLACK   .filled { -fx-fill: "#7f7f7f"; }
+.BLACK   .filled { -fx-fill: "#0c0c0c"; }
 .VIOLET  .filled { -fx-fill: "#eb93db"; }
 .BLUE    .filled { -fx-fill: "#86aaff"; }
 .GREEN   .filled { -fx-fill: "#92db98"; }
