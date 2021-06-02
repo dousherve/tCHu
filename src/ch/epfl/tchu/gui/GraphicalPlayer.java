@@ -18,13 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MultipleSelectionModel;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -58,6 +52,8 @@ public final class GraphicalPlayer {
     private final ObservableGameState gameState;
     private final PlayerId playerId;
     private final ObservableList<Text> infosText;
+    
+    private final BooleanProperty darkModeP;
 
     private final ObjectProperty<DrawTicketsHandler> drawTicketsHP;
     private final ObjectProperty<DrawCardHandler> drawCardHP;
@@ -156,10 +152,8 @@ public final class GraphicalPlayer {
         Stage stage = new Stage();
         stage.setTitle(String.format(WINDOW_TITLE, playerNames.get(playerId)));
     
-        BooleanProperty darkModeProp = new SimpleBooleanProperty(true);
-    
         Node mapView = MapViewCreator
-                .createMapView(gameState, claimRouteHP, this::chooseClaimCards, darkModeProp);
+                .createMapView(gameState, claimRouteHP, this::chooseClaimCards, darkModeP);
         Node cardsView = DecksViewCreator
                 .createCardsView(gameState, drawTicketsHP, drawCardHP);
         Node handView = DecksViewCreator
@@ -175,20 +169,40 @@ public final class GraphicalPlayer {
         MenuBar mb = new MenuBar();
         
         Menu viewMenu = new Menu(StringsFr.VIEW_MENU);
-        CheckMenuItem themeItem = new CheckMenuItem(StringsFr.DARK_MODE);
-        darkModeProp.bind(themeItem.selectedProperty());
-        themeItem.selectedProperty().addListener((o, oV, selected) -> {
+        CheckMenuItem darkModeItem = new CheckMenuItem(StringsFr.DARK_MODE);
+        
+        darkModeP.bind(darkModeItem.selectedProperty());
+        
+        darkModeItem.selectedProperty().addListener((o, oV, selected) -> {
             var stylesheets = scene.getStylesheets();
             stylesheets.clear();
             if (selected) stylesheets.add(DARK_STYLES);
         });
+    
+        RadioMenuItem normalLayoutItem = new RadioMenuItem(StringsFr.NORMAL_LAYOUT_ITEM);
+        normalLayoutItem.selectedProperty().addListener((o, oV, selected) -> {
+            mainPane.setLeft(selected ? infoView : cardsView);
+            mainPane.setRight(selected ? cardsView : infoView);
+        });
         
+        RadioMenuItem reversedLayoutItem = new RadioMenuItem(StringsFr.REVERSED_LAYOUT_ITEM);
+        reversedLayoutItem.selectedProperty().addListener((o, oV, selected) -> {
+            mainPane.setLeft(selected ? cardsView : infoView);
+            mainPane.setRight(selected ? infoView : cardsView);
+        });
+        
+        ToggleGroup layoutGroup = new ToggleGroup();
+        layoutGroup.getToggles().addAll(normalLayoutItem,reversedLayoutItem);
+        
+        viewMenu.getItems().add(darkModeItem);
+        viewMenu.getItems().add(new SeparatorMenuItem());
+        viewMenu.getItems().addAll(normalLayoutItem, reversedLayoutItem);
+    
         mb.getMenus().add(viewMenu);
     
         mainPane.setTop(mb);
-        viewMenu.getItems().add(themeItem);
-    
-        themeItem.setSelected(true);
+        
+        darkModeItem.setSelected(true);
         
         stage.setScene(scene);
         stage.show();
@@ -220,6 +234,8 @@ public final class GraphicalPlayer {
         this.gameState = new ObservableGameState(playerId);
         this.playerId = playerId;
         this.infosText = createInfosTexts();
+        
+        this.darkModeP = new SimpleBooleanProperty(true);
         
         this.drawTicketsHP = createObjectProperty();
         this.drawCardHP = createObjectProperty();

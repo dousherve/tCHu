@@ -80,6 +80,10 @@ public final class StringsFr {
     public static final String DARK_MODE = "Mode sombre";
     // Menu "Affichage"
     public static final String VIEW_MENU = "Affichage";
+    // Affichage normal
+    static final String NORMAL_LAYOUT_ITEM = "Affichage normal";
+    // Affichage inversé
+    static final String REVERSED_LAYOUT_ITEM = "Affichage inversé";
 
     /**
      * Retourne une chaîne marquant le pluriel, ou la chaîne vide.
