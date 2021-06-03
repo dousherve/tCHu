@@ -93,6 +93,7 @@ public final class StringsFr {
     
     // Zoom de la carte
     public static final String SCALE_SLIDER_LABEL = "Zoom de la carte";
+    public static final String RESET_ZOOM = "Restaurer le zoom par défaut";
     
     // Restaurer l'affichage par défaut
     public static final String RESET_LAYOUT = "Restaurer l'affichage par défaut";
@@ -102,6 +103,16 @@ public final class StringsFr {
     
     // Siffler
     public static final String WHISTLE = "Siffler";
+    
+    // Sons
+    public static final String SOUND_MENU = "Sons";
+    public static final String ALL_SOUND_ON_ITEM = "Activer tous les sons";
+    public static final String ALL_SOUND_OFF_ITEM = "Désactiver tous les sons";
+    public static final String SOUND_DRAW_CARDS = "Son lors de la pioche de cartes";
+    public static final String SOUND_DRAW_TICKETS = "Son lors du tirage de billets";
+    public static final String SOUND_CHOOSE_TICKETS = "Son lors du choix des billets";
+    public static final String SOUND_CLAIM_ROUTE = "Son lors de la prise d'une route";
+    public static final String SOUND_LATE_GAME = "Son lorsque la fin de la partie commence";
     
     // Quitter le jeu
     public static final String QUIT = "Quitter le jeu";

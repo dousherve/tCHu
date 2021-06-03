@@ -50,8 +50,7 @@ import static javafx.application.Platform.isFxApplicationThread;
  */
 public final class GraphicalPlayer {
     
-    private static final CardBagStringConverter CARD_BAG_STRING_CONVERTER =
-        new CardBagStringConverter();
+    private static final CardBagStringConverter BAG_TO_STRING_CONV = new CardBagStringConverter();
     private static final double DEFAULT_SCALE = 1.0d;
     private static final double SPACING = 10.0d;
     private static final int ICON_SIZE = 15;
@@ -61,6 +60,11 @@ public final class GraphicalPlayer {
     private final ObservableList<Text> infosText;
     
     private final BooleanProperty darkModeP;
+    private final BooleanProperty soundWhenDrawCardsP;
+    private final BooleanProperty soundWhenDrawTicketsP;
+    private final BooleanProperty soundWhenChooseTicketsP;
+    private final BooleanProperty soundWhenClaimRouteP;
+    private final BooleanProperty soundWhenLateGameP;
 
     private final ObjectProperty<DrawTicketsHandler> drawTicketsHP;
     private final ObjectProperty<DrawCardHandler> drawCardHP;
@@ -84,6 +88,17 @@ public final class GraphicalPlayer {
     
     private static <T> SimpleObjectProperty<T> createObjectProperty() {
         return new SimpleObjectProperty<>(null);
+    }
+    
+    private static BooleanProperty createBooleanProperty() {
+        return new SimpleBooleanProperty(true);
+    }
+    
+    private static CheckMenuItem createSoundItemProperty(String text, BooleanProperty property) {
+        CheckMenuItem item = new CheckMenuItem(text);
+        property.bind(item.selectedProperty());
+        item.setSelected(true);
+        return item;
     }
 
     private static ObservableList<Text> createInfosTexts() {
@@ -157,7 +172,7 @@ public final class GraphicalPlayer {
                     chooseCardsH.onChooseCards(selected != null ? selected : SortedBag.of());
                 },
                 SelectionMode.SINGLE,
-                CARD_BAG_STRING_CONVERTER
+                BAG_TO_STRING_CONV
         );
     }
     
@@ -223,11 +238,14 @@ public final class GraphicalPlayer {
         scale.xProperty().bind(scaleSlider.valueProperty());
         scale.yProperty().bind(scaleSlider.valueProperty());
     
-        Text scaleTxt = new Text(StringsFr.SCALE_SLIDER_LABEL);
         CustomMenuItem scaleSliderItem = new CustomMenuItem(
-                new HBox(SPACING, scaleTxt, scaleSlider),
-                false
-        );
+                new HBox(SPACING,
+                        new Text(StringsFr.SCALE_SLIDER_LABEL),
+                        scaleSlider
+                ), false);
+    
+        MenuItem resetZoomItem = new MenuItem(StringsFr.RESET_ZOOM);
+        resetZoomItem.setOnAction(e -> scaleSlider.setValue(DEFAULT_SCALE));
     
         MenuItem resetLayoutItem = new MenuItem(StringsFr.RESET_LAYOUT);
         resetLayoutItem.setOnAction(e -> {
@@ -247,6 +265,7 @@ public final class GraphicalPlayer {
                 reversedLayoutItem,
                 new SeparatorMenuItem(),
                 scaleSliderItem,
+                resetZoomItem,
                 new SeparatorMenuItem(),
                 resetLayoutItem
         );
@@ -257,6 +276,56 @@ public final class GraphicalPlayer {
         normalLayoutItem.setSelected(true);
     
         return viewMenu;
+    }
+    
+    private Menu createSoundMenu(Scene scene) {
+        Menu soundMenu = new Menu(StringsFr.SOUND_MENU);
+        
+        CheckMenuItem drawCardsItem = createSoundItemProperty(
+                StringsFr.SOUND_DRAW_CARDS,
+                soundWhenDrawCardsP);
+        CheckMenuItem drawTicketsItem = createSoundItemProperty(
+                StringsFr.SOUND_DRAW_TICKETS,
+                soundWhenDrawTicketsP);
+        CheckMenuItem chooseTicketsItem = createSoundItemProperty(
+                StringsFr.SOUND_CHOOSE_TICKETS,
+                soundWhenChooseTicketsP);
+        CheckMenuItem claimRouteItem = createSoundItemProperty(
+                StringsFr.SOUND_CLAIM_ROUTE,
+                soundWhenClaimRouteP);
+        CheckMenuItem lateGameItem = createSoundItemProperty(
+                StringsFr.SOUND_LATE_GAME,
+                soundWhenLateGameP);
+    
+        List<CheckMenuItem> soundItems = List.of(
+                drawCardsItem,
+                drawTicketsItem,
+                chooseTicketsItem,
+                claimRouteItem,
+                lateGameItem
+        );
+        
+        MenuItem allSoundsOnItem = new MenuItem(StringsFr.ALL_SOUND_ON_ITEM);
+        allSoundsOnItem.setOnAction(e -> soundItems.forEach(item -> item.setSelected(true)));
+    
+        MenuItem allSoundsOffItem = new MenuItem(StringsFr.ALL_SOUND_OFF_ITEM);
+        allSoundsOffItem.setOnAction(e -> soundItems.forEach(item -> item.setSelected(false)));
+        
+        soundMenu.getItems().addAll(
+                allSoundsOnItem,
+                allSoundsOffItem,
+                new SeparatorMenuItem(),
+                drawCardsItem,
+                new SeparatorMenuItem(),
+                drawTicketsItem,
+                chooseTicketsItem,
+                new SeparatorMenuItem(),
+                claimRouteItem,
+                new SeparatorMenuItem(),
+                lateGameItem
+        );
+        
+        return soundMenu;
     }
     
     private Stage createMainWindow(PlayerId playerId, Map<PlayerId, String> playerNames) {
@@ -273,7 +342,7 @@ public final class GraphicalPlayer {
                 .createHandView(gameState, darkModeP);
         Node infoView = InfoViewCreator
                 .createInfoView(playerId, playerNames, gameState, infosText);
-    
+        
         BorderPane mainPane =
                 new BorderPane(mapView, null, cardsView, handView, infoView);
     
@@ -282,7 +351,8 @@ public final class GraphicalPlayer {
         // Barre de menus
         mainPane.setTop(new MenuBar(
                 createTchuMenu(scene),
-                createViewMenu(scene, mapView, cardsView, infoView, mainPane)
+                createViewMenu(scene, mapView, cardsView, infoView, mainPane),
+                createSoundMenu(scene)
         ));
     
         stage.setScene(scene);
@@ -316,7 +386,12 @@ public final class GraphicalPlayer {
         this.playerId = playerId;
         this.infosText = createInfosTexts();
         
-        this.darkModeP = new SimpleBooleanProperty(true);
+        this.darkModeP = createBooleanProperty();
+        this.soundWhenDrawCardsP = createBooleanProperty();
+        this.soundWhenDrawTicketsP = createBooleanProperty();
+        this.soundWhenChooseTicketsP = createBooleanProperty();
+        this.soundWhenLateGameP = createBooleanProperty();
+        this.soundWhenClaimRouteP = createBooleanProperty();
         
         this.drawTicketsHP = createObjectProperty();
         this.drawCardHP = createObjectProperty();
@@ -325,8 +400,10 @@ public final class GraphicalPlayer {
         this.mainWindow = createMainWindow(playerId, playerNames);
         
         gameState.carCount(playerId).addListener((o, oV, count) -> {
-            if (count.intValue() <= Constants.LAST_TURN_CAR_COUNT_THRESHOLD)
-                playSound(TRAIN_SOUND);
+            if (
+                count.intValue() <= Constants.LAST_TURN_CAR_COUNT_THRESHOLD 
+                && soundWhenLateGameP.get()
+            ) playSound(TRAIN_SOUND);
         });
     }
     
@@ -386,7 +463,8 @@ public final class GraphicalPlayer {
                 gameState.canDrawTickets()
                 ? () -> {
                     drawTicketsH.onDrawTickets();
-                    playSound(CARD_SOUND, 3);
+                    if (soundWhenDrawTicketsP.get())
+                        playSound(CARD_SOUND, 3);
                     resetHandlers();
                 }
                 : null
@@ -395,7 +473,8 @@ public final class GraphicalPlayer {
                 gameState.canDrawCards()
                 ? slot -> {
                     drawCardH.onDrawCard(slot);
-                    playSound(CARD_SOUND);
+                    if (soundWhenDrawCardsP.get())
+                        playSound(CARD_SOUND);
                     resetHandlers();
                 }
                 : null
@@ -403,7 +482,8 @@ public final class GraphicalPlayer {
         claimRouteHP.set((route, initialCards) -> {
             claimRouteH.onClaimRoute(route, initialCards);
             gameState.routeOwner(route).addListener((o, oV, owner) -> {
-                if (owner == playerId) playSound(HAMMER_SOUND);
+                if (owner == playerId && soundWhenClaimRouteP.get())
+                    playSound(HAMMER_SOUND);
             });
             resetHandlers();
         });
@@ -442,7 +522,8 @@ public final class GraphicalPlayer {
                 model -> {
                     var selected = SortedBag.of(model.getSelectedItems());
                     chooseTicketsH.onChooseTickets(selected);
-                    playSound(CARD_SOUND, selected.size());
+                    if (soundWhenChooseTicketsP.get())
+                        playSound(CARD_SOUND, selected.size());
                 },
                 SelectionMode.MULTIPLE,
                 null
@@ -466,7 +547,8 @@ public final class GraphicalPlayer {
         assert isFxApplicationThread();
         drawCardHP.set(slot -> {
             drawCardH.onDrawCard(slot);
-            playSound(CARD_SOUND);
+            if (soundWhenDrawCardsP.get())
+                playSound(CARD_SOUND);
             resetHandlers();
         });
     }
