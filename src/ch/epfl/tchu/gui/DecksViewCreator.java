@@ -12,7 +12,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -165,11 +164,6 @@ final class DecksViewCreator {
             currentCardsPane.getChildren().add(countText);
             handPane.getChildren().add(currentCardsPane);
         }
-    
-        CheckBox darkModeCB = new CheckBox(StringsFr.DARK_MODE);
-        darkModeCB.selectedProperty().addListener((o, oV, selected) -> {
-            
-        });
 
         handView.getChildren().addAll(ticketsView, handPane);
 

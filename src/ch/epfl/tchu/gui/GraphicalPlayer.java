@@ -121,6 +121,14 @@ public final class GraphicalPlayer {
         claimRouteHP.set(null);
     }
     
+    private void showRulesWindow() {
+        Stage stage = new Stage(StageStyle.UTILITY);
+        stage.setTitle(StringsFr.RULES);
+        stage.initOwner(mainWindow);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setOnCloseRequest(Event::consume);
+    }
+    
     private <T> void showModalWindow(String title, String intro, List<T> options, int minSelected, Consumer<MultipleSelectionModel<T>> btnHandler, SelectionMode selectionMode, StringConverter<T> converter) {
         // Stage de la fenêtre modale
         Stage stage = new Stage(StageStyle.UTILITY);

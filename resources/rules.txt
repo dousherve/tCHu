@@ -1,0 +1,50 @@
+Bienvenue dans le monde de tCHu !
+Il s'agit d'un jeu de plateau qui se joue à tour de rôle.
+Pour gagner, il faut obtenir plus de points que son/ses adversaires.
+
+Déroulement de la partie :
+Au début, les joueurs commencent la partie avec 40 wagons et 4 cartes.
+Ils doivent alors choisir au moins 3 billets parmi les 5 proposés. 
+Le plateau est une carte de la Suisse et de ses pays voisins,
+avec certaines villes inscrites dessus ainsi que des routes qui les relient.
+Il existe différentes couleurs de routes, de différentes tailles.
+
+À chaque tour, les joueurs peuvent effectuer une seule action : 
+	1) Piocher 2 cartes, dans la pioche de cartes ou parmi les 5 cartes faces visibles ;
+	2) Piocher 3 billets dans la pioche des billets, puis en choisir au moins 1 ;
+	3) S'emparer d'une route.
+	
+Pour s'emparer d'une route d'une certaine taille, il faut avoir : 
+	- un nombre de wagons d'au moins la taille de la route convoitée, et 
+	- un nombre de cartes de la couleur de la route d'au moins sa taille.
+
+Vous poserez vos wagons sur les cases de la route.
+Les cartes utilisées seront alors défaussées.
+Si la route est de couleur neutre, vous êtes libre de choisir
+la couleur avec laquelle vous allez vous en emparer.
+Cependant, elles doivent toutes êtres de la même couleur.
+ 
+Si la route est un "tunnel" (entourée de traitillés),
+il est possible de remplacer n'importe quelle carte par des cartes "locomotives".
+Il existe aussi des tunnels de couleur neutre, le principe étant le même.
+Cependant, lorsque vous tentez de vous emparer d'un tunnel, 3 cartes sont tirées de la pioche.
+Alors, un nombre de cartes additionnelles à poser (en plus de vos cartes initiales) est calculé.
+Chaque carte additionnelle piochée qui est une locomotive ou bien de la couleur de celles que vous avez posées
+compte pour une carte en plus à poser : soit une carte de la bonne couleur, soit une locomotive.
+Il est alors possible que vous ne puissiez pas vous emparer du tunnel.
+Il peut aussi arriver que vous n'ayez pas besoin de jouer des cartes additionnelles.
+
+Comment gagner :
+Il faut s'emparer des routes, car elles rapportent des points de construction en fonction de leur taille.
+Elles permettent aussi de relier des villes et/ou des pays entre eux.
+Relier des villes et/ou des pays est nécessaire pour remplir vos billets.
+
+Par exemple, le billet "Lausanne - Zurich (12)" se remplit en s'emparant des routes
+qui permettent de relier les 2 grandes villes. Remplir ces billets vous rapporte des points,
+ici dans l'exemple vous gagnerez 12 points, qui seront comptés à la fin de la partie.
+Si vous ne les remplissez pas, vous perdrez le nombre de points du billet, ici 12 points.
+
+Pour les billets reliant des pays, comme "Bâle - {France (5), Allemagne (5), Autriche (7), Italie (12)}",
+vous obtiendrez les points du pays relié qui rapporte le plus, ici 12.
+Si par contre vous n'avez pas réussi à remplir ce billet, vous perdez le nombre de points
+de celui qui en aurait rapporté le moins, ici 5.
