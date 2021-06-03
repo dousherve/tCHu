@@ -14,7 +14,7 @@ public class TestsJavaFX extends Application {
     
     @Override public void start(Stage stage) {
         // load the image
-        Image image = new Image("map.png");
+        Image image = new Image("images/map.png");
         
         // simple displays ImageView the image as is
         ImageView iv1 = new ImageView();

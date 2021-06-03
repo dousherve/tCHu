@@ -13,12 +13,12 @@
 }
 
 .card .train-image {
-    -fx-fill: url("train-car.png");
+    -fx-fill: url("images/train-car.png");
     -fx-opacity: 0.3;
 }
 
 .card.NEUTRAL .train-image {
-    -fx-fill: url("locomotive.png");
+    -fx-fill: url("images/locomotive.png");
     -fx-opacity: 0.7;
 }
 

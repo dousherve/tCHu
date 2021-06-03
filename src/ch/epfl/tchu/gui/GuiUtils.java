@@ -30,7 +30,7 @@ final class GuiUtils {
      */
     static void playSound(String sound, int count) {
         MediaPlayer mp = new MediaPlayer(new Media(
-                new File(String.format("resources/%s.wav", sound))
+                new File(String.format("resources/sounds/%s.wav", sound))
                         .toURI().toString()
         ));
         
@@ -53,12 +53,12 @@ final class GuiUtils {
     /**
      * Ressource de la carte en mode sombre.
      */
-    static final String DARK_MAP_URL = "map-dark.png";
+    static final String DARK_MAP_URL = "images/map-dark.png";
     
     /**
      * Ressource de la carte normale.
      */
-    static final String NORMAL_MAP_URL = "map.png";
+    static final String NORMAL_MAP_URL = "images/map.png";
     
     /**
      * Le nom du fichier audio à lire lors de la pioche
@@ -159,7 +159,7 @@ final class GuiUtils {
     /**
      * Nom du fichier contenant l'icône du train tCHu.
      */
-    static final String TRAIN_ICON = "train-icon.png";
+    static final String TRAIN_ICON = "images/train-icon.png";
     
     // MARK:- URIs des feuilles de styles
     
@@ -167,37 +167,37 @@ final class GuiUtils {
      * Nom de la feuille de styles pour les fenêtres modales
      * de choix.
      */
-    static final String CHOOSER_STYLES = "chooser.css";
+    static final String CHOOSER_STYLES = "stylesheets/chooser.css";
     
     /**
      * Nom de la feuille de styles pour les couleurs. 
      */
-    static final String COLORS_STYLES = "colors.css";
+    static final String COLORS_STYLES = "stylesheets/colors.css";
     
     /**
      * Nom de la feuille de styles pour les couleurs du mode sombre. 
      */
-    static final String COLORS_DARK_STYLES = "colors-dark.css";
+    static final String COLORS_DARK_STYLES = "stylesheets/colors-dark.css";
     
     /**
      * Nom de la feuille de styles pour les pioches. 
      */
-    static final String DECKS_STYLES = "decks.css";
+    static final String DECKS_STYLES = "stylesheets/decks.css";
     
     /**
      * Nom de la feuille de styles pour la vue des informations.
      */
-    static final String INFO_STYLES = "info.css";
+    static final String INFO_STYLES = "stylesheets/info.css";
     
     /**
      * Nom de la feuille de styles pour la vue de la carte.
      */
-    static final String MAP_STYLES = "map.css";
+    static final String MAP_STYLES = "stylesheets/map.css";
     
     /**
      * Nom de la feuille de styles pour le mode sombre.
      */
-    static final String DARK_STYLES = "dark.css";
+    static final String DARK_STYLES = "stylesheets/dark.css";
     
     // MARK:- Classes CSS
     
