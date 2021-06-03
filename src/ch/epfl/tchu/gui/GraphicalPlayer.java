@@ -32,6 +32,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -51,9 +54,13 @@ import static javafx.application.Platform.isFxApplicationThread;
 public final class GraphicalPlayer {
     
     private static final CardBagStringConverter BAG_TO_STRING_CONV = new CardBagStringConverter();
+    private static final String RULES = loadRules();
+    
     private static final double DEFAULT_SCALE = 1.0d;
     private static final double SPACING = 10.0d;
-    private static final int ICON_SIZE = 15;
+    private static final double RULES_WIDTH = 650d;
+    private static final double RULES_HEIGHT = 900d;
+    private static final int TRAIN_ICON_SIZE = 15;
     
     private final ObservableGameState gameState;
     private final PlayerId playerId;
@@ -71,6 +78,24 @@ public final class GraphicalPlayer {
     private final ObjectProperty<ClaimRouteHandler> claimRouteHP;
     
     private final Stage mainWindow;
+    
+    private static String loadRules() {
+        try {
+            BufferedReader r = new BufferedReader(new FileReader(GuiUtils.RULES_PATH));
+            
+            String line;
+            StringBuilder rulesB = new StringBuilder();
+            while ((line = r.readLine()) != null)
+                rulesB.append(line).append("\n");
+    
+            return rulesB.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Impossible de charger les règles du jeu : " + GuiUtils.RULES_PATH);
+        }
+        
+        return "";
+    }
     
     private static final class CardBagStringConverter extends StringConverter<SortedBag<Card>> {
         
@@ -122,11 +147,21 @@ public final class GraphicalPlayer {
     }
     
     private void showRulesWindow() {
-        Stage stage = new Stage(StageStyle.UTILITY);
-        stage.setTitle(StringsFr.RULES);
-        stage.initOwner(mainWindow);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.setOnCloseRequest(Event::consume);
+        if (! RULES.isEmpty()) {
+            Stage stage = new Stage(StageStyle.UTILITY);
+            stage.setTitle(StringsFr.RULES);
+            stage.initOwner(mainWindow);
+            stage.initModality(Modality.WINDOW_MODAL);
+    
+            TextArea rulesArea = new TextArea();
+            rulesArea.setPrefWidth(RULES_WIDTH);
+            rulesArea.setPrefHeight(RULES_HEIGHT);
+            rulesArea.setEditable(false);
+            rulesArea.setText(RULES);
+            
+            stage.setScene(new Scene(rulesArea));
+            stage.show();
+        }
     }
     
     private <T> void showModalWindow(String title, String intro, List<T> options, int minSelected, Consumer<MultipleSelectionModel<T>> btnHandler, SelectionMode selectionMode, StringConverter<T> converter) {
@@ -186,12 +221,13 @@ public final class GraphicalPlayer {
     
     private Menu createTchuMenu(Scene scene) {
         ImageView iconView = new ImageView(GuiUtils.TRAIN_ICON);
-        iconView.setFitWidth(ICON_SIZE);
-        iconView.setFitHeight(ICON_SIZE);
+        iconView.setFitWidth(TRAIN_ICON_SIZE);
+        iconView.setFitHeight(TRAIN_ICON_SIZE);
         
         Menu tchuMenu = new Menu(StringsFr.TCHU, iconView);
         
         MenuItem rulesItem = new MenuItem(StringsFr.RULES);
+        rulesItem.setOnAction(e -> showRulesWindow());
         
         MenuItem whistleItem = new MenuItem(StringsFr.WHISTLE);
         whistleItem.setOnAction(e -> playSound(TRAIN_SOUND));

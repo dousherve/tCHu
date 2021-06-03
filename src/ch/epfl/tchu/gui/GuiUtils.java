@@ -161,6 +161,11 @@ final class GuiUtils {
      */
     static final String TRAIN_ICON = "images/train-icon.png";
     
+    /**
+     * Nom du fichier contenant les règles du jeu.
+     */
+    static final String RULES_PATH = "resources/rules.txt";
+    
     // MARK:- URIs des feuilles de styles
     
     /**
