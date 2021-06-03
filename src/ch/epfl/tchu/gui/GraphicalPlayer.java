@@ -59,7 +59,7 @@ public final class GraphicalPlayer {
     private static final double DEFAULT_SCALE = 1.0d;
     private static final double SPACING = 10.0d;
     private static final double RULES_WIDTH = 650d;
-    private static final double RULES_HEIGHT = 900d;
+    private static final double RULES_HEIGHT = 500d;
     private static final int TRAIN_ICON_SIZE = 15;
     
     private final ObservableGameState gameState;
