@@ -98,26 +98,25 @@ final class MapViewCreator {
      *          lorsque le joueur désire s'emparer d'une route
      * @param cardChooser
      *          le sélectionneur de cartes à utiliser
-     * @param darkModeProp
+     * @param darkModeP
      *          une propriété indiquant si le jeu
      *          est actuellement en mode sombre
      * @return
      *          la vue de la carte de tCHu
      */
-    public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser, BooleanProperty darkModeProp) {
+    public static Pane createMapView(ObservableGameState gameState, ObjectProperty<ClaimRouteHandler> claimRouteHP, CardChooser cardChooser, BooleanProperty darkModeP) {
         Pane mapView = new Pane();
-        mapView.getStylesheets().addAll(MAP_STYLES, COLORS_STYLES);
 
         ImageView mapImageView = new ImageView();
         mapView.getChildren().add(mapImageView);
         
-        darkModeProp.addListener((o, oV, darkMode) -> {
+        darkModeP.addListener((o, oV, darkMode) -> {
             var stylesheets = mapView.getStylesheets();
             stylesheets.clear();
             
-            mapView.getStylesheets().addAll(MAP_STYLES, darkMode
-                    ? COLORS_DARK_STYLES
-                    : COLORS_STYLES
+            mapView.getStylesheets().addAll(
+                    darkMode ? MAP_STYLES_DARK : MAP_STYLES,
+                    darkMode ? COLORS_DARK_STYLES : COLORS_STYLES
             );
             
             mapImageView.setImage(new Image(darkMode

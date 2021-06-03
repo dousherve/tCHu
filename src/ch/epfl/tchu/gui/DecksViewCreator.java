@@ -5,6 +5,7 @@ import ch.epfl.tchu.game.Card;
 import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.event.EventHandler;
@@ -15,6 +16,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -109,21 +111,36 @@ final class DecksViewCreator {
                 : card.color().name();
     }
     
+    private static void handleDarkMode(Pane pane, BooleanProperty darkModeP) {
+        darkModeP.addListener((o, oV, dark) -> {
+            var stylesheets = pane.getStylesheets();
+            stylesheets.clear();
+    
+            stylesheets.addAll(
+                    dark ? DECKS_STYLES_DARK : DECKS_STYLES,
+                    dark ? COLORS_DARK_STYLES : COLORS_STYLES
+            );
+        });
+    }
+    
     /**
      * Méthode permettant de créer la vue de la main du joueur.
      * 
      * @param gameState
      *          l'état du jeu observable
+     * @param darkModeP
+     *          une propriété indiquant si le thème est sombre
      * @throws NullPointerException
      *          si <code>gameState</code> vaut <code>null</code>
      * @return
      *          la vue de la main du joueur
      */
-    public static Node createHandView(ObservableGameState gameState) {
+    public static Node createHandView(ObservableGameState gameState, BooleanProperty darkModeP) {
         Preconditions.requireNonNull(gameState);
         
         HBox handView = new HBox();
-        handView.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);
+        
+        handleDarkMode(handView, darkModeP);
 
         ListView<Ticket> ticketsView = new ListView<>(gameState.tickets());
         ticketsView.setId(TICKETS_ID);
@@ -169,18 +186,21 @@ final class DecksViewCreator {
      *          une propriété contenant un gestionnaire de tirage de billets
      * @param drawCardHP
      *          une propriété contenant un gestionnaire de tirage de cartes
+     * @param darkModeP
+     *          une propriété indiquant si le thème est sombre
      * @throws NullPointerException
      *          si un des arguments vaut <code>null</code>
      * @return
      *          la vue des pioches de cartes et de billets,
      *          ainsi que des cartes face visible
      */
-    public static Node createCardsView(ObservableGameState gameState, ObjectProperty<DrawTicketsHandler> drawTicketsHP, ObjectProperty<DrawCardHandler> drawCardHP) {
+    public static Node createCardsView(ObservableGameState gameState, ObjectProperty<DrawTicketsHandler> drawTicketsHP, ObjectProperty<DrawCardHandler> drawCardHP, BooleanProperty darkModeP) {
         Preconditions.requireNonNull(gameState, drawTicketsHP, drawCardHP);
         
         VBox cardPane = new VBox();
         cardPane.setId(CARD_PANE_ID);
-        cardPane.getStylesheets().addAll(DECKS_STYLES, COLORS_STYLES);
+        
+        handleDarkMode(cardPane, darkModeP);
 
         GaugedButton ticketsBtn = new GaugedButton(StringsFr.TICKETS);
         ticketsBtn.bindPropertiesAndEvent(

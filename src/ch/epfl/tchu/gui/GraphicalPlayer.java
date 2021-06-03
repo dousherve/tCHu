@@ -268,9 +268,9 @@ public final class GraphicalPlayer {
         Node mapView = MapViewCreator
                 .createMapView(gameState, claimRouteHP, this::chooseClaimCards, darkModeP);
         Node cardsView = DecksViewCreator
-                .createCardsView(gameState, drawTicketsHP, drawCardHP);
+                .createCardsView(gameState, drawTicketsHP, drawCardHP, darkModeP);
         Node handView = DecksViewCreator
-                .createHandView(gameState);
+                .createHandView(gameState, darkModeP);
         Node infoView = InfoViewCreator
                 .createInfoView(playerId, playerNames, gameState, infosText);
     

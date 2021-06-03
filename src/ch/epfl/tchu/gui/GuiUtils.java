@@ -185,6 +185,11 @@ final class GuiUtils {
     static final String DECKS_STYLES = "stylesheets/decks.css";
     
     /**
+     * Nom de la feuille de styles pour les pioches en mode sombre. 
+     */
+    static final String DECKS_STYLES_DARK = "stylesheets/decks-dark.css";
+    
+    /**
      * Nom de la feuille de styles pour la vue des informations.
      */
     static final String INFO_STYLES = "stylesheets/info.css";
@@ -193,6 +198,11 @@ final class GuiUtils {
      * Nom de la feuille de styles pour la vue de la carte.
      */
     static final String MAP_STYLES = "stylesheets/map.css";
+    
+    /**
+     * Nom de la feuille de styles pour la vue de la carte en mode sombre.
+     */
+    static final String MAP_STYLES_DARK = "stylesheets/map-dark.css";
     
     /**
      * Nom de la feuille de styles pour le mode sombre.
