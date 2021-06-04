@@ -1,84 +1,83 @@
 package ch.epfl.tchu.gui;
 
+import ch.epfl.tchu.SortedBag;
+import ch.epfl.tchu.game.ChMap;
+import ch.epfl.tchu.game.Game;
+import ch.epfl.tchu.game.Player;
 import ch.epfl.tchu.game.PlayerId;
+import ch.epfl.tchu.net.RemotePlayerProxy;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.event.Event;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
+import static ch.epfl.tchu.game.PlayerId.PLAYER_1;
+import static ch.epfl.tchu.game.PlayerId.PLAYER_2;
+
+/**
+ * Classe publique, finale qui contient le programme principal
+ * du serveur de tCHu. Il s'agit d'une application JavaFX, elle
+ * hérite donc de {@link Application}.
+ *
+ * @author Mallory Henriet (311258)
+ * @author Louis Hervé (312937)
+ */
 public final class ServerMain extends Application {
     
-    private Thread gameThread;
+    private static final List<String> DEFAULT_PLAYERS = List.of("Ada", "Charles");
+    private static final int DEFAULT_PORT = 5108;
     
+    /**
+     * Démarre l'application JavaFX.
+     * Prend en argument le nom d'hôte ainsi que le port du serveur,
+     * auxquels le client doit se connecter.
+     *
+     * @param args
+     *          noms des joueurs, séparés par un espace
+     */
     public static void main(String[] args) {
         launch(args);
     }
     
-    private void terminate(Event event) {
-        try {
-            if (gameThread != null && gameThread.isAlive())
-                // Deprecated
-                gameThread.stop();
-            Platform.exit();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-    
-    private void showGui(Stage primaryStage) {
-        Platform.setImplicitExit(false);
-        
-        TextField name1TF = new TextField();
-        name1TF.setPromptText("Nom du joueur 1");
-        TextField name2TF = new TextField();
-        name2TF.setPromptText("Nom du joueur 2");
-    
-        Button launchBtn = new Button("Démarrer le serveur");
-        launchBtn.disableProperty().bind(
-                Bindings.or(
-                        name1TF.textProperty().isEmpty(),
-                        name2TF.textProperty().isEmpty()));
-    
-        launchBtn.setOnAction(e -> {
-            gameThread = new Thread(new Server(name1TF.getText(), name2TF.getText()));
-            gameThread.setDaemon(true);
-            gameThread.start();
-            launchBtn.disableProperty().unbind();
-            launchBtn.disableProperty().set(true);
-        });
-    
-        Button exitBtn = new Button("Quitter");
-        exitBtn.setOnAction(this::terminate);
-    
-        VBox vbox = new VBox(10d, name1TF, name2TF, new HBox(10d, launchBtn, exitBtn));
-        vbox.setAlignment(Pos.CENTER);
-        vbox.requestFocus();
-    
-        primaryStage.setOnCloseRequest(this::terminate);
-        primaryStage.setScene(new Scene(vbox));
-        primaryStage.setTitle("tCHu \u2014 Serveur");
-        primaryStage.show();
-    }
-    
+    /**
+     * Démarre l'application JavaFX, côté Serveur.
+     * @param primaryStage
+     *          la Stage principale de l'application
+     */
     @Override
     public void start(Stage primaryStage) {
         List<String> names = getParameters().getRaw();
+        if (names.size() < PlayerId.COUNT)
+            names = DEFAULT_PLAYERS;
         
-        if (names.isEmpty() || names.get(0).equalsIgnoreCase("gui"))
-            showGui(primaryStage);
-        else if (names.size() < PlayerId.COUNT)
-            new Server().run();
-        else
-            new Server(names.subList(0, PlayerId.COUNT)).run();
+        Map<PlayerId, String> playerNames = new EnumMap<>(PlayerId.class);
+        for (PlayerId id : PlayerId.ALL)
+            playerNames.put(id, names.get(id.ordinal()));
+        
+        try {
+            ServerSocket serverSocket = new ServerSocket(DEFAULT_PORT);
+            Socket socket = serverSocket.accept();
+            
+            GraphicalPlayerAdapter graphicalPlayer = new GraphicalPlayerAdapter();
+            Player playerProxy = new RemotePlayerProxy(socket);
+            
+            Thread gameThread = new Thread(() -> Game.play(
+                    Map.of(PLAYER_1, graphicalPlayer, PLAYER_2, playerProxy),
+                    playerNames,
+                    SortedBag.of(ChMap.tickets()),
+                    new Random()
+            ));
+            gameThread.setDaemon(true);
+            gameThread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }

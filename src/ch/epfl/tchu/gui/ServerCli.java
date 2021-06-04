@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public final class Server implements Runnable {
+public final class ServerCli implements Runnable {
     
     public static final int DEFAULT_PORT = 5108;
     public static final List<String> DEFAULT_NAMES = List.of("Ada", "Charles");
@@ -23,21 +23,21 @@ public final class Server implements Runnable {
     private final List<String> names;
     private final int port;
     
-    public Server(int port, List<String> names) {
+    public ServerCli(int port, List<String> names) {
         Preconditions.checkArgument(names.size() == PlayerId.COUNT);
         this.names = names;
         this.port = port;
     }
     
-    public Server(List<String> names) {
+    public ServerCli(List<String> names) {
         this(DEFAULT_PORT, names);
     }
     
-    public Server(String... names) {
+    public ServerCli(String... names) {
         this(DEFAULT_PORT, List.of(names));
     }
     
-    public Server() {
+    public ServerCli() {
         this(DEFAULT_PORT, DEFAULT_NAMES);
     }
     

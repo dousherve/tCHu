@@ -10,9 +10,9 @@ public final class ServerMainCli {
     public static void main(String[] args) {
         List<String> names = (args.length >= PlayerId.COUNT)
                 ? Arrays.asList(args).subList(0, PlayerId.COUNT)
-                : Server.DEFAULT_NAMES;
+                : ServerCli.DEFAULT_NAMES;
                 
-	    new Server(names).run();
+	    new ServerCli(names).run();
     }
     
 }
