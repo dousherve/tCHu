@@ -23,6 +23,19 @@ public final class PlayerState extends PublicPlayerState {
     
     // Nombre maximum de cartes différentes lors de la prise d'un tunnel
     private static final int MAX_CARD_TYPES_COUNT = 2;
+    
+    private StationPartition createPartition() {
+        int maxStationId = routes().stream()
+                .flatMap(r -> r.stations().stream())
+                .mapToInt(Station::id)
+                .max()
+                .orElse(0);
+        
+        StationPartition.Builder partitionB = new StationPartition.Builder(maxStationId + 1);
+        routes().forEach(r -> partitionB.connect(r.station1(), r.station2()));
+        
+        return partitionB.build();
+    }
 
     /**
      * Retourne l'état initial d'un joueur auquel les cartes initiales données ont été distribuées.
@@ -216,24 +229,23 @@ public final class PlayerState extends PublicPlayerState {
     }
     
     /**
-     * Retourne le nombre de points (éventuellement négatif) obtenus par le joueur grâce à ses billets.
+     * Retourne le nombre de points (éventuellement négatif) obtenus par le joueur grâce à tous ses billets.
      * 
      * @return le nombre de points obtenus par le joueur grâce à ses billets
      */
     public int ticketPoints() {
-        int maxStationId = routes().stream()
-                .flatMap(r -> r.stations().stream())
-                .mapToInt(Station::id)
-                .max()
-                .orElse(0);
-    
-        StationPartition.Builder partitionB = new StationPartition.Builder(maxStationId + 1);
-        routes().forEach(r -> partitionB.connect(r.station1(), r.station2()));
-        
-        StationPartition partition = partitionB.build();
         return tickets.stream()
-                .mapToInt(t -> t.points(partition))
+                .mapToInt(t -> t.points(createPartition()))
                 .sum();
+    }
+    
+    /**
+     * Retourne le nombre de points (éventuellement négatif) obtenus par le joueur grâce au billet donné.
+     *
+     * @return le nombre de points obtenus par le joueur grâce au billet donné
+     */
+    public int ticketPoints(Ticket ticket) {
+        return ticket.points(createPartition());
     }
     
     /**

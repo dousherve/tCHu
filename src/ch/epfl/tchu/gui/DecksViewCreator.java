@@ -6,6 +6,7 @@ import ch.epfl.tchu.game.Constants;
 import ch.epfl.tchu.game.Ticket;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.event.EventHandler;
@@ -13,6 +14,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -20,6 +22,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.StringConverter;
+
+import java.util.Map;
 
 import static ch.epfl.tchu.gui.ActionHandlers.DrawCardHandler;
 import static ch.epfl.tchu.gui.ActionHandlers.DrawTicketsHandler;
@@ -88,6 +93,30 @@ final class DecksViewCreator {
         
     }
     
+    private static final class TicketStringConverter extends StringConverter<Ticket> {
+        
+        private final Map<Ticket, IntegerProperty> ticketsPoints;
+    
+        private TicketStringConverter(Map<Ticket, IntegerProperty> ticketsPoints) {
+            this.ticketsPoints = ticketsPoints;
+        }
+    
+        @Override
+        public String toString(Ticket ticket) {
+            String completed = ticketsPoints.get(ticket).get() > 0
+                    ? StringsFr.COMPLETED + StringsFr.EN_DASH_SEPARATOR
+                    : "";
+            
+            return completed + ticket.toString();
+        }
+    
+        @Override
+        public Ticket fromString(String string) {
+            throw new UnsupportedOperationException();
+        }
+        
+    }
+    
     private static StackPane createCardViewPane() {
         Rectangle outsideRect = new Rectangle(OUTSIDE_CARD_WIDTH, OUTSIDE_CARD_HEIGHT);
         outsideRect.getStyleClass().add(OUTSIDE_CARD_CLASS);
@@ -143,6 +172,9 @@ final class DecksViewCreator {
 
         ListView<Ticket> ticketsView = new ListView<>(gameState.tickets());
         ticketsView.setId(TICKETS_ID);
+        ticketsView.setCellFactory(v -> new TextFieldListCell<>(
+                new TicketStringConverter(gameState.ticketsPointsProperty())
+        ));
 
         HBox handPane = new HBox();
         handPane.setId(GuiUtils.CARD_PANE_ID);

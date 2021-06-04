@@ -63,6 +63,7 @@ public final class ObservableGameState {
 
     private final ObservableList<Ticket> ticketsProperty;
     private final Map<Card, IntegerProperty> cardCountsPerType;
+    private final Map<Ticket, IntegerProperty> ticketsPointsProperty;
     private final Map<Route, BooleanProperty> routesClaimability;
     
     // MARK:- Méthodes utilitaires privées et statiques
@@ -155,7 +156,19 @@ public final class ObservableGameState {
     }
     
     private void setPlayerStateProperties(PublicGameState newGameState, PlayerState newPlayerState) {
-        ticketsProperty.setAll(newPlayerState.tickets().toList());
+        List<Ticket> playerTickets = newPlayerState.tickets().toList();
+        ticketsProperty.setAll(playerTickets);
+        for (Ticket ticket : playerTickets) {
+            int points = newPlayerState.ticketPoints(ticket);
+            if (ticketsPointsProperty.containsKey(ticket)) {
+                ticketsPointsProperty.get(ticket)
+                        .set(points);
+            } else {
+                IntegerProperty prop = createIntProperty();
+                prop.set(points);
+                ticketsPointsProperty.put(ticket, prop);
+            }
+        }
         
         for (Card card : Card.ALL) {
             cardCountsPerType.get(card)
@@ -215,6 +228,7 @@ public final class ObservableGameState {
 
         this.ticketsProperty = FXCollections.observableArrayList();
         this.cardCountsPerType = createPropertiesMap(Card.ALL, ObservableGameState::createIntProperty);
+        this.ticketsPointsProperty = createPropertiesMap(List.of(), ObservableGameState::createIntProperty);
         this.routesClaimability = createPropertiesMap(ChMap.routes(), ObservableGameState::createBooleanProperty);
     }
     
@@ -421,6 +435,17 @@ public final class ObservableGameState {
      */
     public ObservableList<Ticket> tickets() {
         return FXCollections.unmodifiableObservableList(ticketsProperty);
+    }
+    
+    /**
+     * Retourne une table associative associant
+     * chaque billet au nombre de points qu'il rapporte au joueur
+     * @return
+     *      une table associative associant
+     *      chaque billet au nombre de points qu'il rapporte au joueur
+     */
+    public Map<Ticket, IntegerProperty> ticketsPointsProperty() {
+        return Collections.unmodifiableMap(ticketsPointsProperty);
     }
     
     /**

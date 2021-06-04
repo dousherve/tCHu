@@ -114,6 +114,9 @@ public final class StringsFr {
     public static final String SOUND_CLAIM_ROUTE = "Son lors de la prise d'une route";
     public static final String SOUND_LATE_GAME = "Son lorsque la fin de la partie commence";
     
+    // Billet rempli
+    public static final String COMPLETED = "Rempli";
+    
     // Quitter le jeu
     public static final String QUIT = "Quitter le jeu";
     
