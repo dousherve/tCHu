@@ -104,7 +104,7 @@ final class DecksViewCreator {
         @Override
         public String toString(Ticket ticket) {
             String completed = ticketsPoints.get(ticket).get() > 0
-                    ? StringsFr.COMPLETED + StringsFr.EN_DASH_SEPARATOR
+                    ? StringsFr.COMPLETED + " : "
                     : "";
             
             return completed + ticket.toString();
